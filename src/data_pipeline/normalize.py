@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from src.domain.enums import ParticipantLocation
@@ -10,7 +10,28 @@ from src.domain.match import Match, MatchParticipant, Score
 
 
 def _parse_datetime(value: str) -> datetime:
-    return datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+    """Parse Sportmonks datetime strings into naive UTC datetimes."""
+    text = value.strip()
+    if not text:
+        raise ValueError("Empty datetime value")
+
+    if "T" in text:
+        iso = text.replace("Z", "+00:00")
+        try:
+            parsed = datetime.fromisoformat(iso)
+        except ValueError as exc:
+            raise ValueError(f"Unsupported ISO datetime: {value!r}") from exc
+        if parsed.tzinfo is not None:
+            return parsed.astimezone(timezone.utc).replace(tzinfo=None)
+        return parsed
+
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported datetime format: {value!r}")
 
 
 def _extract_score(scores: list[dict[str, Any]] | None) -> Score | None:

@@ -31,7 +31,7 @@ class EloModel(BaseModel):
         rh_adj = rh + self.settings.elo_home_advantage
 
         p_home_beats = table.expected_score(rh_adj, ra)
-        p_away_beats = 1.0 - table.expected_score(ra, rh_adj)
+        p_away_beats = table.expected_score(ra, rh_adj)
 
         closeness = 1.0 - abs(p_home_beats - p_away_beats)
         p_draw = self._base_draw * (0.6 + 0.4 * closeness)

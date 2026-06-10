@@ -10,6 +10,7 @@ from pathlib import Path
 from src.config import CACHE_DB_PATH, FIXTURES_DIR, PROCESSED_DIR, Settings
 from src.data_pipeline.dataset_builder import MatchDataset
 from src.data_pipeline.normalize import normalize_fixtures_response
+from src.domain.match import Match
 from src.sportmonks.cache import ResponseCache
 from src.sportmonks.client import SportmonksClient
 from src.sportmonks import fixtures as fixtures_api
@@ -35,6 +36,19 @@ def load_offline_dataset(league_id: int) -> MatchDataset:
     return MatchDataset(league_id=league_id, season_id=season_id, matches=matches)
 
 
+PAST_SYNC_DAYS = 180
+FUTURE_SYNC_DAYS = 30
+
+
+def _merge_matches(*groups: list[Match]) -> list[Match]:
+    """Merge match lists deduplicating by fixture id (later entries win)."""
+    by_id: dict[int, Match] = {}
+    for group in groups:
+        for match in group:
+            by_id[match.id] = match
+    return sorted(by_id.values(), key=lambda match: match.starting_at)
+
+
 def _resolve_season_id(client: SportmonksClient, league_id: int, ttl: int) -> int | None:
     response = leagues_api.fetch_league(client, league_id, ttl=ttl)
     data = response.get("data") or {}
@@ -51,17 +65,42 @@ def _sync_from_api(settings: Settings, league_id: int) -> MatchDataset:
     ttl = settings.cache_ttl_fixtures
 
     season_id = _resolve_season_id(client, league_id, settings.cache_ttl_standings)
-    end = datetime.utcnow().date()
-    start = end - timedelta(days=180)
-    response = fixtures_api.fetch_fixtures_between(
+    today = datetime.utcnow().date()
+    past_start = today - timedelta(days=PAST_SYNC_DAYS)
+    future_end = today + timedelta(days=FUTURE_SYNC_DAYS)
+    includes = "participants;scores;state"
+
+    past_response = fixtures_api.fetch_fixtures_between(
         client,
-        start.isoformat(),
-        end.isoformat(),
+        past_start.isoformat(),
+        today.isoformat(),
         league_id=league_id,
-        includes="participants;scores;state",
+        includes=includes,
         ttl=ttl,
     )
-    matches = normalize_fixtures_response(response)
+    future_response = fixtures_api.fetch_fixtures_between(
+        client,
+        today.isoformat(),
+        future_end.isoformat(),
+        league_id=league_id,
+        includes=includes,
+        ttl=ttl,
+    )
+
+    past_matches = normalize_fixtures_response(past_response)
+    future_matches = normalize_fixtures_response(future_response)
+    matches = _merge_matches(past_matches, future_matches)
+
+    logger.info(
+        "Sync API: %d passate [%s -> %s], %d future [%s -> %s], %d totali",
+        len(past_matches),
+        past_start,
+        today,
+        len(future_matches),
+        today,
+        future_end,
+        len(matches),
+    )
     return MatchDataset(league_id=league_id, season_id=season_id, matches=matches)
 
 
