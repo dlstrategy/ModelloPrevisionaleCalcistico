@@ -75,10 +75,23 @@ Poi: `python -m src.cli sync --league 384`
 python -m pytest -q
 ```
 
-## Documentazione Sportmonks
+## Documentazione progetto
+
+Documentazione completa su architettura, logiche, collegamenti e cronostoria:
+
+- **[Indice documentazione](docs/progetto/README.md)**
+- [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
+- [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
+- [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (13 moduli)
+
+## Documentazione Sportmonks API
 
 ```bash
 python scripts/fetch_sportmonks_docs.py
 ```
 
-Riferimento locale: [`docs/sportmonks-football-v3-docs.md`](docs/sportmonks-football-v3-docs.md)
+Riferimento locale:
+
+- [`docs/sportmonks-football-v3-docs.md`](docs/sportmonks-football-v3-docs.md) — bundle 367 pagine
+- [`docs/sportmonks-football-v3-pagine.md`](docs/sportmonks-football-v3-pagine.md) — catalogo completo pagine
