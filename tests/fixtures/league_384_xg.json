@@ -1,0 +1,8 @@
+{
+  "teams": {
+    "1": {"xg_for": 1.85, "xg_against": 0.95, "clean_sheet_rate": 0.42},
+    "2": {"xg_for": 1.05, "xg_against": 1.55, "clean_sheet_rate": 0.18},
+    "3": {"xg_for": 1.62, "xg_against": 1.10, "clean_sheet_rate": 0.30},
+    "4": {"xg_for": 1.20, "xg_against": 1.35, "clean_sheet_rate": 0.22}
+  }
+}

@@ -1,0 +1,45 @@
+---
+description: Sportmonks Football API v3 integration rules for the predictive football model
+globs: "**/*.{py,md,ts,tsx,js,json,yml,yaml}"
+alwaysApply: false
+---
+
+# Sportmonks Football API v3
+
+## Primary documentation source
+
+When working on Sportmonks integration, use `docs/sportmonks-football-v3-docs.md` as the **primary reference**.
+
+If unsure about endpoints, includes, fields, filters, or response shapes:
+
+1. Search first in `docs/sportmonks-football-v3-docs.md`
+2. Then check `docs/sportmonks-llms-index.md` for the official page list
+3. Do not invent API details not present in the local docs
+
+## API version and authentication
+
+- This project uses **Sportmonks Football API v3**
+- Authenticate with the `Authorization` header
+- Do **not** pass API tokens in query strings
+
+Example:
+
+```http
+Authorization: YOUR_API_TOKEN
+```
+
+## Rate limits and caching
+
+- Respect Sportmonks rate limits documented locally
+- Prefer local caching for stable or rarely-changing data
+- Avoid redundant API calls in loops or batch jobs
+
+## Predictive model scope
+
+The football predictive model must use Sportmonks data to output only:
+
+- probability of **home win**
+- probability of **draw**
+- probability of **away win**
+
+Do not fabricate endpoints, includes, or response fields. Use only what is documented in the local Markdown bundle.

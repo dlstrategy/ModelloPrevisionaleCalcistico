@@ -1,0 +1,33 @@
+{
+  "fixtures": {
+    "1006": {
+      "home_offensive_quality": 1.08,
+      "home_defensive_quality": 1.02,
+      "away_offensive_quality": 0.88,
+      "away_defensive_quality": 0.92,
+      "home_absences": 0,
+      "away_absences": 2,
+      "home_formation": "4-3-3",
+      "away_formation": "3-5-2",
+      "duel_edges": {
+        "attack_vs_defense": 0.12,
+        "midfield": 0.05,
+        "right_vs_left": 0.08
+      }
+    },
+    "1007": {
+      "home_offensive_quality": 0.95,
+      "home_defensive_quality": 1.0,
+      "away_offensive_quality": 0.90,
+      "away_defensive_quality": 0.95,
+      "home_absences": 1,
+      "away_absences": 1,
+      "home_formation": "4-4-2",
+      "away_formation": "4-2-3-1",
+      "duel_edges": {
+        "attack_vs_defense": -0.03,
+        "midfield": 0.0
+      }
+    }
+  }
+}
