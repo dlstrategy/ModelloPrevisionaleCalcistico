@@ -1,32 +1,413 @@
 {
   "fixtures": {
-    "1006": {
-      "home_offensive_quality": 1.08,
-      "home_defensive_quality": 1.02,
-      "away_offensive_quality": 0.88,
-      "away_defensive_quality": 0.92,
-      "home_absences": 0,
+    "1041": {
+      "home_offensive_quality": 1.4,
+      "home_defensive_quality": 1.22,
+      "away_offensive_quality": 1.7,
+      "away_defensive_quality": 1.16,
+      "home_absences": 1,
       "away_absences": 2,
       "home_formation": "4-3-3",
       "away_formation": "3-5-2",
       "duel_edges": {
-        "attack_vs_defense": 0.12,
-        "midfield": 0.05,
-        "right_vs_left": 0.08
+        "wing": 0.11,
+        "midfield": -0.02,
+        "aerial": -0.07,
+        "pressing": -0.02,
+        "defensive_line": 0.09
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.4,
+        "starting_xi_defense_rating": 1.19,
+        "starting_xi_midfield_rating": 1.33,
+        "goalkeeper_rating": 0.77,
+        "missing_starters_count": 2,
+        "missing_minutes_share": 0.09,
+        "missing_goals_share": 0.05,
+        "missing_xg_share": 0.04,
+        "bench_strength": 0.66,
+        "lineup_continuity": 0.69
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.7,
+        "starting_xi_defense_rating": 1.15,
+        "starting_xi_midfield_rating": 1.61,
+        "goalkeeper_rating": 0.89,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.05,
+        "missing_goals_share": 0.06,
+        "missing_xg_share": 0.09,
+        "bench_strength": 0.69,
+        "lineup_continuity": 0.91
       }
     },
-    "1007": {
+    "1042": {
       "home_offensive_quality": 0.95,
-      "home_defensive_quality": 1.0,
-      "away_offensive_quality": 0.90,
-      "away_defensive_quality": 0.95,
-      "home_absences": 1,
+      "home_defensive_quality": 1.31,
+      "away_offensive_quality": 1.05,
+      "away_defensive_quality": 1.29,
+      "home_absences": 0,
       "away_absences": 1,
-      "home_formation": "4-4-2",
+      "home_formation": "4-2-3-1",
+      "away_formation": "3-5-2",
+      "duel_edges": {
+        "wing": -0.07,
+        "midfield": -0.07,
+        "aerial": 0.16,
+        "pressing": -0.07,
+        "defensive_line": 0.14
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 0.95,
+        "starting_xi_defense_rating": 1.26,
+        "starting_xi_midfield_rating": 0.9,
+        "goalkeeper_rating": 0.84,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.07,
+        "missing_goals_share": 0.02,
+        "missing_xg_share": 0.1,
+        "bench_strength": 0.63,
+        "lineup_continuity": 0.73
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.05,
+        "starting_xi_defense_rating": 1.24,
+        "starting_xi_midfield_rating": 1.0,
+        "goalkeeper_rating": 0.8,
+        "missing_starters_count": 0,
+        "missing_minutes_share": 0.02,
+        "missing_goals_share": 0.07,
+        "missing_xg_share": 0.09,
+        "bench_strength": 0.63,
+        "lineup_continuity": 0.76
+      }
+    },
+    "1043": {
+      "home_offensive_quality": 1.65,
+      "home_defensive_quality": 1.17,
+      "away_offensive_quality": 1.85,
+      "away_defensive_quality": 1.13,
+      "home_absences": 0,
+      "away_absences": 2,
+      "home_formation": "3-4-3",
+      "away_formation": "4-4-2",
+      "duel_edges": {
+        "wing": -0.11,
+        "midfield": -0.02,
+        "aerial": -0.09,
+        "pressing": 0.18,
+        "defensive_line": 0.19
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.65,
+        "starting_xi_defense_rating": 1.15,
+        "starting_xi_midfield_rating": 1.57,
+        "goalkeeper_rating": 0.84,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.14,
+        "missing_goals_share": 0.0,
+        "missing_xg_share": 0.09,
+        "bench_strength": 0.68,
+        "lineup_continuity": 0.71
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.85,
+        "starting_xi_defense_rating": 1.12,
+        "starting_xi_midfield_rating": 1.76,
+        "goalkeeper_rating": 0.8,
+        "missing_starters_count": 0,
+        "missing_minutes_share": 0.05,
+        "missing_goals_share": 0.07,
+        "missing_xg_share": 0.01,
+        "bench_strength": 0.7,
+        "lineup_continuity": 0.78
+      }
+    },
+    "1044": {
+      "home_offensive_quality": 1.7,
+      "home_defensive_quality": 1.16,
+      "away_offensive_quality": 0.95,
+      "away_defensive_quality": 1.31,
+      "home_absences": 2,
+      "away_absences": 0,
+      "home_formation": "4-2-3-1",
+      "away_formation": "3-5-2",
+      "duel_edges": {
+        "wing": 0.07,
+        "midfield": 0.04,
+        "aerial": -0.08,
+        "pressing": 0.22,
+        "defensive_line": 0.02
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.7,
+        "starting_xi_defense_rating": 1.15,
+        "starting_xi_midfield_rating": 1.61,
+        "goalkeeper_rating": 0.86,
+        "missing_starters_count": 2,
+        "missing_minutes_share": 0.02,
+        "missing_goals_share": 0.08,
+        "missing_xg_share": 0.02,
+        "bench_strength": 0.69,
+        "lineup_continuity": 0.77
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 0.95,
+        "starting_xi_defense_rating": 1.26,
+        "starting_xi_midfield_rating": 0.9,
+        "goalkeeper_rating": 0.75,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.07,
+        "missing_goals_share": 0.07,
+        "missing_xg_share": 0.02,
+        "bench_strength": 0.63,
+        "lineup_continuity": 0.72
+      }
+    },
+    "1045": {
+      "home_offensive_quality": 1.4,
+      "home_defensive_quality": 1.22,
+      "away_offensive_quality": 1.55,
+      "away_defensive_quality": 1.19,
+      "home_absences": 2,
+      "away_absences": 0,
+      "home_formation": "4-3-3",
       "away_formation": "4-2-3-1",
       "duel_edges": {
-        "attack_vs_defense": -0.03,
-        "midfield": 0.0
+        "wing": -0.27,
+        "midfield": 0.18,
+        "aerial": -0.12,
+        "pressing": -0.14,
+        "defensive_line": 0.12
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.4,
+        "starting_xi_defense_rating": 1.19,
+        "starting_xi_midfield_rating": 1.33,
+        "goalkeeper_rating": 0.73,
+        "missing_starters_count": 0,
+        "missing_minutes_share": 0.05,
+        "missing_goals_share": 0.05,
+        "missing_xg_share": 0.02,
+        "bench_strength": 0.66,
+        "lineup_continuity": 0.91
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.55,
+        "starting_xi_defense_rating": 1.17,
+        "starting_xi_midfield_rating": 1.47,
+        "goalkeeper_rating": 0.82,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.01,
+        "missing_goals_share": 0.04,
+        "missing_xg_share": 0.1,
+        "bench_strength": 0.67,
+        "lineup_continuity": 0.77
+      }
+    },
+    "1046": {
+      "home_offensive_quality": 1.05,
+      "home_defensive_quality": 1.29,
+      "away_offensive_quality": 1.45,
+      "away_defensive_quality": 1.21,
+      "home_absences": 2,
+      "away_absences": 2,
+      "home_formation": "3-4-3",
+      "away_formation": "3-5-2",
+      "duel_edges": {
+        "wing": -0.0,
+        "midfield": -0.12,
+        "aerial": 0.07,
+        "pressing": -0.21,
+        "defensive_line": 0.04
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.05,
+        "starting_xi_defense_rating": 1.24,
+        "starting_xi_midfield_rating": 1.0,
+        "goalkeeper_rating": 0.73,
+        "missing_starters_count": 2,
+        "missing_minutes_share": 0.03,
+        "missing_goals_share": 0.02,
+        "missing_xg_share": 0.03,
+        "bench_strength": 0.63,
+        "lineup_continuity": 0.7
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.45,
+        "starting_xi_defense_rating": 1.18,
+        "starting_xi_midfield_rating": 1.38,
+        "goalkeeper_rating": 0.9,
+        "missing_starters_count": 0,
+        "missing_minutes_share": 0.08,
+        "missing_goals_share": 0.05,
+        "missing_xg_share": 0.03,
+        "bench_strength": 0.67,
+        "lineup_continuity": 0.69
+      }
+    },
+    "1047": {
+      "home_offensive_quality": 1.85,
+      "home_defensive_quality": 1.13,
+      "away_offensive_quality": 0.95,
+      "away_defensive_quality": 1.31,
+      "home_absences": 1,
+      "away_absences": 0,
+      "home_formation": "4-2-3-1",
+      "away_formation": "4-4-2",
+      "duel_edges": {
+        "wing": 0.29,
+        "midfield": 0.08,
+        "aerial": 0.07,
+        "pressing": 0.06,
+        "defensive_line": 0.17
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.85,
+        "starting_xi_defense_rating": 1.12,
+        "starting_xi_midfield_rating": 1.76,
+        "goalkeeper_rating": 0.8,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.08,
+        "missing_goals_share": 0.06,
+        "missing_xg_share": 0.09,
+        "bench_strength": 0.7,
+        "lineup_continuity": 0.65
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 0.95,
+        "starting_xi_defense_rating": 1.26,
+        "starting_xi_midfield_rating": 0.9,
+        "goalkeeper_rating": 0.77,
+        "missing_starters_count": 2,
+        "missing_minutes_share": 0.06,
+        "missing_goals_share": 0.09,
+        "missing_xg_share": 0.02,
+        "bench_strength": 0.63,
+        "lineup_continuity": 0.94
+      }
+    },
+    "1048": {
+      "home_offensive_quality": 1.65,
+      "home_defensive_quality": 1.17,
+      "away_offensive_quality": 1.55,
+      "away_defensive_quality": 1.19,
+      "home_absences": 1,
+      "away_absences": 0,
+      "home_formation": "4-4-2",
+      "away_formation": "3-5-2",
+      "duel_edges": {
+        "wing": -0.23,
+        "midfield": -0.16,
+        "aerial": 0.03,
+        "pressing": 0.1,
+        "defensive_line": 0.23
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.65,
+        "starting_xi_defense_rating": 1.15,
+        "starting_xi_midfield_rating": 1.57,
+        "goalkeeper_rating": 0.86,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.07,
+        "missing_goals_share": 0.05,
+        "missing_xg_share": 0.03,
+        "bench_strength": 0.68,
+        "lineup_continuity": 0.74
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.55,
+        "starting_xi_defense_rating": 1.17,
+        "starting_xi_midfield_rating": 1.47,
+        "goalkeeper_rating": 0.73,
+        "missing_starters_count": 2,
+        "missing_minutes_share": 0.02,
+        "missing_goals_share": 0.09,
+        "missing_xg_share": 0.06,
+        "bench_strength": 0.67,
+        "lineup_continuity": 0.91
+      }
+    },
+    "1049": {
+      "home_offensive_quality": 1.05,
+      "home_defensive_quality": 1.29,
+      "away_offensive_quality": 1.7,
+      "away_defensive_quality": 1.16,
+      "home_absences": 0,
+      "away_absences": 0,
+      "home_formation": "4-4-2",
+      "away_formation": "3-5-2",
+      "duel_edges": {
+        "wing": -0.21,
+        "midfield": -0.24,
+        "aerial": 0.02,
+        "pressing": -0.1,
+        "defensive_line": 0.19
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.05,
+        "starting_xi_defense_rating": 1.24,
+        "starting_xi_midfield_rating": 1.0,
+        "goalkeeper_rating": 0.72,
+        "missing_starters_count": 0,
+        "missing_minutes_share": 0.06,
+        "missing_goals_share": 0.05,
+        "missing_xg_share": 0.1,
+        "bench_strength": 0.63,
+        "lineup_continuity": 0.82
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.7,
+        "starting_xi_defense_rating": 1.15,
+        "starting_xi_midfield_rating": 1.61,
+        "goalkeeper_rating": 0.81,
+        "missing_starters_count": 0,
+        "missing_minutes_share": 0.1,
+        "missing_goals_share": 0.08,
+        "missing_xg_share": 0.01,
+        "bench_strength": 0.69,
+        "lineup_continuity": 0.93
+      }
+    },
+    "1050": {
+      "home_offensive_quality": 1.55,
+      "home_defensive_quality": 1.19,
+      "away_offensive_quality": 1.45,
+      "away_defensive_quality": 1.21,
+      "home_absences": 2,
+      "away_absences": 0,
+      "home_formation": "4-3-3",
+      "away_formation": "4-3-3",
+      "duel_edges": {
+        "wing": -0.11,
+        "midfield": -0.08,
+        "aerial": -0.08,
+        "pressing": -0.21,
+        "defensive_line": 0.18
+      },
+      "home_player": {
+        "starting_xi_attack_rating": 1.55,
+        "starting_xi_defense_rating": 1.17,
+        "starting_xi_midfield_rating": 1.47,
+        "goalkeeper_rating": 0.77,
+        "missing_starters_count": 1,
+        "missing_minutes_share": 0.01,
+        "missing_goals_share": 0.07,
+        "missing_xg_share": 0.12,
+        "bench_strength": 0.67,
+        "lineup_continuity": 0.85
+      },
+      "away_player": {
+        "starting_xi_attack_rating": 1.45,
+        "starting_xi_defense_rating": 1.18,
+        "starting_xi_midfield_rating": 1.38,
+        "goalkeeper_rating": 0.82,
+        "missing_starters_count": 2,
+        "missing_minutes_share": 0.05,
+        "missing_goals_share": 0.02,
+        "missing_xg_share": 0.06,
+        "bench_strength": 0.67,
+        "lineup_continuity": 0.74
       }
     }
   }

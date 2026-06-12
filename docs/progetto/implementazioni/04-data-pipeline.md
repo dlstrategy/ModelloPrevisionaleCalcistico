@@ -25,7 +25,9 @@ sync(league_id, settings)
     └─ can_sync_api (Fase 3)
             → SportmonksClient + cache
             → resolve season_id da leagues API
-            → fetch fixtures/between (ultimi 180 giorni)
+            → fetch fixtures/between passate (today-180 → today)
+            → fetch fixtures/between future (today → today+30)
+            → _merge_matches() dedup per id
             → normalize_fixtures_response()
     │
     → salva data/processed/league_{id}_matches.json
@@ -40,6 +42,8 @@ sync(league_id, settings)
 - Partecipanti (home/away) con `team_id`, nome
 - Score finale (`home_score`, `away_score`)
 - `league_id`, `season_id`
+
+**Datetime:** supporta formato Sportmonks (`YYYY-MM-DD HH:MM:SS`), ISO con timezone e solo data. Vedi Fase 2b in [15-hardening-foundation.md](15-hardening-foundation.md).
 
 Output: lista di oggetti `Match` del dominio.
 
@@ -74,5 +78,6 @@ sync.py ──→ normalize.py ──→ MatchDataset
 
 ## Fase di sviluppo
 
-Fase 1 (base) — sync offline
-Fase 3 (estensione) — branch API in `sync.py`
+Fase 1 (base) — sync offline  
+Fase 2b — sync API passate + future, normalize ISO  
+Fase 3 — attivazione API live

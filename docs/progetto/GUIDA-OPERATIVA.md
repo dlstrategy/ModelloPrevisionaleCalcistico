@@ -3,45 +3,16 @@
 ## Requisiti
 
 - Python 3.10+
-- Dipendenze: `pip install -r requirements.txt`
+- `pip install -r requirements.txt`
 
-## Setup iniziale
+## Setup
 
 ```bash
-cd "C:\Users\lucac\Desktop\Modello previsionale calcstico"
 pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Senza modifiche a `.env` il sistema gira in **modalità offline** (default).
-
----
-
-## Configurazione (`.env`)
-
-| Variabile | Default | Descrizione |
-|-----------|---------|-------------|
-| `SPORTMONKS_API_TOKEN` | vuoto | Token API (Fase 3) |
-| `ENABLE_SPORTMONKS_SYNC` | `false` | Abilita sync API reale |
-| `OFFLINE_MODE` | `auto` | `auto` / `true` / `false` |
-| `DEFAULT_LEAGUE_ID` | `384` | Serie A |
-| `ENSEMBLE_WEIGHT_POISSON` | `0.25` | Peso Poisson nell'ensemble |
-| `ENSEMBLE_WEIGHT_DIXON_COLES` | `0.30` | Peso Dixon-Coles |
-| `ENSEMBLE_WEIGHT_ELO` | `0.20` | Peso Elo |
-| `ENSEMBLE_WEIGHT_FEATURE` | `0.25` | Peso Feature model |
-| `DIXON_COLES_RHO` | `-0.13` | Correzione low-score |
-| `ELO_K` | `20` | Fattore K Elo |
-| `ELO_HOME_ADVANTAGE` | `65` | Bonus Elo casa |
-| `CALIBRATION_TEMPERATURE` | `1.0` | Temperature scaling (>1 appiattisce) |
-
-### Logica offline vs API
-
-```
-can_sync_api = token presente AND ENABLE_SPORTMONKS_SYNC=true
-is_offline   = OFFLINE_MODE=true OR (auto AND NOT can_sync_api)
-```
-
-Se `is_offline=True`, `sync` legge `tests/fixtures/league_{id}_matches.json`.
+Modalità **offline** di default (nessun token richiesto).
 
 ---
 
@@ -53,33 +24,49 @@ Se `is_offline=True`, `sync` legge `tests/fixtures/league_{id}_matches.json`.
 python -m src.cli sync --league 384
 ```
 
-Output: `data/processed/league_384_matches.json`
-
 ### Predizioni
 
 ```bash
-# Ensemble (consigliato)
-python -m src.cli predict --date 2025-09-20 --model ensemble
-
-# Singolo modello con spiegazione
-python -m src.cli predict --date 2025-09-20 --model poisson --explain
-
-# Modelli disponibili: poisson, dixon_coles, elo, feature, ensemble
+python -m src.cli predict --date 2025-10-18 --model ensemble
+python -m src.cli predict --date 2025-10-18 --model ensemble --explain
 ```
 
-Output: `data/predictions/predictions_YYYY-MM-DD.json`
+Modelli: `ensemble`, `poisson`, `dixon_coles`, `elo`, `feature`
 
 ### Backtest
 
 ```bash
-# Singolo modello
-python -m src.cli backtest --league 384 --model dixon_coles --rounds 5
-
-# Confronto tutti i modelli
+python -m src.cli backtest --league 384 --model ensemble --rounds 5
 python -m src.cli backtest --league 384 --all-models --rounds 5
 ```
 
-Output: `data/backtests/backtest_{model}_{timestamp}.json`
+### Feature engineering
+
+```bash
+python -m src.cli features --league 384
+```
+
+Mostra gruppi feature attivi, conteggio per gruppo, esempio feature vector.
+
+### Ablation test
+
+```bash
+python -m src.cli ablation --league 384 --rounds 5
+```
+
+Esegue 7 varianti cumulative e salva report in `data/backtests/ablation_*.json`.
+
+Varianti: `base`, `base+xg`, `base+shots`, `base+player_lineup`, `base+tactical`, `base+calendar`, `full`
+
+---
+
+## Rigenerare fixture mock
+
+```bash
+python scripts/generate_fixtures.py
+```
+
+Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/fixtures/`.
 
 ---
 
@@ -89,76 +76,50 @@ Output: `data/backtests/backtest_{model}_{timestamp}.json`
 python -m pytest -q
 ```
 
-Risultato atteso: 15 passed, 1 skipped (`test_client` quando offline).
+Risultato atteso: **42 passed**.
+
+CI automatica su GitHub Actions (`.github/workflows/ci.yml`).
 
 ---
 
-## Aggiornare documentazione Sportmonks
+## Configurazione (`.env`)
 
-```bash
-# Download completo (367 pagine) + bundle + catalogo
-python scripts/fetch_sportmonks_docs.py
+| Variabile | Default | Descrizione |
+|-----------|---------|-------------|
+| `ENABLE_SPORTMONKS_SYNC` | `false` | Abilita API reale |
+| `SPORTMONKS_API_TOKEN` | vuoto | Token API |
+| `FORM_WINDOW_MATCHES` | `5` | Finestra forma recente |
+| `ENSEMBLE_WEIGHT_*` | vedi `.env.example` | Pesi ensemble |
+| `MIN_CONFIDENCE_THRESHOLD` | `0.38` | Soglia confidenza bassa |
 
-# Solo catalogo da file locali (senza re-download)
-python scripts/fetch_sportmonks_docs.py --catalog-only
+---
+
+## Output
+
+```
+data/
+  processed/league_384_dataset.json
+  predictions/predictions_YYYY-MM-DD.json
+  backtests/backtest_*.json
+  backtests/ablation_*.json
 ```
 
-Output:
-
-- `docs/sportmonks-football-v3-docs.md` — bundle unico
-- `docs/sportmonks-football-v3-pagine.md` — elenco completo pagine per categoria
-- `docs/sportmonks-llms-index.md` — indice `llms.txt`
-
 ---
 
-## Attivare Fase 3 (API live)
-
-1. Ottenere token da [Sportmonks](https://www.sportmonks.com/)
-2. In `.env`:
+## Fase 3 — API live
 
 ```env
 SPORTMONKS_API_TOKEN=il_tuo_token
 ENABLE_SPORTMONKS_SYNC=true
 ```
 
-3. Eseguire sync:
-
-```bash
-python -m src.cli sync --league 384
-```
-
-4. Verificare log: deve comparire sync API, non "offline fixtures".
-
-Vedi [implementazioni/13-fase-3-sportmonks-api.md](implementazioni/13-fase-3-sportmonks-api.md).
-
----
-
-## Troubleshooting
-
-| Sintomo | Causa probabile | Soluzione |
-|---------|-----------------|-----------|
-| "No matches found" | Data senza partite in dataset | Cambiare `--date` o aggiungere fixture |
-| Sync sempre offline | `ENABLE_SPORTMONKS_SYNC=false` | Impostare `true` + token |
-| Test client skipped | Normale in offline | Attivare Fase 3 per test API |
-| `pytest` non trovato | Non in PATH | `python -m pytest` |
-| Errori SSL fetch docs | Ambiente Windows | Script usa già `urllib`+`certifi` |
-
----
-
-## Struttura output
-
-```
-data/
-  processed/league_384_matches.json    # Dataset normalizzato
-  predictions/predictions_*.json       # Predizioni giornata
-  backtests/backtest_*.json            # Report valutazione
-  cache.db                             # Cache API (Fase 3)
-```
+Sync scarica partite passate (180gg) + future (30gg).
 
 ---
 
 ## Riferimenti
 
-- [ARCHITETTURA.md](ARCHITETTURA.md) — Come i moduli si collegano
-- [CRONOSTORIA.md](CRONOSTORIA.md) — Timeline sviluppo
-- [implementazioni/](implementazioni/) — Dettaglio per modulo
+- [ARCHITETTURA.md](ARCHITETTURA.md)
+- [CRONOSTORIA.md](CRONOSTORIA.md)
+- [06-feature-engineering.md](implementazioni/06-feature-engineering.md)
+- [14-ablation-e-valutazione.md](implementazioni/14-ablation-e-valutazione.md)

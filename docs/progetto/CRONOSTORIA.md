@@ -6,209 +6,132 @@ Timeline dello sviluppo del **Modello Previsionale Calcistico** — repository [
 
 ## Fase 0 — Setup iniziale
 
-**Obiettivo:** Collegare il progetto locale a GitHub e preparare l'ambiente.
-
 | Evento | Dettaglio |
 |--------|-----------|
-| Creazione repository | `https://github.com/dlstrategy/ModelloPrevisionaleCalcistico` |
-| Clone locale | Workspace `Modello previsionale calcstico` |
-| Tooling | `gh` CLI, Python 3.12, `pytest`, `requirements.txt` |
-| Primo push | Commit iniziale con struttura completa (81 file) |
-
-**Deliverable:** Repository versionato, README base, `.env.example`, `.gitignore`.
+| Repository | `https://github.com/dlstrategy/ModelloPrevisionaleCalcistico` |
+| Primo push | Commit iniziale (81 file) |
 
 ---
 
 ## Fase 0b — Documentazione Sportmonks locale
 
-**Obiettivo:** Avere riferimento API offline per Cursor e sviluppo senza navigare il web.
-
-| Evento | Dettaglio |
-|--------|-----------|
-| Script `scripts/fetch_sportmonks_docs.py` | Scarica `llms.txt`, filtra Football API v3, genera bundle |
-| Bundle generato | `docs/sportmonks-football-v3-docs.md` (367 pagine) |
-| Catalogo pagine | `docs/sportmonks-football-v3-pagine.md` (elenco completo categorizzato) |
-| Indice | `docs/sportmonks-llms-index.md` |
-| Cursor rule | `.cursor/rules/sportmonks.mdc` — usa docs locali, solo 1/X/2 |
-| Fix SSL Windows | Script riscritto con `urllib` + `certifi` (fallimento `requests`) |
-| Fix pagina mancante | 1/367 pagine patchata manualmente nel bundle |
-
-**Deliverable:** Documentazione API consultabile offline + regole IDE.
+- Bundle 367 pagine in `docs/sportmonks-football-v3-docs.md`
+- Catalogo pagine in `docs/sportmonks-football-v3-pagine.md`
+- Cursor rules in `.cursor/rules/sportmonks.mdc`
 
 ---
 
 ## Fase 1 — Foundation (completata)
 
-**Obiettivo:** Motore modulare minimo funzionante offline con Poisson e backtest base.
-
-### 1.1 Configurazione e dominio
-
-- `src/config.py` — Settings da `.env`
-- `src/logging_config.py` — Logging strutturato
-- `src/domain/` — `Match`, `Team`, `Player`, `OutcomeProbabilities`, `Prediction`
-
-### 1.2 Layer Sportmonks (predisposto)
-
-- `SportmonksClient` con retry e rate limit
-- Cache SQLite (`src/sportmonks/cache.py`)
-- Moduli endpoint: leagues, fixtures, teams, standings
-- Scheletri: players, lineups, injuries, statistics
-
-### 1.3 Data pipeline
-
-- `normalize.py` — JSON → `Match`
-- `dataset_builder.py` — `MatchDataset` con filtri temporali
-- `sync.py` — Caricamento da `tests/fixtures/league_384_matches.json`
-
-### 1.4 Feature base
-
-- Forma recente (`recent_form.py`)
-- Forza attacco/difesa (`team_strength.py`)
-- Contesto partita (`match_context.py`)
-
-### 1.5 Modello Poisson
-
-- Stima λ da strength
-- Matrice score fino a `max_goals`
-- Somma diagonali → P(1), P(X), P(2)
-
-### 1.6 Prediction e CLI
-
-- `predict_match`, `predict_round`
-- CLI: `sync`, `predict`, `backtest`
-- Export JSON in `data/predictions/`
-
-### 1.7 Backtest base
-
-- Walk-forward su partite finite
-- Metriche: accuracy, Brier score
-
-### 1.8 Test
-
-- Test dominio, Poisson, dataset, cache, sync offline
-- 10 partite mock Serie A (`league_id=384`)
-
-**Stato fine Fase 1:** Pipeline end-to-end offline, un modello, CLI operativa.
+Pipeline offline end-to-end: dominio, Poisson, CLI, backtest base, 10 partite mock.
 
 ---
 
 ## Fase 2 — Multi-modello avanzato (completata)
 
-**Obiettivo:** Feature ricche, più modelli, ensemble, calibrazione, report comparativi — tutto offline.
+Multi-modello (Poisson, Dixon-Coles, Elo, Feature, Ensemble), calibrazione, explain base, fixture xG/lineup.
 
-### 2.1 Config estesa
+---
 
-- Pesi ensemble (`ENSEMBLE_WEIGHT_*`)
-- Parametri Dixon-Coles (`DIXON_COLES_RHO`)
-- Parametri Elo (`ELO_K`, `ELO_HOME_ADVANTAGE`)
-- Calibrazione (`CALIBRATION_TEMPERATURE`)
-- Gate Fase 3: `ENABLE_SPORTMONKS_SYNC=false` di default
+## Fase 2b — Hardening foundation (completata)
 
-### 2.2 Feature avanzate
+**Obiettivo:** Solidificare la base prima di nuove feature.
 
-| Feature | File | Stato |
-|---------|------|-------|
-| Classifica dinamica | `standings_features.py` | Implementato |
-| Casa/trasferta, riposo | `home_away.py` | Implementato |
-| xG | `xg_features.py` | Mock fixture |
-| Lineup e duelli | `lineup_features.py` | Mock fixture |
-| Metriche giocatore | `player_features.py` | Scheletro |
-| Duelli tattici | `tactical_features.py` | Scheletro |
-| `feature_vector` | `match_context.py` | Implementato |
+| Area | Modifica |
+|------|----------|
+| Bug Elo | `p_away_beats = expected_score(ra, rh_adj)` |
+| Sync API | Partite passate (180gg) + future (30gg) |
+| Normalize | ISO datetime con timezone |
+| Test client | Mock HTTP: auth, 429, errori, cache hit |
+| CI | GitHub Actions pytest |
 
-### 2.3 Nuovi modelli
+**Test:** 35 passed.
 
-| Modello | File | Note |
-|---------|------|------|
-| Dixon-Coles | `dixon_coles.py` | Correzione τ low-score |
-| Elo | `elo.py`, `elo_ratings.py` | Rating pre-partita |
-| Feature | `feature_model.py` | Softmax su vettore feature |
-| Ensemble | `ensemble.py` | Media pesata |
-| Calibrazione | `calibration.py` | Temperature scaling |
-| Registry | `registry.py` | Factory modelli |
+---
 
-### 2.4 Backtest multi-modello
+## Fase 2c — Feature engineering avanzato + ablation (completata)
 
-- `--all-models` confronta tutti i modelli
-- Report JSON in `data/backtests/`
-- Metriche: log-loss, calibration bins
+**Obiettivo:** Sistema serio di feature testabile con ablation, tutto offline.
 
-### 2.5 Explain
+### Moduli feature (9 gruppi)
 
-- `explain.py` — Breakdown feature per predizione
+| Gruppo | File |
+|--------|------|
+| Advanced strength | `advanced_strength.py` |
+| xG esteso | `xg_features.py` |
+| Shot profile | `shots_features.py` |
+| Strength of schedule | `schedule_strength.py` |
+| Player/lineup | `lineup_features.py` |
+| Tactical matchup | `tactical_features.py` |
+| Calendar/fatigue | `fatigue_features.py` |
+| Motivation | `motivation_features.py` |
+| Orchestrazione | `feature_vector.py`, `feature_groups.py` |
 
-### 2.6 Fixture estese
+### Ablation test
 
-- `league_384_xg.json`
-- `league_384_lineups.json`
+7 varianti cumulative: `base` → `full`
 
-### 2.7 Test estesi
+Metriche: accuracy, Brier, log-loss, Brier skill score, calibration bins, over/underconfidence.
 
-- Test Dixon-Coles, Elo, ensemble, standings, backtest multi-modello
-- 15 test pass, 1 skipped (client API quando offline)
+### Fixture mock ampliate
 
-**Stato fine Fase 2:** Motore multi-modello completo in modalità offline.
+- 10 squadre Serie A
+- 8 giornate passate (40 partite) + 2 future (10 partite)
+- 6 file JSON: matches, xg, shots, lineups, tactical, calendar
+- Generatore: `scripts/generate_fixtures.py`
+
+### CLI estesa
+
+- `features` — riepilogo gruppi feature
+- `ablation` — studio ablation
+- `predict --explain` — explain arricchito per tutte le partite
+
+### Explain arricchito
+
+Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue), warning confidenza.
+
+**Test:** 42 passed.
 
 ---
 
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
-**Obiettivo:** Sostituire fixture mock con dati live da Sportmonks Football API v3.
-
-| Prerequisito | Azione |
-|--------------|--------|
-| Token API | `SPORTMONKS_API_TOKEN` in `.env` |
-| Abilitazione | `ENABLE_SPORTMONKS_SYNC=true` |
-| Sync | `python -m src.cli sync --league 384` |
-
-**Cosa cambia:**
-
-- `sync.py` chiama `SportmonksClient` invece di fixture JSON
-- xG, lineup, standings da endpoint documentati
-- Cache SQLite popolata con risposte API
-
-**Cosa resta uguale:**
-
-- Pipeline normalizzazione → feature → modelli → prediction
-- Output solo 1/X/2
-- Nessun uso add-on Predictions Sportmonks
-
-**Stato:** Codice predisposto, non attivato per scelta di sviluppo offline-first.
+Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 
 ---
 
 ## Milestone riepilogative
 
 ```
-2025 (sessione sviluppo)
+2025-2026 (sessione sviluppo)
 │
 ├── [M0] Repository GitHub + push iniziale
 ├── [M1] Docs Sportmonks locale + Cursor rules
-├── [M2] Fase 1 — Poisson + pipeline + CLI + backtest base
-├── [M3] Fase 2 — Multi-modello + ensemble + feature avanzate
-├── [M4] Documentazione progetto completa  ← questa milestone
-└── [M5] Fase 3 — API live (futuro, on-demand)
+├── [M2] Fase 1 — Poisson + pipeline + CLI + backtest
+├── [M3] Fase 2 — Multi-modello + ensemble
+├── [M4] Documentazione progetto completa
+├── [M5] Fase 2b — Hardening (Elo, sync, CI)
+├── [M6] Fase 2c — Feature engineering + ablation
+└── [M7] Fase 3 — API live (futuro)
 ```
 
 ---
 
-## Problemi risolti durante lo sviluppo
+## Problemi risolti
 
 | Problema | Soluzione |
 |----------|-----------|
-| `gh` non in PATH | Reinstall winget + refresh PATH |
-| Auth GitHub interrotta | Retry `gh auth login` |
-| SSL Python Windows Store | `urllib` + `certifi` nello script docs |
-| Unicode `→` in log Windows | Sostituito con `->` in `sync.py` |
-| SQLite lock su Windows test | Cache test con `:memory:` |
-| PowerShell `&&` | Usare `;` come separatore |
+| Elo away prob invertita | Fix `expected_score(ra, rh_adj)` |
+| Predict senza partite future API | Sync today → today+30 |
+| Date invalide in fixture generator | `datetime + timedelta` |
+| SSL Windows | `urllib` + `certifi` |
+| SQLite lock test | Cache `:memory:` |
 
 ---
 
-## Evoluzione prevista (post Fase 3)
+## Evoluzione prevista
 
-- Training pipeline per FeatureModel (pesi da dati storici)
-- Calibrazione isotonica e reliability curves
-- Ottimizzazione ρ Dixon-Coles su backtest
-- Integrazione infortuni e metriche giocatore da API
-- Estensione ad altre leghe (stesso `league_id` pattern)
+- Training pesi FeatureModel da ablation/backtest
+- Calibrazione isotonica
+- Fase 3 API live (xG, shots, lineup da Sportmonks)
+- Estensione altre leghe

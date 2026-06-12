@@ -12,7 +12,7 @@ def test_prediction_output_fields():
     model = EnsembleModel.from_settings(settings, [PoissonModel(settings)])
     predictions = predict_round(dataset, upcoming, model, settings)
 
-    assert len(predictions) == 2
+    assert len(predictions) == 10
     for pred in predictions:
         assert pred.pick.value in {"1", "X", "2"}
         assert 0.0 < pred.confidence <= 1.0

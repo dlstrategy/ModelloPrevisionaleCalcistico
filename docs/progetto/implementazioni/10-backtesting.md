@@ -1,86 +1,75 @@
-# 10 — Backtesting
-
-## Cosa è stato fatto
-
-Sistema di valutazione walk-forward su partite già concluse, con metriche multi-dimensionali e report comparativo tra modelli.
+# 10 — Backtesting e valutazione
 
 ## Moduli
 
-| Modulo | File | Funzione |
-|--------|------|----------|
-| Engine | `backtest.py` | Loop valutazione |
-| Metriche | `metrics.py` | Accuracy, Brier, log-loss, calibration |
-| Report | `reports.py` | Export JSON confronto |
+| Modulo | Funzione |
+|--------|----------|
+| `backtest.py` | Walk-forward multi-modello |
+| `ablation.py` | Ablation test gruppi feature |
+| `metrics.py` | Metriche estese |
+| `reports.py` | Report JSON/CSV |
 
-## Logica walk-forward
+---
 
-```python
-finished = dataset.finished_matches_ordered()
-# Ultimi N "rounds" (gruppi per data)
-
-for match in evaluation_set:
-    as_of = match.starting_at
-    context = build_match_context(match, dataset, settings)
-    probs = model.predict(context)
-    actual = outcome_from_score(match)  # 1, X, o 2
-    record_prediction(probs, actual, pick, confidence)
-```
-
-**Anti-leakage:** `build_match_context` usa `finished_before(as_of)` — il risultato della partita valutata non è mai nelle feature.
-
-## Metriche (`metrics.py`)
-
-| Metrica | Formula / significato |
-|---------|----------------------|
-| **Accuracy** | % pick corretti |
-| **Brier score** | Media (p - actual)² su one-hot |
-| **Log-loss** | -log(p_actual) |
-| **Calibration bins** | Per fascia confidenza, freq. predetta vs osservata |
-
-Brier e log-loss penalizzano probabilità mal calibrate, non solo pick sbagliati.
-
-## Modalità CLI
+## Backtest standard
 
 ```bash
-# Singolo modello
-python -m src.cli backtest --league 384 --model elo --rounds 5
-
-# Tutti i modelli
+python -m src.cli backtest --league 384 --model ensemble --rounds 5
 python -m src.cli backtest --league 384 --all-models --rounds 5
 ```
 
-`--rounds N` limita alle ultime N giornate con partite finite nel dataset.
+Walk-forward su partite finite, `as_of = match.starting_at`, no leakage.
 
-## Report (`reports.py`)
+---
 
-Con `--all-models`, genera JSON con:
+## Metriche (`BacktestMetrics`)
 
-- Metriche per ogni modello
-- Ranking per accuracy / Brier
-- Timestamp e parametri league
+| Metrica | Formula / significato |
+|---------|----------------------|
+| `accuracy` | Pick corretti / totale |
+| `brier_score` | Media (p - y)² su one-hot |
+| `log_loss` | -log(p_actual) |
+| `brier_skill_score` | 1 - brier_model / brier_baseline |
+| `overconfidence_rate` | conf > hit + 5% |
+| `underconfidence_rate` | conf < hit - 5% |
+| `calibration_bins` | Confidence vs hit rate |
 
-Output: `data/backtests/backtest_{model}_{timestamp}.json`
+Baseline Brier = probabilità marginali empiriche (freq. 1/X/2 nel campione).
 
-## Collegamenti
+---
+
+## Ablation test
+
+Vedi [14-ablation-e-valutazione.md](14-ablation-e-valutazione.md).
+
+```bash
+python -m src.cli ablation --league 384 --rounds 5
+```
+
+Output: `data/backtests/ablation_*.json`
+
+---
+
+## Output report
 
 ```
-CLI backtest
-    ↓
-backtest.run_backtest(model, dataset, settings, rounds)
-    ├→ build_match_context (no leakage)
-    ├→ model.predict
-    └→ metrics.compute_all()
-    ↓
-reports.write_backtest_report()
+data/backtests/
+  backtest_{model}_{timestamp}.json
+  backtest_{model}_{timestamp}.csv
+  backtest_comparison_{timestamp}.json
+  ablation_{timestamp}.json
 ```
 
-## Limitazioni attuali
+---
 
-- Dataset mock: 10 partite — metriche indicative, non statisticamente robuste
-- Nessuna cross-validation stagionale automatica
-- ρ Dixon-Coles e temperature non ottimizzati da backtest
+## Test
+
+- `tests/test_backtest_no_leakage.py`
+- `tests/test_backtest_all_models.py`
+- `tests/test_ablation.py`
+
+---
 
 ## Fase di sviluppo
 
-Fase 1: backtest base, accuracy, Brier
-Fase 2: multi-modello, log-loss, calibration bins, report comparativo
+Fase 1 (accuracy, Brier) → Fase 2 (log-loss, calibration) → Fase 2c (Brier skill, ablation, over/underconf)

@@ -8,13 +8,25 @@ from datetime import datetime
 from src.config import Settings
 from src.data_pipeline.dataset_builder import MatchDataset
 from src.domain.match import Match
+from src.features.advanced_strength import AdvancedTeamStrength, compute_advanced_strength
+from src.features.fatigue_features import FatigueSnapshot, compute_fatigue_snapshot
+from src.features.feature_groups import ALL_GROUPS, filter_feature_vector
+from src.features.feature_vector import build_full_feature_vector
 from src.features.home_away import ScheduleSnapshot, compute_schedule_snapshot
-from src.features.lineup_features import LineupImpact, get_lineup_impact
+from src.features.lineup_features import (
+    LineupImpact,
+    PlayerLineupSnapshot,
+    get_lineup_impact,
+    get_player_lineup_snapshot,
+)
+from src.features.motivation_features import MotivationSnapshot, compute_motivation
 from src.features.recent_form import TeamFormSnapshot, compute_team_form
+from src.features.schedule_strength import ScheduleStrengthSnapshot, compute_schedule_strength
+from src.features.shots_features import TeamShotsProfile, get_team_shots_profile
 from src.features.standings_features import TeamStandingsSnapshot, get_team_standings
-from src.features.tactical_features import tactical_edge_score
+from src.features.tactical_features import TacticalMatchup, get_tactical_matchup
 from src.features.team_strength import TeamStrength, compute_team_strengths
-from src.features.xg_features import TeamXgSnapshot, get_team_xg
+from src.features.xg_features import TeamXgProfile, TeamXgSnapshot, get_team_xg, get_team_xg_profile
 
 
 @dataclass(frozen=True)
@@ -30,53 +42,25 @@ class MatchContext:
     away_standings: TeamStandingsSnapshot
     home_schedule: ScheduleSnapshot
     away_schedule: ScheduleSnapshot
+    home_advanced: AdvancedTeamStrength
+    away_advanced: AdvancedTeamStrength
+    home_xg_profile: TeamXgProfile
+    away_xg_profile: TeamXgProfile
+    home_shots: TeamShotsProfile
+    away_shots: TeamShotsProfile
+    home_sos: ScheduleStrengthSnapshot
+    away_sos: ScheduleStrengthSnapshot
+    home_motivation: MotivationSnapshot
+    away_motivation: MotivationSnapshot
+    home_fatigue: FatigueSnapshot
+    away_fatigue: FatigueSnapshot
+    tactical: TacticalMatchup
     home_xg: TeamXgSnapshot | None = None
     away_xg: TeamXgSnapshot | None = None
     lineup_impact: LineupImpact | None = None
+    player_lineup: PlayerLineupSnapshot | None = None
     feature_vector: dict[str, float] = field(default_factory=dict)
-
-
-def _build_feature_vector(context: MatchContext) -> dict[str, float]:
-    hs = context.home_strength
-    aws = context.away_strength
-    hst = context.home_standings
-    ast = context.away_standings
-    vec = {
-        "home_attack": hs.attack_home,
-        "home_defense": hs.defense_home,
-        "away_attack": aws.attack_away,
-        "away_defense": aws.defense_away,
-        "home_form_gf": context.home_form.goals_for,
-        "away_form_gf": context.away_form.goals_for,
-        "home_form_ga": context.home_form.goals_against,
-        "away_form_ga": context.away_form.goals_against,
-        "home_position": float(hst.position),
-        "away_position": float(ast.position),
-        "home_points": float(hst.points),
-        "away_points": float(ast.points),
-        "position_gap": float(ast.position - hst.position),
-        "points_gap": float(hst.points - ast.points),
-        "home_rest_days": context.home_schedule.days_since_last_match or 7.0,
-        "away_rest_days": context.away_schedule.days_since_last_match or 7.0,
-        "home_congestion": float(context.home_schedule.matches_last_14_days),
-        "away_congestion": float(context.away_schedule.matches_last_14_days),
-        "home_win_streak": float(hst.win_streak),
-        "away_win_streak": float(ast.win_streak),
-    }
-    if context.home_xg:
-        vec["home_xg_for"] = context.home_xg.xg_for
-        vec["home_xg_against"] = context.home_xg.xg_against
-    if context.away_xg:
-        vec["away_xg_for"] = context.away_xg.xg_for
-        vec["away_xg_against"] = context.away_xg.xg_against
-    if context.lineup_impact:
-        li = context.lineup_impact
-        vec["home_lineup_attack"] = li.home_offensive_quality
-        vec["away_lineup_attack"] = li.away_offensive_quality
-        vec["home_lineup_defense"] = li.home_defensive_quality
-        vec["away_lineup_defense"] = li.away_defensive_quality
-        vec["tactical_edge"] = tactical_edge_score(li)
-    return vec
+    enabled_feature_groups: frozenset[str] = ALL_GROUPS
 
 
 def build_match_context(
@@ -84,12 +68,20 @@ def build_match_context(
     match: Match,
     settings: Settings,
     as_of: datetime | None = None,
+    *,
+    enabled_feature_groups: frozenset[str] | None = None,
 ) -> MatchContext:
     cutoff = as_of or match.starting_at
     home_id = match.home.team_id
     away_id = match.away.team_id
+    league_id = match.league_id
+    groups = enabled_feature_groups or ALL_GROUPS
 
-    context = MatchContext(
+    lineup = get_lineup_impact(league_id, match.id)
+    player_lineup = get_player_lineup_snapshot(league_id, match.id)
+    tactical = get_tactical_matchup(league_id, match.id, lineup)
+
+    partial = MatchContext(
         match=match,
         as_of=cutoff,
         home_strength=compute_team_strengths(dataset, home_id, cutoff, settings),
@@ -101,24 +93,58 @@ def build_match_context(
         away_standings=get_team_standings(dataset, away_id, cutoff),
         home_schedule=compute_schedule_snapshot(dataset, home_id, cutoff),
         away_schedule=compute_schedule_snapshot(dataset, away_id, cutoff),
-        home_xg=get_team_xg(match.league_id, home_id),
-        away_xg=get_team_xg(match.league_id, away_id),
-        lineup_impact=get_lineup_impact(match.league_id, match.id),
+        home_advanced=compute_advanced_strength(dataset, home_id, cutoff, settings),
+        away_advanced=compute_advanced_strength(dataset, away_id, cutoff, settings),
+        home_xg_profile=get_team_xg_profile(dataset, home_id, cutoff, league_id),
+        away_xg_profile=get_team_xg_profile(dataset, away_id, cutoff, league_id),
+        home_shots=get_team_shots_profile(dataset, home_id, cutoff, league_id),
+        away_shots=get_team_shots_profile(dataset, away_id, cutoff, league_id),
+        home_sos=compute_schedule_strength(dataset, home_id, cutoff, settings, league_id),
+        away_sos=compute_schedule_strength(dataset, away_id, cutoff, settings, league_id),
+        home_motivation=compute_motivation(get_team_standings(dataset, home_id, cutoff)),
+        away_motivation=compute_motivation(get_team_standings(dataset, away_id, cutoff)),
+        home_fatigue=compute_fatigue_snapshot(dataset, home_id, cutoff, league_id),
+        away_fatigue=compute_fatigue_snapshot(dataset, away_id, cutoff, league_id),
+        tactical=tactical,
+        home_xg=get_team_xg(league_id, home_id),
+        away_xg=get_team_xg(league_id, away_id),
+        lineup_impact=lineup,
+        player_lineup=player_lineup,
+        enabled_feature_groups=groups,
     )
+
+    full_vector = build_full_feature_vector(partial)
+    filtered = filter_feature_vector(full_vector, groups)
+
     return MatchContext(
-        match=context.match,
-        as_of=context.as_of,
-        home_strength=context.home_strength,
-        away_strength=context.away_strength,
-        home_advantage=context.home_advantage,
-        home_form=context.home_form,
-        away_form=context.away_form,
-        home_standings=context.home_standings,
-        away_standings=context.away_standings,
-        home_schedule=context.home_schedule,
-        away_schedule=context.away_schedule,
-        home_xg=context.home_xg,
-        away_xg=context.away_xg,
-        lineup_impact=context.lineup_impact,
-        feature_vector=_build_feature_vector(context),
+        match=partial.match,
+        as_of=partial.as_of,
+        home_strength=partial.home_strength,
+        away_strength=partial.away_strength,
+        home_advantage=partial.home_advantage,
+        home_form=partial.home_form,
+        away_form=partial.away_form,
+        home_standings=partial.home_standings,
+        away_standings=partial.away_standings,
+        home_schedule=partial.home_schedule,
+        away_schedule=partial.away_schedule,
+        home_advanced=partial.home_advanced,
+        away_advanced=partial.away_advanced,
+        home_xg_profile=partial.home_xg_profile,
+        away_xg_profile=partial.away_xg_profile,
+        home_shots=partial.home_shots,
+        away_shots=partial.away_shots,
+        home_sos=partial.home_sos,
+        away_sos=partial.away_sos,
+        home_motivation=partial.home_motivation,
+        away_motivation=partial.away_motivation,
+        home_fatigue=partial.home_fatigue,
+        away_fatigue=partial.away_fatigue,
+        tactical=partial.tactical,
+        home_xg=partial.home_xg,
+        away_xg=partial.away_xg,
+        lineup_impact=partial.lineup_impact,
+        player_lineup=partial.player_lineup,
+        feature_vector=filtered,
+        enabled_feature_groups=groups,
     )

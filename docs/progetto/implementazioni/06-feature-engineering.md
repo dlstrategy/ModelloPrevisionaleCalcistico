@@ -1,83 +1,153 @@
-# 06 — Feature engineering
+# 06 — Feature engineering (9 gruppi)
 
-## Cosa è stato fatto
+## Panoramica
 
-Sistema di estrazione feature da storico partite, classifica dinamica, calendario, xG e lineup. Tutto aggregato in `MatchContext` con `feature_vector` per FeatureModel e explain.
+Sistema modulare di feature engineering con **~137 chiavi** nel `feature_vector`, organizzate in **9 gruppi** testabili con ablation.
 
-## Moduli
+Orchestrazione:
+- `match_context.py` — `build_match_context()`
+- `feature_vector.py` — `build_full_feature_vector()`
+- `feature_groups.py` — definizione gruppi + filtri
 
-| Modulo | File | Input | Output |
-|--------|------|-------|--------|
-| Forma recente | `recent_form.py` | Ultimi N match squadra | `TeamFormSnapshot` (GF, GA) |
-| Forza squadra | `team_strength.py` | Storico gol | `TeamStrength` (attack/defense casa/trasferta) |
-| Classifica | `standings_features.py` | Tutte le partite finite | `TeamStandingsSnapshot` (pos, punti, streak) |
-| Calendario | `home_away.py` | Date partite | `ScheduleSnapshot` (riposo, congestione) |
-| xG | `xg_features.py` | Fixture mock xG | `TeamXgSnapshot` |
-| Lineup | `lineup_features.py` | Fixture mock lineup | `LineupImpact` |
-| Tattico | `tactical_features.py` | LineupImpact | `tactical_edge_score` |
-| Giocatori | `player_features.py` | — | Scheletro Fase 3 |
-| Contesto | `match_context.py` | Tutto sopra | `MatchContext` |
+---
 
-## Logica `build_match_context`
+## Gruppi e moduli
 
-```python
-as_of = match.starting_at
-history = dataset.finished_before(as_of)
+### 1. Base (`base`) — 20 feature
 
-# Per home e away:
-form = compute_team_form(history, team_id, window)
-strength = compute_team_strengths(history, team_id)
-standings = get_team_standings(history, team_id)
-schedule = compute_schedule_snapshot(history, team_id, as_of)
-xg = get_team_xg(team_id)          # da mock JSON
-lineup = get_lineup_impact(match)  # da mock JSON
+| Modulo | Feature |
+|--------|---------|
+| `team_strength.py` | home/away attack, defense |
+| `recent_form.py` | form_gf, form_ga |
+| `standings_features.py` | position, points, gaps, win_streak |
+| `home_away.py` | rest_days, congestion |
 
-feature_vector = _build_feature_vector(context)
+### 2. Advanced team strength — 16 feature
+
+**File:** `advanced_strength.py`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `attack_rating`, `defense_rating` | Rating normalizzati |
+| `attack_home_rating`, `defense_home_rating` | Split casa |
+| `attack_away_rating`, `defense_away_rating` | Split trasferta |
+| `opponent_adjusted_strength` | Performance vs qualità avversari |
+| `rolling_5_strength`, `rolling_10_strength` | Forma rolling |
+| `season_strength` | Forza stagionale |
+
+### 3. xG — 20 feature
+
+**File:** `xg_features.py`  
+**Fixture:** `league_384_xg.json` (teams + match_history)
+
+| Feature | Descrizione |
+|---------|-------------|
+| `xg_for_avg`, `xg_against_avg`, `xg_diff_avg` | Medie xG |
+| `xg_for_home`, `xg_against_home`, `xg_for_away`, `xg_against_away` | Split H/A |
+| `rolling_xg_for_5`, `rolling_xg_against_5`, `rolling_xg_diff_5` | Rolling 5 |
+| `goals_minus_xg`, `goals_against_minus_xga` | Over/underperformance |
+
+### 4. Shot profile — 18 feature
+
+**File:** `shots_features.py`  
+**Fixture:** `league_384_shots.json`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `shots_for_avg`, `shots_against_avg` | Volume tiri |
+| `shots_on_target_for_avg`, `shots_on_target_against_avg` | Tiri in porta |
+| `xg_per_shot`, `xga_per_shot_against` | Qualità tiro |
+| `shot_conversion_rate` | Conversione |
+| `big_chances_for`, `big_chances_against` | Occasioni da gol |
+
+### 5. Strength of schedule — 8 feature
+
+**File:** `schedule_strength.py`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `avg_opponent_rating_last_5/10` | Qualità avversari |
+| `points_vs_expected_last_5` | Punti vs attesi |
+| `xg_diff_vs_opponent_strength` | xG diff aggiustato |
+
+### 6. Player/lineup — 20 feature
+
+**File:** `lineup_features.py`  
+**Fixture:** `league_384_lineups.json`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `starting_xi_attack/defense/midfield_rating` | Qualità XI |
+| `goalkeeper_rating` | Portiere |
+| `missing_starters_count` | Assenti |
+| `missing_minutes/goals/xg_share` | Impatto assenze |
+| `bench_strength`, `lineup_continuity` | Panchina e continuità |
+
+### 7. Tactical matchup — 8 feature
+
+**File:** `tactical_features.py`  
+**Fixture:** `league_384_tactical.json`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `home/away_formation_code` | Codice formazione |
+| `formation_matchup_score` | Compatibilità formazioni |
+| `wing_advantage`, `midfield_advantage`, `aerial_advantage` | Duelli per zona |
+| `pressing_mismatch`, `defensive_line_risk` | Stile di gioco |
+
+### 8. Calendar/fatigue — 13 feature
+
+**File:** `fatigue_features.py`  
+**Fixture:** `league_384_calendar.json`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `days_rest_home/away`, `rest_difference` | Riposo |
+| `matches_last_7/14_days_home/away` | Congestione |
+| `played_midweek_home/away` | Partita infrasettimanale |
+| `rotation_risk_home/away` | Rischio rotazione |
+| `fatigue_score_home/away` | Score composito fatigue |
+
+### 9. Motivation — 14 feature
+
+**File:** `motivation_features.py`
+
+| Feature | Descrizione |
+|---------|-------------|
+| `points_gap_to_top4`, `points_gap_to_relegation` | Distanza zone |
+| `title_race_pressure`, `european_spot_pressure` | Pressione alto classifica |
+| `relegation_pressure`, `mid_table_low_motivation` | Pressione basso classifica |
+| `end_season_motivation_score` | Score composito |
+
+---
+
+## Flusso build
+
+```
+build_match_context(dataset, match, settings, enabled_feature_groups?)
+    → compute tutti gli snapshot (con as_of anti-leakage)
+    → build_full_feature_vector(partial)
+    → filter_feature_vector(full, enabled_groups)
+    → MatchContext con feature_vector filtrato
 ```
 
-## Feature vector (chiavi principali)
+---
 
-| Chiave | Significato |
-|--------|-------------|
-| `home_attack`, `home_defense` | Forza offensiva/difensiva in casa |
-| `away_attack`, `away_defense` | Forza in trasferta |
-| `home_form_gf`, `home_form_ga` | Gol fatti/subiti forma recente |
-| `home_position`, `away_position` | Posizione in classifica |
-| `points_gap`, `position_gap` | Differenziali |
-| `home_rest_days`, `away_rest_days` | Giorni dall'ultima partita |
-| `home_congestion`, `away_congestion` | Partite ultimi 14 giorni |
-| `home_xg_for`, `away_xg_against` | xG (se disponibile) |
-| `tactical_edge` | Vantaggio tattico da lineup |
+## Uso in modelli
 
-## Classifica dinamica
+- **FeatureModel** — usa `feature_vector` filtrato (softmax lineare)
+- **Poisson/Dixon-Coles** — usano `TeamStrength`, optional lineup
+- **Elo** — rating da storico
+- **Ensemble** — combina tutti
 
-Non usa API standings in Fase 2. `standings_features.py` **ricostruisce** la classifica sommando punti da partite finite prima di `as_of`. Garantisce coerenza temporale nel backtest.
+---
 
-## Dati mock (Fase 2)
+## Anti-leakage
 
-| File | Uso |
-|------|-----|
-| `tests/fixtures/league_384_xg.json` | xG per squadra |
-| `tests/fixtures/league_384_lineups.json` | Qualità lineup e duelli |
+Tutte le feature storiche usano `dataset.finished_before(as_of)` o `team_history(team_id, as_of)`.
 
-In Fase 3 questi moduli leggeranno da API Sportmonks.
-
-## Collegamenti
-
-```
-MatchDataset.finished_before(as_of)
-        ↓
-  [recent_form, team_strength, standings, home_away]
-        ↓
-  [xg_features, lineup_features] ← fixture mock
-        ↓
-  match_context.build_match_context()
-        ↓
-  MatchContext.feature_vector → FeatureModel, explain.py
-  MatchContext.strength/form → Poisson, Dixon-Coles, Elo
-```
+---
 
 ## Fase di sviluppo
 
-Fase 1: form, strength, match_context base
-Fase 2: standings, schedule, xG, lineup, feature_vector esteso
+Fase 2 (base) → Fase 2c (9 gruppi completi + ablation)

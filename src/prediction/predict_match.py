@@ -22,7 +22,10 @@ def predict_match(
     as_of: datetime | None = None,
     calibrator: ProbabilityCalibrator | None = None,
 ) -> Prediction:
-    context = build_match_context(dataset, match, settings, as_of=as_of)
+    enabled_groups = getattr(model, "enabled_groups", None)
+    context = build_match_context(
+        dataset, match, settings, as_of=as_of, enabled_feature_groups=enabled_groups
+    )
     probabilities = model.predict(context)
     if calibrator and calibrator.is_ready():
         probabilities = calibrator.calibrate(probabilities)

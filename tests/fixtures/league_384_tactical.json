@@ -1,0 +1,94 @@
+{
+  "fixtures": {
+    "1041": {
+      "home_formation": "3-5-2",
+      "away_formation": "3-5-2",
+      "wing_advantage": -0.24,
+      "midfield_advantage": 0.33,
+      "aerial_advantage": 0.06,
+      "pressing_mismatch": -0.12,
+      "defensive_line_risk": 0.14
+    },
+    "1042": {
+      "home_formation": "3-4-3",
+      "away_formation": "4-2-3-1",
+      "wing_advantage": 0.21,
+      "midfield_advantage": -0.31,
+      "aerial_advantage": -0.01,
+      "pressing_mismatch": 0.24,
+      "defensive_line_risk": 0.09
+    },
+    "1043": {
+      "home_formation": "3-5-2",
+      "away_formation": "3-4-3",
+      "wing_advantage": -0.06,
+      "midfield_advantage": 0.29,
+      "aerial_advantage": 0.19,
+      "pressing_mismatch": -0.24,
+      "defensive_line_risk": 0.02
+    },
+    "1044": {
+      "home_formation": "4-3-3",
+      "away_formation": "4-3-3",
+      "wing_advantage": -0.16,
+      "midfield_advantage": 0.18,
+      "aerial_advantage": -0.15,
+      "pressing_mismatch": 0.22,
+      "defensive_line_risk": 0.0
+    },
+    "1045": {
+      "home_formation": "4-4-2",
+      "away_formation": "4-3-3",
+      "wing_advantage": -0.13,
+      "midfield_advantage": -0.01,
+      "aerial_advantage": -0.12,
+      "pressing_mismatch": -0.29,
+      "defensive_line_risk": 0.06
+    },
+    "1046": {
+      "home_formation": "3-5-2",
+      "away_formation": "3-5-2",
+      "wing_advantage": 0.32,
+      "midfield_advantage": 0.13,
+      "aerial_advantage": 0.06,
+      "pressing_mismatch": -0.16,
+      "defensive_line_risk": 0.3
+    },
+    "1047": {
+      "home_formation": "4-3-3",
+      "away_formation": "3-4-3",
+      "wing_advantage": 0.24,
+      "midfield_advantage": -0.35,
+      "aerial_advantage": 0.04,
+      "pressing_mismatch": 0.1,
+      "defensive_line_risk": 0.06
+    },
+    "1048": {
+      "home_formation": "4-3-3",
+      "away_formation": "4-3-3",
+      "wing_advantage": -0.11,
+      "midfield_advantage": 0.05,
+      "aerial_advantage": -0.12,
+      "pressing_mismatch": -0.04,
+      "defensive_line_risk": 0.26
+    },
+    "1049": {
+      "home_formation": "4-3-3",
+      "away_formation": "4-4-2",
+      "wing_advantage": 0.26,
+      "midfield_advantage": 0.2,
+      "aerial_advantage": 0.19,
+      "pressing_mismatch": -0.09,
+      "defensive_line_risk": 0.32
+    },
+    "1050": {
+      "home_formation": "3-4-3",
+      "away_formation": "3-4-3",
+      "wing_advantage": -0.24,
+      "midfield_advantage": -0.1,
+      "aerial_advantage": -0.11,
+      "pressing_mismatch": 0.05,
+      "defensive_line_risk": 0.09
+    }
+  }
+}

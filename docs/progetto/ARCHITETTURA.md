@@ -19,7 +19,7 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         CLI (src/cli.py)                     │
-│              sync | predict | backtest                       │
+│     sync | predict | backtest | features | ablation          │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -34,9 +34,15 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
-│                   FEATURE LAYER                              │
-│   match_context ← recent_form, team_strength, standings,     │
-│                   home_away, xg, lineup, tactical            │
+│                   FEATURE LAYER (9 gruppi)                   │
+│   match_context ← feature_vector ← feature_groups            │
+│   advanced_strength | xg | shots | sos | lineup | tactical │
+│   fatigue | motivation | form | standings | team_strength    │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│              EVALUATION LAYER                                  │
+│   backtest.py | ablation.py | metrics.py | reports.py         │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -55,7 +61,7 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 
 ---
 
-## Flusso predizione (logica)
+## Flusso predizione
 
 ```mermaid
 sequenceDiagram
@@ -69,8 +75,9 @@ sequenceDiagram
     CLI->>Dataset: upcoming_on(date)
     loop Per ogni partita
         CLI->>Features: build_match_context(match, as_of)
-        Features->>Dataset: team_history (solo match prima di as_of)
-        Features-->>CLI: MatchContext + feature_vector
+        Features->>Features: build_full_feature_vector()
+        Features->>Features: filter_feature_vector(groups)
+        Features-->>CLI: MatchContext (~130+ feature)
         CLI->>Model: predict(context)
         Model-->>CLI: OutcomeProbabilities
         CLI->>Output: Prediction (pick, confidence)
@@ -79,105 +86,73 @@ sequenceDiagram
 
 ### Regola anti-leakage
 
-Per ogni partita, `as_of = match.starting_at`. Tutte le feature usano **solo** partite con `starting_at < as_of`. Questo vale anche nel backtesting.
+Per ogni partita, `as_of = match.starting_at`. Tutte le feature usano **solo** partite con `starting_at < as_of`. Vale per backtest e ablation.
+
+---
+
+## Gruppi feature (`feature_groups.py`)
+
+| Gruppo | Modulo | ~Feature |
+|--------|--------|----------|
+| `base` | form, standings, team_strength, home_away | 20 |
+| `advanced_strength` | `advanced_strength.py` | 16 |
+| `xg` | `xg_features.py` | 20 |
+| `shots` | `shots_features.py` | 18 |
+| `strength_of_schedule` | `schedule_strength.py` | 8 |
+| `player_lineup` | `lineup_features.py` | 20 |
+| `tactical` | `tactical_features.py` | 8 |
+| `calendar` | `fatigue_features.py` | 13 |
+| `motivation` | `motivation_features.py` | 14 |
+
+Assemblaggio in `feature_vector.py`, orchestrazione in `match_context.py`.
+
+---
+
+## Ablation framework
+
+```
+ABLATION_VARIANTS (cumulative):
+  base → base+xg → base+shots → base+player_lineup
+       → base+tactical → base+calendar → full
+```
+
+- Engine: `src/backtesting/ablation.py`
+- Modello valutato: `FeatureModel` con `enabled_groups`
+- Output: `data/backtests/ablation_*.json`
 
 ---
 
 ## Collegamenti tra moduli
 
-### `src/config.py`
-
-Centro configurazione: legge `.env`, espone `Settings`. Controlla:
-
-- `is_offline` — se usare fixture locali
-- `can_sync_api` — se abilitare Fase 3 (`ENABLE_SPORTMONKS_SYNC=true` + token)
-
-### `src/domain/`
-
-Entità pure del calcio, indipendenti da Sportmonks:
-
-| Classe | Ruolo |
-|--------|-------|
-| `Match` | Partita con partecipanti, score, datetime |
-| `Team`, `Player` | Anagrafica |
-| `OutcomeProbabilities` | P(1), P(X), P(2) normalizzate |
-| `Prediction` | Output finale con pick e confidenza |
-
-### `src/sportmonks/`
-
-Adattatore verso API esterna (Fase 3). Oggi usato solo se `can_sync_api=True`.
-
-| Modulo | Endpoint documentato |
-|--------|---------------------|
-| `client.py` | HTTP + `Authorization` header |
-| `cache.py` | SQLite response cache |
-| `fixtures.py` | `/fixtures/date`, `/fixtures/between` |
-| `leagues.py` | `/leagues/{id}` + currentSeason |
-| `standings.py` | `/standings/seasons/{id}` (predisposto) |
-
-Moduli scheletro per Fase 3: `players`, `lineups`, `injuries`, `statistics`.
-
-### `src/data_pipeline/`
-
-| Modulo | Funzione |
-|--------|----------|
-| `normalize.py` | JSON Sportmonks → `Match` |
-| `dataset_builder.py` | `MatchDataset` con query temporali |
-| `sync.py` | Carica offline o API, salva in `data/processed/` |
-
 ### `src/features/`
 
-Trasformano storico partite in numeri per i modelli.
-
-| Modulo | Output |
-|--------|--------|
-| `recent_form.py` | Gol fatti/subiti ultimi N match |
-| `team_strength.py` | Attack/defense normalizzati |
-| `standings_features.py` | Classifica calcolata da risultati |
-| `home_away.py` | Giorni riposo, congestione |
-| `xg_features.py` | xG da fixture mock (Fase 3: API) |
-| `lineup_features.py` | Qualità lineup e duelli tattici |
-| `match_context.py` | Aggrega tutto in `feature_vector` |
-
-### `src/models/`
-
-Tutti implementano `BaseModel.predict(context) → OutcomeProbabilities`.
-
-| Modello | Logica |
-|---------|--------|
-| `poisson` | λ casa/trasferta da strength → matrice score |
-| `dixon_coles` | Poisson + correzione τ su 0-0, 1-0, 0-1, 1-1 |
-| `elo` | Rating dinamico → probabilità esito |
-| `feature` | Softmax lineare su feature_vector |
-| `ensemble` | Media pesata + temperature scaling |
-
-`registry.py` costruisce la lista modelli e l'ensemble.
-
-### `src/prediction/`
-
-| Modulo | Funzione |
-|--------|----------|
-| `predict_match.py` | Singola partita → `Prediction` |
-| `predict_round.py` | Lista partite + export JSON |
-| `explain.py` | Breakdown feature per trasparenza |
+| Modulo | Ruolo |
+|--------|-------|
+| `match_context.py` | Aggregatore centrale, `build_match_context()` |
+| `feature_vector.py` | Costruisce vettore completo |
+| `feature_groups.py` | Definizione gruppi + filtri ablation |
+| `advanced_strength.py` | Rating attacco/difesa, rolling, opponent-adjusted |
+| `xg_features.py` | xG rolling, overperformance, split H/A |
+| `shots_features.py` | Volume tiri, conversione, big chances |
+| `schedule_strength.py` | SOS, points vs expected |
+| `lineup_features.py` | XI ratings, assenze, bench, continuity |
+| `tactical_features.py` | Formazioni, duelli tattici |
+| `fatigue_features.py` | Riposo, midweek, fatigue score |
+| `motivation_features.py` | Pressione classifica (top4, retrocessione) |
+| `recent_form.py`, `team_strength.py`, `standings_features.py`, `home_away.py` | Feature base |
 
 ### `src/backtesting/`
 
 | Modulo | Funzione |
 |--------|----------|
-| `backtest.py` | Loop partite finite, no leakage |
-| `metrics.py` | Accuracy, Brier, log-loss, calibration bins |
-| `reports.py` | Confronto multi-modello JSON |
+| `backtest.py` | Walk-forward multi-modello |
+| `ablation.py` | Studio incrementale gruppi feature |
+| `metrics.py` | Accuracy, Brier, log-loss, Brier skill, over/underconf |
+| `reports.py` | Report JSON/CSV comparativi |
 
----
+### `src/prediction/explain.py`
 
-## Decisioni architetturali
-
-1. **Separazione layer** — Il dominio calcistico non dipende da Sportmonks; l'API è un adapter.
-2. **Offline-first** — Sviluppo e test senza token; API opzionale in Fase 3.
-3. **Multi-modello** — Ogni modello produce 1/X/2; l'ensemble combina.
-4. **Feature vector condiviso** — Il FeatureModel e l'explain usano lo stesso vettore.
-5. **Documentazione locale Sportmonks** — Cursor e sviluppatori consultano `docs/sportmonks-football-v3-docs.md`.
+Explain arricchito: probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue), fattori positivi/negativi, warning confidenza.
 
 ---
 
@@ -185,17 +160,29 @@ Tutti implementano `BaseModel.predict(context) → OutcomeProbabilities`.
 
 ```
 data/
-  processed/          # Dataset normalizzato (generato da sync)
-  predictions/        # Output predizioni JSON
-  backtests/          # Report backtest JSON/CSV
+  processed/          # Dataset normalizzato
+  predictions/        # Predizioni JSON
+  backtests/          # Backtest + ablation JSON
   cache.db            # Cache API (Fase 3)
-  raw/                # Riservato sync grezzo (Fase 3)
 
 tests/fixtures/
-  league_384_matches.json
-  league_384_xg.json
-  league_384_lineups.json
+  league_384_matches.json     # 50 partite (40 finite + 10 future)
+  league_384_xg.json          # xG team + match_history
+  league_384_shots.json       # Shot profile + match_history
+  league_384_lineups.json     # Lineup + player impact
+  league_384_tactical.json    # Matchup tattici
+  league_384_calendar.json    # Midweek, rotation risk
+
+scripts/
+  generate_fixtures.py          # Rigenera fixture mock
+  fetch_sportmonks_docs.py    # Docs API offline
 ```
+
+---
+
+## CI/CD
+
+GitHub Actions (`.github/workflows/ci.yml`): `pytest` su ogni push/PR su `main`.
 
 ---
 
@@ -205,3 +192,4 @@ tests/fixtures/
 - Output: solo 1/X/2
 - Endpoint/campi: solo da documentazione locale
 - No add-on Predictions Sportmonks
+- Feature aggiunte solo se testabili con ablation

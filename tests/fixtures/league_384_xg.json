@@ -1,8 +1,456 @@
 {
   "teams": {
-    "1": {"xg_for": 1.85, "xg_against": 0.95, "clean_sheet_rate": 0.42},
-    "2": {"xg_for": 1.05, "xg_against": 1.55, "clean_sheet_rate": 0.18},
-    "3": {"xg_for": 1.62, "xg_against": 1.10, "clean_sheet_rate": 0.30},
-    "4": {"xg_for": 1.20, "xg_against": 1.35, "clean_sheet_rate": 0.22}
+    "1": {
+      "xg_for": 2.22,
+      "xg_against": 1.28,
+      "clean_sheet_rate": 0.34
+    },
+    "2": {
+      "xg_for": 1.14,
+      "xg_against": 1.73,
+      "clean_sheet_rate": 0.24
+    },
+    "3": {
+      "xg_for": 2.1,
+      "xg_against": 1.33,
+      "clean_sheet_rate": 0.33
+    },
+    "4": {
+      "xg_for": 1.26,
+      "xg_against": 1.68,
+      "clean_sheet_rate": 0.26
+    },
+    "5": {
+      "xg_for": 2.04,
+      "xg_against": 1.35,
+      "clean_sheet_rate": 0.32
+    },
+    "6": {
+      "xg_for": 1.98,
+      "xg_against": 1.38,
+      "clean_sheet_rate": 0.32
+    },
+    "7": {
+      "xg_for": 1.86,
+      "xg_against": 1.43,
+      "clean_sheet_rate": 0.31
+    },
+    "8": {
+      "xg_for": 1.74,
+      "xg_against": 1.48,
+      "clean_sheet_rate": 0.29
+    },
+    "9": {
+      "xg_for": 1.68,
+      "xg_against": 1.5,
+      "clean_sheet_rate": 0.29
+    },
+    "10": {
+      "xg_for": 1.5,
+      "xg_against": 1.58,
+      "clean_sheet_rate": 0.28
+    }
+  },
+  "match_history": {
+    "1001": {
+      "home_xg": 1.21,
+      "away_xg": 1.05,
+      "home_xga": 1.05,
+      "away_xga": 1.21,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1002": {
+      "home_xg": 1.93,
+      "away_xg": 1.33,
+      "home_xga": 1.33,
+      "away_xga": 1.93,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1003": {
+      "home_xg": 1.5,
+      "away_xg": 0.56,
+      "home_xga": 0.56,
+      "away_xga": 1.5,
+      "home_goals": 1,
+      "away_goals": 0,
+      "home_goals_against": 0,
+      "away_goals_against": 1
+    },
+    "1004": {
+      "home_xg": 0.62,
+      "away_xg": 1.69,
+      "home_xga": 1.69,
+      "away_xga": 0.62,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    },
+    "1005": {
+      "home_xg": 2.32,
+      "away_xg": 1.29,
+      "home_xga": 1.29,
+      "away_xga": 2.32,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1006": {
+      "home_xg": 1.19,
+      "away_xg": 1.05,
+      "home_xga": 1.05,
+      "away_xga": 1.19,
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 1
+    },
+    "1007": {
+      "home_xg": 1.22,
+      "away_xg": 0.76,
+      "home_xga": 0.76,
+      "away_xga": 1.22,
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 1
+    },
+    "1008": {
+      "home_xg": 1.71,
+      "away_xg": 1.12,
+      "home_xga": 1.12,
+      "away_xga": 1.71,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1009": {
+      "home_xg": 1.13,
+      "away_xg": 0.84,
+      "home_xga": 0.84,
+      "away_xga": 1.13,
+      "home_goals": 1,
+      "away_goals": 0,
+      "home_goals_against": 0,
+      "away_goals_against": 1
+    },
+    "1010": {
+      "home_xg": 2.27,
+      "away_xg": 1.39,
+      "home_xga": 1.39,
+      "away_xga": 2.27,
+      "home_goals": 3,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 3
+    },
+    "1011": {
+      "home_xg": 1.93,
+      "away_xg": 1.33,
+      "home_xga": 1.33,
+      "away_xga": 1.93,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1012": {
+      "home_xg": 1.43,
+      "away_xg": 1.1,
+      "home_xga": 1.1,
+      "away_xga": 1.43,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1013": {
+      "home_xg": 1.19,
+      "away_xg": 1.05,
+      "home_xga": 1.05,
+      "away_xga": 1.19,
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 1
+    },
+    "1014": {
+      "home_xg": 0.93,
+      "away_xg": 1.98,
+      "home_xga": 1.98,
+      "away_xga": 0.93,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    },
+    "1015": {
+      "home_xg": 2.35,
+      "away_xg": 1.05,
+      "home_xga": 1.05,
+      "away_xga": 2.35,
+      "home_goals": 3,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 3
+    },
+    "1016": {
+      "home_xg": 1.73,
+      "away_xg": 1.25,
+      "home_xga": 1.25,
+      "away_xga": 1.73,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1017": {
+      "home_xg": 2.27,
+      "away_xg": 1.39,
+      "home_xga": 1.39,
+      "away_xga": 2.27,
+      "home_goals": 3,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 3
+    },
+    "1018": {
+      "home_xg": 1.49,
+      "away_xg": 0.74,
+      "home_xga": 0.74,
+      "away_xga": 1.49,
+      "home_goals": 2,
+      "away_goals": 0,
+      "home_goals_against": 0,
+      "away_goals_against": 2
+    },
+    "1019": {
+      "home_xg": 0.84,
+      "away_xg": 1.74,
+      "home_xga": 1.74,
+      "away_xga": 0.84,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    },
+    "1020": {
+      "home_xg": 2.04,
+      "away_xg": 0.86,
+      "home_xga": 0.86,
+      "away_xga": 2.04,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1021": {
+      "home_xg": 1.21,
+      "away_xg": 1.05,
+      "home_xga": 1.05,
+      "away_xga": 1.21,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1022": {
+      "home_xg": 2.03,
+      "away_xg": 1.95,
+      "home_xga": 1.95,
+      "away_xga": 2.03,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1023": {
+      "home_xg": 2.66,
+      "away_xg": 1.58,
+      "home_xga": 1.58,
+      "away_xga": 2.66,
+      "home_goals": 3,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 3
+    },
+    "1024": {
+      "home_xg": 0.65,
+      "away_xg": 1.54,
+      "home_xga": 1.54,
+      "away_xga": 0.65,
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 1
+    },
+    "1025": {
+      "home_xg": 2.05,
+      "away_xg": 1.93,
+      "home_xga": 1.93,
+      "away_xga": 2.05,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1026": {
+      "home_xg": 1.36,
+      "away_xg": 0.3,
+      "home_xga": 0.3,
+      "away_xga": 1.36,
+      "home_goals": 1,
+      "away_goals": 0,
+      "home_goals_against": 0,
+      "away_goals_against": 1
+    },
+    "1027": {
+      "home_xg": 1.9,
+      "away_xg": 1.73,
+      "home_xga": 1.73,
+      "away_xga": 1.9,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1028": {
+      "home_xg": 1.56,
+      "away_xg": 1.09,
+      "home_xga": 1.09,
+      "away_xga": 1.56,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1029": {
+      "home_xg": 0.91,
+      "away_xg": 1.64,
+      "home_xga": 1.64,
+      "away_xga": 0.91,
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 1
+    },
+    "1030": {
+      "home_xg": 2.35,
+      "away_xg": 1.05,
+      "home_xga": 1.05,
+      "away_xga": 2.35,
+      "home_goals": 3,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 3
+    },
+    "1031": {
+      "home_xg": 1.39,
+      "away_xg": 1.53,
+      "home_xga": 1.53,
+      "away_xga": 1.39,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1032": {
+      "home_xg": 0.53,
+      "away_xg": 1.45,
+      "home_xga": 1.45,
+      "away_xga": 0.53,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    },
+    "1033": {
+      "home_xg": 2.66,
+      "away_xg": 1.58,
+      "home_xga": 1.58,
+      "away_xga": 2.66,
+      "home_goals": 3,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 3
+    },
+    "1034": {
+      "home_xg": 0.93,
+      "away_xg": 1.98,
+      "home_xga": 1.98,
+      "away_xga": 0.93,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    },
+    "1035": {
+      "home_xg": 2.42,
+      "away_xg": 1.61,
+      "home_xga": 1.61,
+      "away_xga": 2.42,
+      "home_goals": 3,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 3
+    },
+    "1036": {
+      "home_xg": 1.53,
+      "away_xg": 1.29,
+      "home_xga": 1.29,
+      "away_xga": 1.53,
+      "home_goals": 2,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 2
+    },
+    "1037": {
+      "home_xg": 1.49,
+      "away_xg": 1.59,
+      "home_xga": 1.59,
+      "away_xga": 1.49,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    },
+    "1038": {
+      "home_xg": 2.11,
+      "away_xg": 2.03,
+      "home_xga": 2.03,
+      "away_xga": 2.11,
+      "home_goals": 2,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 2
+    },
+    "1039": {
+      "home_xg": 0.93,
+      "away_xg": 1.09,
+      "home_xga": 1.09,
+      "away_xga": 0.93,
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_goals_against": 1,
+      "away_goals_against": 1
+    },
+    "1040": {
+      "home_xg": 1.27,
+      "away_xg": 1.88,
+      "home_xga": 1.88,
+      "away_xga": 1.27,
+      "home_goals": 1,
+      "away_goals": 2,
+      "home_goals_against": 2,
+      "away_goals_against": 1
+    }
   }
 }

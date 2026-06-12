@@ -6,15 +6,17 @@ import argparse
 import json
 import sys
 
+from src.backtesting.ablation import run_ablation_study, save_ablation_report
 from src.backtesting.backtest import run_backtest, run_backtest_all_models
 from src.backtesting.reports import save_comparison_report
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
 from src.data_pipeline.sync import load_dataset, sync_league_data
+from src.features.feature_vector import summarize_feature_groups
+from src.features.match_context import build_match_context
 from src.logging_config import setup_logging
 from src.models.registry import get_model_by_name
 from src.prediction.explain import explain_prediction
 from src.prediction.predict_round import default_output_path, predict_round, save_predictions
-from src.features.match_context import build_match_context
 
 
 def _resolve_model(settings, dataset, name: str):
@@ -77,13 +79,61 @@ def cmd_predict(args: argparse.Namespace) -> int:
         )
 
     if args.explain and predictions:
-        match = matches[0]
-        ctx = build_match_context(dataset, match, settings)
-        explanation = explain_prediction(ctx, predictions[0])
-        print("\nExplain (prima partita):")
-        print(json.dumps(explanation, indent=2))
+        for match, pred in zip(matches, predictions):
+            ctx = build_match_context(dataset, match, settings)
+            explanation = explain_prediction(ctx, pred, dataset=dataset, settings=settings)
+            print(f"\nExplain — {pred.home_team} vs {pred.away_team}:")
+            print(json.dumps(explanation, indent=2))
 
     print(f"\nSalvato: {output}")
+    return 0
+
+
+def cmd_features(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    dataset = load_dataset(settings, league_id)
+
+    sample = next((m for m in dataset.matches if not m.is_finished), dataset.matches[0])
+    ctx = build_match_context(dataset, sample, settings)
+
+    summary = summarize_feature_groups(ctx.feature_vector)
+    print(f"Feature engineering — lega {league_id}")
+    print(f"Partita esempio: {sample.home.team_name} vs {sample.away.team_name} (id={sample.id})")
+    print(f"Feature attive: {len(ctx.feature_vector)}")
+    print("\nGruppi:")
+    for group, count in sorted(summary.items()):
+        print(f"  {group:<22} {count:>3} feature")
+    print("\nFeature vector (prime 20 per modulo):")
+    for key in sorted(ctx.feature_vector.keys())[:20]:
+        print(f"  {key:<40} {ctx.feature_vector[key]:.4f}")
+    if len(ctx.feature_vector) > 20:
+        print(f"  ... +{len(ctx.feature_vector) - 20} altre")
+    return 0
+
+
+def cmd_ablation(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    dataset = load_dataset(settings, league_id)
+    max_matches = args.rounds * 10 if args.rounds else None
+
+    results = run_ablation_study(dataset, settings, max_matches=max_matches)
+    report_path = save_ablation_report(results, BACKTESTS_DIR)
+
+    print(f"Ablation study — lega {league_id}, campioni max {max_matches or 'all'}")
+    print(f"{'Variante':<22} {'Feat':>5} {'Acc':>6} {'Brier':>7} {'LogLoss':>8} {'BSS':>7} {'Over':>6} {'Under':>6}")
+    print("-" * 78)
+    for r in results:
+        m = r.metrics
+        print(
+            f"{r.variant:<22} {r.feature_count:>5} {m.accuracy:>5.1%} "
+            f"{m.brier_score:>7.4f} {m.log_loss:>8.4f} {m.brier_skill_score:>7.3f} "
+            f"{m.overconfidence_rate:>5.1%} {m.underconfidence_rate:>5.1%}"
+        )
+    print(f"\nReport: {report_path}")
     return 0
 
 
@@ -118,6 +168,9 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     print(f"  Accuracy:    {m.accuracy:.3f}")
     print(f"  Brier score: {m.brier_score:.4f}")
     print(f"  Log-loss:    {m.log_loss:.4f}")
+    print(f"  Brier skill: {m.brier_skill_score:.4f}")
+    print(f"  Overconf:    {m.overconfidence_rate:.3f}")
+    print(f"  Underconf:   {m.underconfidence_rate:.3f}")
     if m.calibration_bins:
         print("  Calibrazione (confidence vs hit rate):")
         for b in m.calibration_bins:
@@ -161,6 +214,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     backtest_p.add_argument("--all-models", action="store_true", help="Confronta tutti i modelli")
     backtest_p.set_defaults(func=cmd_backtest)
+
+    features_p = sub.add_parser("features", help="Mostra feature engineering per lega")
+    features_p.add_argument("--league", type=int, default=None)
+    features_p.set_defaults(func=cmd_features)
+
+    ablation_p = sub.add_parser("ablation", help="Ablation test gruppi feature")
+    ablation_p.add_argument("--league", type=int, default=None)
+    ablation_p.add_argument("--rounds", type=int, default=5)
+    ablation_p.set_defaults(func=cmd_ablation)
 
     return parser
 

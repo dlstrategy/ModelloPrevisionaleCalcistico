@@ -1,17 +1,20 @@
 # 11 — Interfaccia CLI
 
-## Cosa è stato fatto
+**Entry point:** `python -m src.cli`
 
-Interfaccia a riga di comando unificata per sync, predizione e backtest. Entry point: `python -m src.cli`.
-
-## File
-
-| File | Ruolo |
-|------|-------|
-| `src/cli.py` | Parser argparse + comandi |
-| `src/__main__.py` | `python -m src` → cli |
+---
 
 ## Comandi
+
+| Comando | Descrizione |
+|---------|-------------|
+| `sync` | Carica dataset (offline o API) |
+| `predict` | Predizioni per data |
+| `backtest` | Valutazione modelli |
+| `features` | Riepilogo feature engineering |
+| `ablation` | Ablation test gruppi feature |
+
+---
 
 ### `sync`
 
@@ -19,70 +22,65 @@ Interfaccia a riga di comando unificata per sync, predizione e backtest. Entry p
 python -m src.cli sync --league 384
 ```
 
-- Carica dataset (offline o API)
-- Salva `data/processed/league_{id}_matches.json`
-- Logga modalità usata (offline fixtures vs API)
+Offline: legge `tests/fixtures/league_384_matches.json`  
+API (Fase 3): passate 180gg + future 30gg
+
+---
 
 ### `predict`
 
 ```bash
-python -m src.cli predict --date YYYY-MM-DD [--model NAME] [--explain] [--league ID]
+python -m src.cli predict --date 2025-10-18 --model ensemble [--explain]
 ```
 
-| Flag | Default | Descrizione |
-|------|---------|-------------|
-| `--date` | obbligatorio | Giornata da predire |
-| `--model` | `ensemble` | poisson, dixon_coles, elo, feature, ensemble |
-| `--explain` | off | Aggiunge breakdown feature |
-| `--league` | 384 | ID lega Sportmonks |
+| Flag | Default |
+|------|---------|
+| `--date` | obbligatorio |
+| `--model` | `ensemble` |
+| `--league` | 384 |
+| `--explain` | off |
 
 Output: `data/predictions/predictions_{date}.json`
+
+---
 
 ### `backtest`
 
 ```bash
-python -m src.cli backtest --league 384 [--model NAME | --all-models] [--rounds N]
+python -m src.cli backtest --league 384 [--model X | --all-models] [--rounds N]
 ```
 
-| Flag | Descrizione |
-|------|-------------|
-| `--model` | Singolo modello da valutare |
-| `--all-models` | Confronta tutti i modelli |
-| `--rounds` | Numero giornate da includere |
+---
 
-Mutuamente esclusivi: `--model` o `--all-models`.
+### `features`
 
-## Flusso interno CLI
-
-```
-parse_args()
-    ↓
-load_settings()
-setup_logging()
-    ↓
-┌─ sync  → sync_dataset()
-├─ predict → load dataset → predict_round()
-└─ backtest → load dataset → run_backtest() / run_all_models_backtest()
+```bash
+python -m src.cli features --league 384
 ```
 
-## Collegamenti
+Mostra:
+- Partita esempio (prima upcoming)
+- Conteggio feature per gruppo
+- Sample feature vector
 
+---
+
+### `ablation`
+
+```bash
+python -m src.cli ablation --league 384 --rounds 5
 ```
-cli.py
-  → config.load_settings()
-  → data_pipeline.sync / dataset_builder
-  → prediction.predict_round
-  → backtesting.backtest
-  → models.registry.get_model_by_name
-```
 
-## Estensioni future
+Tabella comparativa 7 varianti + report JSON.
 
-- `calibrate` — ottimizza pesi/temperature da backtest
-- `report` — genera report HTML
-- `ingest` — import manuale CSV partite
+---
+
+## Modelli disponibili
+
+`ensemble`, `poisson`, `dixon_coles`, `elo`, `feature`
+
+---
 
 ## Fase di sviluppo
 
-Fase 1: sync, predict, backtest base
-Fase 2: --all-models, --explain, modelli multipli
+Fase 1 (sync, predict, backtest) → Fase 2c (features, ablation, explain multi-match)

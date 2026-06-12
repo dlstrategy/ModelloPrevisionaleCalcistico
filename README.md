@@ -7,8 +7,10 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | Fase | Stato | Descrizione |
 |------|-------|-------------|
 | **Fase 1** | Completata | Foundation modulare, Poisson, CLI, backtest base |
-| **Fase 2** | Completata | Multi-modello, feature avanzate, ensemble, calibrazione, report — **tutto offline** |
-| **Fase 3** | Da attivare | Sync API Sportmonks reale (`ENABLE_SPORTMONKS_SYNC=true` + token) |
+| **Fase 2** | Completata | Multi-modello, ensemble, calibrazione — offline |
+| **Fase 2b** | Completata | Hardening: fix Elo, sync future, CI, normalize |
+| **Fase 2c** | Completata | 9 gruppi feature, ablation, fixture 10 squadre |
+| **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
 
@@ -24,13 +26,23 @@ P(1), P(X), P(2), pick suggerito, confidenza.
 | `feature` | Implementato (softmax su feature vector) |
 | `ensemble` | Implementato (pesi configurabili + temperature scaling) |
 
-## Feature engineering (Fase 2)
+## Feature engineering (Fase 2+)
 
-- Forma recente, attacco/difesa, casa/trasferta
-- Classifica dinamica (posizione, punti, streak)
-- Calendario (giorni riposo, congestione)
-- xG da fixture mock (`tests/fixtures/league_384_xg.json`)
-- Lineup/duelli da fixture mock (`tests/fixtures/league_384_lineups.json`)
+Moduli offline testabili con ablation:
+
+| Gruppo | Modulo | Feature chiave |
+|--------|--------|----------------|
+| Base | form, standings, strength | attack/defense, form, classifica |
+| Advanced strength | `advanced_strength.py` | rolling_5/10, opponent_adjusted |
+| xG | `xg_features.py` | xg_diff, rolling_xg, goals_minus_xg |
+| Shots | `shots_features.py` | xg_per_shot, conversion, big_chances |
+| SOS | `schedule_strength.py` | avg_opponent_rating, points_vs_expected |
+| Player/lineup | `lineup_features.py` | XI ratings, missing share, continuity |
+| Tactical | `tactical_features.py` | formation matchup, wing/midfield edge |
+| Calendar | `fatigue_features.py` | rest, midweek, fatigue_score |
+| Motivation | `motivation_features.py` | top4/relegation pressure |
+
+Fixture mock: `tests/fixtures/league_384_*.json` (10 squadre, 8+2 giornate).
 
 ## Setup
 
@@ -56,6 +68,12 @@ python -m src.cli backtest --league 384 --model dixon_coles --rounds 5
 
 # Confronto tutti i modelli
 python -m src.cli backtest --league 384 --all-models --rounds 5
+
+# Feature engineering (riepilogo gruppi feature)
+python -m src.cli features --league 384
+
+# Ablation test gruppi feature
+python -m src.cli ablation --league 384 --rounds 5
 ```
 
 ## Fase 3 — Attivare Sportmonks API
@@ -83,7 +101,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (13 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (15 moduli)
 
 ## Documentazione Sportmonks API
 

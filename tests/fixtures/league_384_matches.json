@@ -1,14 +1,1854 @@
 {
   "data": [
-    {"id": 1001, "league_id": 384, "season_id": 25000, "round_id": 1, "state_id": 5, "starting_at": "2025-08-23 18:45:00", "participants": [{"id": 1, "name": "Inter", "meta": {"location": "home"}}, {"id": 2, "name": "Genoa", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 2}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 0}}]},
-    {"id": 1002, "league_id": 384, "season_id": 25000, "round_id": 1, "state_id": 5, "starting_at": "2025-08-24 20:45:00", "participants": [{"id": 3, "name": "Milan", "meta": {"location": "home"}}, {"id": 4, "name": "Torino", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 1}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 1}}]},
-    {"id": 1003, "league_id": 384, "season_id": 25000, "round_id": 2, "state_id": 5, "starting_at": "2025-08-30 18:45:00", "participants": [{"id": 2, "name": "Genoa", "meta": {"location": "home"}}, {"id": 3, "name": "Milan", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 0}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 2}}]},
-    {"id": 1004, "league_id": 384, "season_id": 25000, "round_id": 2, "state_id": 5, "starting_at": "2025-08-31 20:45:00", "participants": [{"id": 4, "name": "Torino", "meta": {"location": "home"}}, {"id": 1, "name": "Inter", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 1}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 3}}]},
-    {"id": 1005, "league_id": 384, "season_id": 25000, "round_id": 3, "state_id": 5, "starting_at": "2025-09-06 18:45:00", "participants": [{"id": 1, "name": "Inter", "meta": {"location": "home"}}, {"id": 3, "name": "Milan", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 2}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 1}}]},
-    {"id": 1008, "league_id": 384, "season_id": 25000, "round_id": 3, "state_id": 5, "starting_at": "2025-09-07 15:00:00", "participants": [{"id": 4, "name": "Torino", "meta": {"location": "home"}}, {"id": 2, "name": "Genoa", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 2}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 0}}]},
-    {"id": 1009, "league_id": 384, "season_id": 25000, "round_id": 4, "state_id": 5, "starting_at": "2025-09-14 18:45:00", "participants": [{"id": 2, "name": "Genoa", "meta": {"location": "home"}}, {"id": 4, "name": "Torino", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 1}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 1}}]},
-    {"id": 1010, "league_id": 384, "season_id": 25000, "round_id": 4, "state_id": 5, "starting_at": "2025-09-15 20:45:00", "participants": [{"id": 3, "name": "Milan", "meta": {"location": "home"}}, {"id": 1, "name": "Inter", "meta": {"location": "away"}}], "scores": [{"description": "CURRENT", "score": {"participant": "home", "goals": 0}}, {"description": "CURRENT", "score": {"participant": "away", "goals": 1}}]},
-    {"id": 1006, "league_id": 384, "season_id": 25000, "round_id": 5, "state_id": 1, "starting_at": "2025-09-20 20:45:00", "participants": [{"id": 3, "name": "Milan", "meta": {"location": "home"}}, {"id": 2, "name": "Genoa", "meta": {"location": "away"}}], "scores": []},
-    {"id": 1007, "league_id": 384, "season_id": 25000, "round_id": 5, "state_id": 1, "starting_at": "2025-09-21 15:00:00", "participants": [{"id": 4, "name": "Torino", "meta": {"location": "home"}}, {"id": 2, "name": "Genoa", "meta": {"location": "away"}}], "scores": []}
+    {
+      "id": 1001,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 1,
+      "state_id": 5,
+      "starting_at": "2025-08-23 20:00:00",
+      "participants": [
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1002,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 1,
+      "state_id": 5,
+      "starting_at": "2025-08-23 15:45:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1003,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 1,
+      "state_id": 5,
+      "starting_at": "2025-08-23 20:00:00",
+      "participants": [
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 1004,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 1,
+      "state_id": 5,
+      "starting_at": "2025-08-23 15:45:00",
+      "participants": [
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1005,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 1,
+      "state_id": 5,
+      "starting_at": "2025-08-23 20:00:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1006,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 2,
+      "state_id": 5,
+      "starting_at": "2025-08-30 20:00:00",
+      "participants": [
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1007,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 2,
+      "state_id": 5,
+      "starting_at": "2025-08-30 15:45:00",
+      "participants": [
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1008,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 2,
+      "state_id": 5,
+      "starting_at": "2025-08-30 20:00:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1009,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 2,
+      "state_id": 5,
+      "starting_at": "2025-08-30 15:45:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 1010,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 2,
+      "state_id": 5,
+      "starting_at": "2025-08-30 20:00:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1011,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 3,
+      "state_id": 5,
+      "starting_at": "2025-09-06 20:00:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1012,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 3,
+      "state_id": 5,
+      "starting_at": "2025-09-06 15:45:00",
+      "participants": [
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1013,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 3,
+      "state_id": 5,
+      "starting_at": "2025-09-06 20:00:00",
+      "participants": [
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1014,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 3,
+      "state_id": 5,
+      "starting_at": "2025-09-06 15:45:00",
+      "participants": [
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1015,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 3,
+      "state_id": 5,
+      "starting_at": "2025-09-06 20:00:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1016,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 4,
+      "state_id": 5,
+      "starting_at": "2025-09-13 20:00:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1017,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 4,
+      "state_id": 5,
+      "starting_at": "2025-09-13 15:45:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1018,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 4,
+      "state_id": 5,
+      "starting_at": "2025-09-13 20:00:00",
+      "participants": [
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 1019,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 4,
+      "state_id": 5,
+      "starting_at": "2025-09-13 15:45:00",
+      "participants": [
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1020,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 4,
+      "state_id": 5,
+      "starting_at": "2025-09-13 20:00:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1021,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 5,
+      "state_id": 5,
+      "starting_at": "2025-09-20 20:00:00",
+      "participants": [
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1022,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 5,
+      "state_id": 5,
+      "starting_at": "2025-09-20 15:45:00",
+      "participants": [
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1023,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 5,
+      "state_id": 5,
+      "starting_at": "2025-09-20 20:00:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1024,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 5,
+      "state_id": 5,
+      "starting_at": "2025-09-20 15:45:00",
+      "participants": [
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1025,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 5,
+      "state_id": 5,
+      "starting_at": "2025-09-20 20:00:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1026,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 6,
+      "state_id": 5,
+      "starting_at": "2025-09-27 20:00:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 1027,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 6,
+      "state_id": 5,
+      "starting_at": "2025-09-27 15:45:00",
+      "participants": [
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1028,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 6,
+      "state_id": 5,
+      "starting_at": "2025-09-27 20:00:00",
+      "participants": [
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1029,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 6,
+      "state_id": 5,
+      "starting_at": "2025-09-27 15:45:00",
+      "participants": [
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1030,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 6,
+      "state_id": 5,
+      "starting_at": "2025-09-27 20:00:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1031,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 7,
+      "state_id": 5,
+      "starting_at": "2025-10-04 20:00:00",
+      "participants": [
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1032,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 7,
+      "state_id": 5,
+      "starting_at": "2025-10-04 15:45:00",
+      "participants": [
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1033,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 7,
+      "state_id": 5,
+      "starting_at": "2025-10-04 20:00:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1034,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 7,
+      "state_id": 5,
+      "starting_at": "2025-10-04 15:45:00",
+      "participants": [
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1035,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 7,
+      "state_id": 5,
+      "starting_at": "2025-10-04 20:00:00",
+      "participants": [
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 3
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1036,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 8,
+      "state_id": 5,
+      "starting_at": "2025-10-11 20:00:00",
+      "participants": [
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1037,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 8,
+      "state_id": 5,
+      "starting_at": "2025-10-11 15:45:00",
+      "participants": [
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1038,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 8,
+      "state_id": 5,
+      "starting_at": "2025-10-11 20:00:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 2
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1039,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 8,
+      "state_id": 5,
+      "starting_at": "2025-10-11 15:45:00",
+      "participants": [
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 1040,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 8,
+      "state_id": 5,
+      "starting_at": "2025-10-11 20:00:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": [
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "home",
+            "goals": 1
+          }
+        },
+        {
+          "description": "CURRENT",
+          "score": {
+            "participant": "away",
+            "goals": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1041,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 9,
+      "state_id": 1,
+      "starting_at": "2025-10-18 20:00:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1042,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 9,
+      "state_id": 1,
+      "starting_at": "2025-10-18 15:45:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1043,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 9,
+      "state_id": 1,
+      "starting_at": "2025-10-18 20:00:00",
+      "participants": [
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1044,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 9,
+      "state_id": 1,
+      "starting_at": "2025-10-18 15:45:00",
+      "participants": [
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1045,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 9,
+      "state_id": 1,
+      "starting_at": "2025-10-18 20:00:00",
+      "participants": [
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1046,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 10,
+      "state_id": 1,
+      "starting_at": "2025-10-25 20:00:00",
+      "participants": [
+        {
+          "id": 7,
+          "name": "Roma",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 2,
+          "name": "Genoa",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1047,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 10,
+      "state_id": 1,
+      "starting_at": "2025-10-25 15:45:00",
+      "participants": [
+        {
+          "id": 3,
+          "name": "Milan",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 8,
+          "name": "Lazio",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1048,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 10,
+      "state_id": 1,
+      "starting_at": "2025-10-25 20:00:00",
+      "participants": [
+        {
+          "id": 9,
+          "name": "Atalanta",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 10,
+          "name": "Fiorentina",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1049,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 10,
+      "state_id": 1,
+      "starting_at": "2025-10-25 15:45:00",
+      "participants": [
+        {
+          "id": 4,
+          "name": "Torino",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 5,
+          "name": "Juventus",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    },
+    {
+      "id": 1050,
+      "league_id": 384,
+      "season_id": 25000,
+      "round_id": 10,
+      "state_id": 1,
+      "starting_at": "2025-10-25 20:00:00",
+      "participants": [
+        {
+          "id": 6,
+          "name": "Napoli",
+          "meta": {
+            "location": "home"
+          }
+        },
+        {
+          "id": 1,
+          "name": "Inter",
+          "meta": {
+            "location": "away"
+          }
+        }
+      ],
+      "scores": []
+    }
   ]
 }
