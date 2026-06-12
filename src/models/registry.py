@@ -10,7 +10,18 @@ from src.models.elo import EloModel
 from src.models.ensemble import EnsembleModel
 from src.features.feature_groups import ABLATION_VARIANTS
 from src.models.feature_model import FeatureModel
+from src.models.feature_trained import FeatureTrainedModel
 from src.models.poisson import PoissonModel
+
+
+MODEL_NAMES: tuple[str, ...] = (
+    "ensemble",
+    "poisson",
+    "dixon_coles",
+    "elo",
+    "feature",
+    "feature_trained",
+)
 
 
 def build_base_models(
@@ -47,6 +58,8 @@ def get_model_by_name(
 ) -> BaseModel:
     if name == "ensemble":
         return build_ensemble(settings, dataset, feature_groups=feature_groups)
+    if name == "feature_trained":
+        return FeatureTrainedModel(settings, dataset)
     for model in build_base_models(settings, dataset, feature_groups=feature_groups):
         if model.name == name:
             return model

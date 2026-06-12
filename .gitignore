@@ -15,5 +15,6 @@ data/processed/
 data/cache.db
 data/predictions/
 data/backtests/
+data/models/
 
 *.log

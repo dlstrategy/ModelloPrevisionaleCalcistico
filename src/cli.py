@@ -12,13 +12,14 @@ from src.backtesting.reports import save_comparison_report
 from src.backtesting.walk_forward import run_walk_forward, save_walk_forward_report
 from src.cli_capabilities import print_capabilities
 from src.cli_status import print_status
+from src.cli_train import print_train
 from src.cli_validate import print_validate
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
 from src.data_pipeline.sync import load_dataset, sync_league_data
 from src.features.feature_vector import summarize_feature_groups
 from src.features.match_context import build_match_context
 from src.logging_config import setup_logging
-from src.models.registry import get_model_by_name
+from src.models.registry import MODEL_NAMES, get_model_by_name
 from src.prediction.explain import explain_prediction
 from src.prediction.predict_round import default_output_path, predict_round, save_predictions
 
@@ -89,6 +90,22 @@ def cmd_status(args: argparse.Namespace) -> int:
     return print_status(settings, league_id)
 
 
+def cmd_train(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    return print_train(
+        settings,
+        league_id,
+        model_name=args.model,
+        profile=args.profile,
+        epochs=args.epochs,
+        learning_rate=args.learning_rate,
+        l2=args.l2,
+        min_samples=args.min_samples,
+    )
+
+
 def cmd_sync(args: argparse.Namespace) -> int:
     settings = load_settings()
     setup_logging(settings.log_level)
@@ -111,6 +128,13 @@ def cmd_predict(args: argparse.Namespace) -> int:
     dataset = load_dataset(settings, league_id)
     model_name = args.model or "ensemble"
     model = _resolve_model(settings, dataset, model_name)
+    if not model.is_ready():
+        print(
+            f"Modello {model_name} non pronto. "
+            f"Esegui: python -m src.cli train --league {league_id} --model feature_trained",
+            file=sys.stderr,
+        )
+        return 1
 
     if args.date:
         matches = dataset.upcoming_on(args.date)
@@ -145,8 +169,14 @@ def cmd_predict(args: argparse.Namespace) -> int:
         )
 
     if args.explain and predictions:
+        profile = getattr(model, "data_profile", None)
         for match, pred in zip(matches, predictions):
-            ctx = build_match_context(dataset, match, settings)
+            ctx = build_match_context(
+                dataset,
+                match,
+                settings,
+                profile=profile,
+            )
             explanation = explain_prediction(ctx, pred, dataset=dataset, settings=settings)
             print(f"\nExplain — {pred.home_team} vs {pred.away_team}:")
             print(json.dumps(explanation, indent=2))
@@ -229,6 +259,13 @@ def cmd_backtest(args: argparse.Namespace) -> int:
 
     model_name = args.model or "ensemble"
     model = _resolve_model(settings, dataset, model_name)
+    if not model.is_ready():
+        print(
+            f"Modello {model_name} non pronto. "
+            f"Esegui: python -m src.cli train --league {league_id} --model feature_trained",
+            file=sys.stderr,
+        )
+        return 1
     result = run_backtest(dataset, model, settings, max_matches=max_matches)
     from src.backtesting.backtest import save_report
 
@@ -275,7 +312,7 @@ def build_parser() -> argparse.ArgumentParser:
     predict_p.add_argument("--league", type=int, default=None)
     predict_p.add_argument(
         "--model",
-        choices=["ensemble", "poisson", "dixon_coles", "elo", "feature"],
+        choices=list(MODEL_NAMES),
         default="ensemble",
     )
     predict_p.add_argument(
@@ -290,7 +327,7 @@ def build_parser() -> argparse.ArgumentParser:
     backtest_p.add_argument("--rounds", type=int, default=5)
     backtest_p.add_argument(
         "--model",
-        choices=["ensemble", "poisson", "dixon_coles", "elo", "feature"],
+        choices=list(MODEL_NAMES),
         default="ensemble",
     )
     backtest_p.add_argument("--all-models", action="store_true", help="Confronta tutti i modelli")
@@ -329,11 +366,25 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cap_p.set_defaults(func=cmd_capabilities)
 
+    train_p = sub.add_parser("train", help="Allenamento offline feature_trained")
+    train_p.add_argument("--league", type=int, default=None)
+    train_p.add_argument("--model", default="feature_trained")
+    train_p.add_argument(
+        "--profile",
+        choices=["base", "advanced", "all_in_no_predictions"],
+        default=None,
+    )
+    train_p.add_argument("--epochs", type=int, default=None)
+    train_p.add_argument("--learning-rate", type=float, default=None)
+    train_p.add_argument("--l2", type=float, default=None)
+    train_p.add_argument("--min-samples", type=int, default=None)
+    train_p.set_defaults(func=cmd_train)
+
     walk_p = sub.add_parser("walk-forward", help="Backtest walk-forward nel tempo")
     walk_p.add_argument("--league", type=int, default=None)
     walk_p.add_argument(
         "--model",
-        choices=["ensemble", "poisson", "dixon_coles", "elo", "feature"],
+        choices=list(MODEL_NAMES),
         default="ensemble",
     )
     walk_p.add_argument("--min-train-matches", type=int, default=10)

@@ -32,6 +32,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 16 | [16-hardening-feature-anti-leakage.md](implementazioni/16-hardening-feature-anti-leakage.md) | Status CLI, anti-leakage lineup, metriche calibrazione |
 | 17 | [17-data-quality-walk-forward.md](implementazioni/17-data-quality-walk-forward.md) | Data quality, validate, walk-forward |
 | 18 | [18-data-capability-layer.md](implementazioni/18-data-capability-layer.md) | Data Capability Layer, profili, fallback |
+| 19 | [19-feature-trained-model.md](implementazioni/19-feature-trained-model.md) | FeatureTrainedModel offline, CLI train |
 
 ## Documentazione API esterna
 

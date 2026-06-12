@@ -134,7 +134,20 @@ Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue)
 | Integrazione | `status`, `validate --profile`, `predict --explain` |
 | Policy | PREDICTIONS e ODDS sempre disabilitati |
 
-**Test:** 115+ passed.
+**Test:** 116 passed.
+
+---
+
+## Fase 2g — FeatureTrainedModel offline (completata)
+
+| Area | Modifica |
+|------|----------|
+| Training | `src/training/` — dataset, scaler, softmax regression |
+| Modello | `feature_trained` — artifact JSON in `data/models/` |
+| CLI `train` | Allenamento offline con profilo dati |
+| Predict/backtest | `--model feature_trained` (non in ensemble) |
+
+**Test:** 130+ passed.
 
 ---
 
@@ -159,6 +172,7 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M6b] Fase 2d — Hardening anti-leakage + status CLI
 ├── [M6c] Fase 2e — Data quality + walk-forward
 ├── [M6d] Fase 2f — Data Capability Layer + fallback
+├── [M6e] Fase 2g — FeatureTrainedModel offline
 └── [M7] Fase 3 — API live (futuro)
 ```
 

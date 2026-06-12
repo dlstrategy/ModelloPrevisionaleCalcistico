@@ -15,6 +15,7 @@ PROCESSED_DIR = DATA_DIR / "processed"
 PREDICTIONS_DIR = DATA_DIR / "predictions"
 BACKTESTS_DIR = DATA_DIR / "backtests"
 QUALITY_DIR = DATA_DIR / "quality"
+MODELS_DIR = DATA_DIR / "models"
 CACHE_DB_PATH = DATA_DIR / "cache.db"
 FIXTURES_DIR = PROJECT_ROOT / "tests" / "fixtures"
 
@@ -84,7 +85,7 @@ def load_settings(env_file: Path | None = None) -> Settings:
     if env_file.exists():
         load_dotenv(env_file)
 
-    for directory in (DATA_DIR, RAW_DIR, PROCESSED_DIR, PREDICTIONS_DIR, BACKTESTS_DIR, QUALITY_DIR):
+    for directory in (DATA_DIR, RAW_DIR, PROCESSED_DIR, PREDICTIONS_DIR, BACKTESTS_DIR, QUALITY_DIR, MODELS_DIR):
         directory.mkdir(parents=True, exist_ok=True)
 
     token = os.getenv("SPORTMONKS_API_TOKEN", "").strip() or None

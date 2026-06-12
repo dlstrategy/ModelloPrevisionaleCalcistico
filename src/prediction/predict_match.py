@@ -23,9 +23,25 @@ def predict_match(
     calibrator: ProbabilityCalibrator | None = None,
 ) -> Prediction:
     enabled_groups = getattr(model, "enabled_groups", None)
+    profile = getattr(model, "data_profile", None)
     context = build_match_context(
-        dataset, match, settings, as_of=as_of, enabled_feature_groups=enabled_groups
+        dataset,
+        match,
+        settings,
+        as_of=as_of,
+        enabled_feature_groups=enabled_groups,
+        profile=profile,
     )
+    if not model.is_ready():
+        raise RuntimeError(
+            f"Modello {model.name} non pronto. "
+            + (
+                "Esegui: python -m src.cli train --league "
+                f"{dataset.league_id} --model feature_trained"
+                if model.name == "feature_trained"
+                else "Verifica configurazione e dati."
+            )
+        )
     probabilities = model.predict(context)
     if calibrator and calibrator.is_ready():
         probabilities = calibrator.calibrate(probabilities)

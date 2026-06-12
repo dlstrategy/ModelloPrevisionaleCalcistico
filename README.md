@@ -13,6 +13,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2d** | Completata | Hardening: status, anti-leakage lineup, explain data_sources |
 | **Fase 2e** | Completata | Data quality, validate CLI, walk-forward backtest |
 | **Fase 2f** | Completata | Data Capability Layer, profili dati, fallback intelligenti |
+| **Fase 2g** | Completata | FeatureTrainedModel offline (train + artifact JSON) |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -27,6 +28,7 @@ P(1), P(X), P(2), pick suggerito, confidenza.
 | `dixon_coles` | Implementato |
 | `elo` | Implementato |
 | `feature` | Implementato (softmax su feature vector) |
+| `feature_trained` | Implementato (softmax allenata offline, artifact JSON) |
 | `ensemble` | Implementato (pesi configurabili + temperature scaling) |
 
 ## Feature engineering (Fase 2+)
@@ -89,6 +91,10 @@ python -m src.cli validate --league 384 --profile base
 
 # Walk-forward — predizioni nel tempo con solo info pre-kickoff
 python -m src.cli walk-forward --league 384 --model ensemble
+
+# Training offline feature_trained
+python -m src.cli train --league 384 --model feature_trained --profile advanced
+python -m src.cli predict --date 2025-10-18 --model feature_trained
 ```
 
 ## Fase 3 — Attivare Sportmonks API
@@ -116,7 +122,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (18 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (19 moduli)
 
 ## Documentazione Sportmonks API
 

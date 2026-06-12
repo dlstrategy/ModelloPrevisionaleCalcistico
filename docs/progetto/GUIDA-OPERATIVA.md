@@ -93,6 +93,16 @@ python -m src.cli walk-forward --league 384 --model ensemble
 
 Simula predizioni nel tempo usando solo informazione disponibile prima del kickoff (`training_mode: as_of_simulation_no_refit` — nessun refit per finestra). Report in `data/backtests/walk_forward_*.json`.
 
+### Training feature_trained
+
+```bash
+python -m src.cli train --league 384 --model feature_trained --profile advanced
+python -m src.cli predict --date 2025-10-18 --model feature_trained
+python -m src.cli backtest --league 384 --model feature_trained --rounds 5
+```
+
+Allena softmax regression su match finiti (`as_of=starting_at`), salva artifact in `data/models/feature_trained_384.json`. Richiede training prima del primo predict.
+
 ---
 
 ## Rigenerare fixture mock
