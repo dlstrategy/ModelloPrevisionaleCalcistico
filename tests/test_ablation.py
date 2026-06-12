@@ -9,7 +9,12 @@ def test_feature_vector_has_all_groups_when_full():
     settings = load_settings()
     dataset = load_offline_dataset(384)
     match = dataset.matches[0]
-    ctx = build_match_context(dataset, match, settings)
+    ctx = build_match_context(
+        dataset,
+        match,
+        settings,
+        enabled_feature_groups=ABLATION_VARIANTS["full"],
+    )
     full_keys = keys_for_groups(ABLATION_VARIANTS["full"])
     assert len(ctx.feature_vector) >= len(full_keys) * 0.9
 

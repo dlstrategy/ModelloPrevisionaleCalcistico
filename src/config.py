@@ -59,6 +59,7 @@ class Settings:
     ensemble_weight_feature: float
     log_level: str
     offline_mode: str
+    data_profile: str
 
     @property
     def is_offline(self) -> bool:
@@ -113,4 +114,12 @@ def load_settings(env_file: Path | None = None) -> Settings:
         ensemble_weight_feature=_float("ENSEMBLE_WEIGHT_FEATURE", 0.15),
         log_level=os.getenv("LOG_LEVEL", "INFO"),
         offline_mode=os.getenv("OFFLINE_MODE", "auto").lower(),
+        data_profile=_load_data_profile(),
     )
+
+
+def _load_data_profile() -> str:
+    from src.data_capabilities.resolver import parse_data_profile
+
+    raw = os.getenv("DATA_PROFILE", "base")
+    return parse_data_profile(raw)

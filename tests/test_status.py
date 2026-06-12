@@ -31,6 +31,10 @@ def test_status_offline_counts(synced_dataset):
     assert "xg" in output
     assert "lineups" in output
     assert "Feature attive" in output
+    assert "Data profile:" in output
+    assert "Data completeness:" in output
+    assert "Feature groups:" in output
+    assert "Policy disabled:" in output
 
 
 def test_status_missing_dataset_suggests_sync():

@@ -30,7 +30,17 @@ python -m src.cli sync --league 384
 python -m src.cli status --league 384
 ```
 
-Mostra modalità offline/API, conteggi partite, fixture companion e feature attive su una partita futura di esempio. Se manca il dataset processato, suggerisce di eseguire `sync`.
+Mostra modalità offline/API, **profilo dati** (`DATA_PROFILE`), **data completeness score**, conteggi partite, fixture companion, feature groups e feature attive su una partita futura di esempio. Se manca il dataset processato, suggerisce di eseguire `sync`.
+
+### Capability dati
+
+```bash
+python -m src.cli capabilities --profile base
+python -m src.cli capabilities --profile advanced
+python -m src.cli capabilities --profile all_in_no_predictions
+```
+
+Profilo default da `.env` (`DATA_PROFILE=base`). Mostra capability disponibili, disabilitate per policy (PREDICTIONS, ODDS), feature groups e completeness score.
 
 ### Predizioni
 
@@ -69,10 +79,11 @@ Varianti: `base`, `base+xg`, `base+shots`, `base+player_lineup`, `base+tactical`
 ### Data quality
 
 ```bash
-python -m src.cli validate --league 384
+python -m src.cli validate --league 384 --profile base
+python -m src.cli validate --league 384 --profile advanced
 ```
 
-Controlla consistenza dataset, fixture companion, feature vector e probabilità modelli. Report in `data/quality/`.
+Controlla consistenza dataset, fixture companion, feature vector e probabilità modelli. Con profilo `base`, xG/shots/tactical avanzato mancante **non** genera errori. Report in `data/quality/` con `data_profile` e `data_completeness`.
 
 ### Walk-forward backtest
 

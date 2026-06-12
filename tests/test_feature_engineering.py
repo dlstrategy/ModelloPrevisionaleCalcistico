@@ -37,7 +37,9 @@ def test_shots_profile():
 
 
 def test_explain_includes_edges():
-    settings = load_settings()
+    from dataclasses import replace
+
+    settings = replace(load_settings(), data_profile="advanced")
     dataset = load_offline_dataset(384)
     upcoming = next(m for m in dataset.matches if not m.is_finished)
     model = FeatureModel()
@@ -49,6 +51,9 @@ def test_explain_includes_edges():
     assert "model_contributions" in explanation
     assert "probabilities" in explanation
     assert "data_sources" in explanation
+    assert "data_profile" in explanation
+    assert "data_completeness" in explanation
+    assert explanation["data_profile"] == "advanced"
     assert explanation["data_sources"]["player_lineup"] == "mock_fixture"
     assert explanation["data_sources"]["tactical"] == "mock_fixture"
     assert explanation["data_sources"]["xg"] == "mock_fixture_historical"

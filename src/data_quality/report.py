@@ -29,9 +29,11 @@ class QualityReport:
     passed: bool
     dataset_summary: dict[str, int]
     area_status: dict[str, str]
+    data_profile: str | None = None
+    data_completeness: dict | None = None
 
     def as_dict(self) -> dict:
-        return {
+        payload = {
             "league_id": self.league_id,
             "generated_at": self.generated_at,
             "passed": self.passed,
@@ -42,6 +44,11 @@ class QualityReport:
             "area_status": self.area_status,
             "issues": [asdict(issue) for issue in self.issues],
         }
+        if self.data_profile is not None:
+            payload["data_profile"] = self.data_profile
+        if self.data_completeness is not None:
+            payload["data_completeness"] = self.data_completeness
+        return payload
 
 
 def build_report(
@@ -49,6 +56,8 @@ def build_report(
     issues: list[QualityIssue],
     *,
     dataset_summary: dict[str, int],
+    data_profile: str | None = None,
+    data_completeness: dict | None = None,
 ) -> QualityReport:
     errors = sum(1 for i in issues if i.severity == "error")
     warnings = sum(1 for i in issues if i.severity == "warning")
@@ -70,6 +79,8 @@ def build_report(
         passed=errors == 0,
         dataset_summary=dataset_summary,
         area_status=area_status,
+        data_profile=data_profile,
+        data_completeness=data_completeness,
     )
 
 

@@ -12,6 +12,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2c** | Completata | 9 gruppi feature, ablation, fixture 10 squadre |
 | **Fase 2d** | Completata | Hardening: status, anti-leakage lineup, explain data_sources |
 | **Fase 2e** | Completata | Data quality, validate CLI, walk-forward backtest |
+| **Fase 2f** | Completata | Data Capability Layer, profili dati, fallback intelligenti |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -61,8 +62,11 @@ Senza token funziona in **modalità offline** (default).
 # Sync (offline Fase 2, oppure API se Fase 3 abilitata)
 python -m src.cli sync --league 384
 
-# Stato dataset, fixture companion e feature attive
+# Stato dataset, profilo dati, fixture companion e feature attive
 python -m src.cli status --league 384
+
+# Capability dati per profilo (base / advanced / all_in_no_predictions)
+python -m src.cli capabilities --profile base
 
 # Predizioni
 python -m src.cli predict --date 2025-09-20 --model ensemble
@@ -81,7 +85,7 @@ python -m src.cli features --league 384
 python -m src.cli ablation --league 384 --rounds 5
 
 # Data quality — consistenza dataset, fixture companion, feature e probabilità
-python -m src.cli validate --league 384
+python -m src.cli validate --league 384 --profile base
 
 # Walk-forward — predizioni nel tempo con solo info pre-kickoff
 python -m src.cli walk-forward --league 384 --model ensemble
@@ -112,7 +116,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (17 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (18 moduli)
 
 ## Documentazione Sportmonks API
 

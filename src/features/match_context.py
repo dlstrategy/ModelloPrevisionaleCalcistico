@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from src.config import Settings
+from src.data_capabilities.resolver import resolve_capabilities
 from src.data_pipeline.dataset_builder import MatchDataset
 from src.domain.match import Match
 from src.features.advanced_strength import AdvancedTeamStrength, compute_advanced_strength
@@ -62,6 +63,9 @@ class MatchContext:
     tactical_source: str = "default_fallback"
     feature_vector: dict[str, float] = field(default_factory=dict)
     enabled_feature_groups: frozenset[str] = ALL_GROUPS
+    data_profile: str = "base"
+    data_completeness: dict = field(default_factory=dict)
+    capability_fallbacks: tuple[str, ...] = ()
 
 
 def build_match_context(
@@ -76,7 +80,11 @@ def build_match_context(
     home_id = match.home.team_id
     away_id = match.away.team_id
     league_id = match.league_id
-    groups = enabled_feature_groups or ALL_GROUPS
+    cap_resolution = resolve_capabilities(settings, league_id, dataset)
+    if enabled_feature_groups is None:
+        groups = cap_resolution.enabled_feature_groups & ALL_GROUPS
+    else:
+        groups = enabled_feature_groups
 
     resolved_lineup = resolve_lineup_for_match(league_id, match)
     resolved_tactical = resolve_tactical_for_match(league_id, match, resolved_lineup.lineup)
@@ -151,4 +159,7 @@ def build_match_context(
         tactical_source=partial.tactical_source,
         feature_vector=filtered,
         enabled_feature_groups=groups,
+        data_profile=cap_resolution.profile,
+        data_completeness=cap_resolution.completeness.as_dict(),
+        capability_fallbacks=cap_resolution.fallbacks,
     )

@@ -19,7 +19,7 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         CLI (src/cli.py)                     │
-│     sync | predict | backtest | features | ablation | status | validate | walk-forward │
+│     sync | predict | backtest | features | ablation | status | validate | capabilities | walk-forward │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -38,6 +38,12 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 │   match_context ← feature_vector ← feature_groups            │
 │   advanced_strength | xg | shots | sos | lineup | tactical │
 │   fatigue | motivation | form | standings | team_strength    │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│         DATA CAPABILITY LAYER (Fase 2f)                        │
+│   profiles | requirements | resolver | completeness report     │
+│   profili: base | advanced | all_in_no_predictions             │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐

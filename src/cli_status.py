@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from src.config import FIXTURES_DIR, PROCESSED_DIR, Settings
+from src.data_capabilities.resolver import feature_group_display_status, resolve_capabilities
 from src.data_pipeline.sync import load_dataset
 from src.features.data_sources import companion_fixture_status
 from src.features.match_context import build_match_context
@@ -50,6 +51,7 @@ def print_status(settings: Settings, league_id: int) -> int:
         )
         return 1
 
+    cap = resolve_capabilities(settings, league_id, dataset)
     finished = [m for m in dataset.matches if m.is_finished]
     future = [m for m in dataset.matches if not m.is_finished]
     companions = companion_fixture_status(league_id)
@@ -65,6 +67,8 @@ def print_status(settings: Settings, league_id: int) -> int:
         )
 
     print(f"Modalità:           {mode}")
+    print(f"Data profile:       {cap.profile}")
+    print(f"Data completeness:  {cap.completeness.score:.2f}")
     print(f"Lega default:       {settings.default_league_id}")
     print(f"Lega richiesta:     {league_id}")
     print(f"Dataset processato: {processed_path}")
@@ -80,4 +84,10 @@ def print_status(settings: Settings, league_id: int) -> int:
     print(f"Feature attive (esempio futuro): {feature_count}")
     if sample:
         print(f"  Partita esempio: {sample_label}")
+    print("Feature groups:")
+    from src.data_capabilities.requirements import ALL_FEATURE_GROUPS
+
+    for group in sorted(ALL_FEATURE_GROUPS):
+        print(f"  {group:<22} {feature_group_display_status(group, cap)}")
+    print(f"Policy disabled:    {', '.join(cap.policy_disabled_capabilities)}")
     return 0

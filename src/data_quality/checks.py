@@ -14,6 +14,9 @@ from src.data_pipeline.dataset_builder import MatchDataset
 from src.data_quality.report import QualityIssue
 from src.domain.enums import ParticipantLocation
 from src.domain.match import Match, Score
+from src.data_capabilities.capabilities import DataCapability
+from src.data_capabilities.profiles import profile_capabilities
+from src.data_capabilities.resolver import parse_data_profile
 from src.features.lineup_features import FORECAST, KNOWN_PRE_MATCH
 from src.features.match_context import build_match_context
 from src.models.registry import get_model_by_name
@@ -688,14 +691,24 @@ def run_all_checks(
     dataset: MatchDataset,
     settings: Settings,
     league_id: int,
+    *,
+    profile: str | None = None,
 ) -> tuple[list[QualityIssue], dict[str, int]]:
+    profile_name = parse_data_profile(profile or settings.data_profile)
+    profile_caps = profile_capabilities(profile_name)
+
     collector = IssueCollector()
     check_matches(dataset, collector)
-    check_xg_companion(dataset, league_id, collector)
-    check_shots_companion(dataset, league_id, collector)
-    check_lineups_companion(dataset, league_id, collector)
-    check_tactical_companion(dataset, league_id, collector)
-    check_calendar_companion(dataset, league_id, collector)
+    if DataCapability.XG in profile_caps:
+        check_xg_companion(dataset, league_id, collector)
+    if DataCapability.SHOTS in profile_caps:
+        check_shots_companion(dataset, league_id, collector)
+    if DataCapability.LINEUPS_CONFIRMED in profile_caps:
+        check_lineups_companion(dataset, league_id, collector)
+    if DataCapability.TACTICAL_DATA in profile_caps:
+        check_tactical_companion(dataset, league_id, collector)
+    if DataCapability.CALENDAR in profile_caps:
+        check_calendar_companion(dataset, league_id, collector)
     check_features(dataset, settings, collector)
     return collector.issues, _dataset_summary(dataset)
 

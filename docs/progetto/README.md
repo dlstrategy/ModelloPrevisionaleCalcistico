@@ -7,7 +7,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | Documento | Contenuto |
 |-----------|-----------|
 | [ARCHITETTURA.md](ARCHITETTURA.md) | Architettura a strati, 9 gruppi feature, ablation, flussi |
-| [CRONOSTORIA.md](CRONOSTORIA.md) | Timeline Fase 0 → 2d → 3 |
+| [CRONOSTORIA.md](CRONOSTORIA.md) | Timeline Fase 0 → 2f → 3 |
 | [GUIDA-OPERATIVA.md](GUIDA-OPERATIVA.md) | Setup, comandi CLI, fixture, test |
 
 ## Documentazione per implementazione
@@ -31,6 +31,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 15 | [15-hardening-foundation.md](implementazioni/15-hardening-foundation.md) | Fix Elo, sync, CI, normalize |
 | 16 | [16-hardening-feature-anti-leakage.md](implementazioni/16-hardening-feature-anti-leakage.md) | Status CLI, anti-leakage lineup, metriche calibrazione |
 | 17 | [17-data-quality-walk-forward.md](implementazioni/17-data-quality-walk-forward.md) | Data quality, validate, walk-forward |
+| 18 | [18-data-capability-layer.md](implementazioni/18-data-capability-layer.md) | Data Capability Layer, profili, fallback |
 
 ## Documentazione API esterna
 

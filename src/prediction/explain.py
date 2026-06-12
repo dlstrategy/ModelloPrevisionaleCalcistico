@@ -84,7 +84,7 @@ def explain_prediction(
         for group, keys in FEATURE_GROUPS.items()
     }
 
-    data_sources = build_data_sources(context, settings) if settings else {}
+    data_sources = build_data_sources(context, settings, dataset) if settings else {}
 
     explanation = {
         "fixture_id": prediction.fixture_id,
@@ -104,12 +104,20 @@ def explain_prediction(
         "top_factors": _top_factors(context.feature_vector),
         "feature_groups_active": group_counts,
         "enabled_groups": sorted(context.enabled_feature_groups),
+        "data_profile": context.data_profile,
+        "data_completeness": context.data_completeness,
         "data_sources": data_sources,
         "warnings": [],
     }
 
     if dataset is not None and settings is not None:
         explanation["model_contributions"] = _model_contributions(context, dataset, settings)
+        from src.data_capabilities.resolver import resolve_capabilities
+
+        cap = resolve_capabilities(settings, context.match.league_id, dataset, profile=context.data_profile)
+        for warning in cap.explain_warnings():
+            if warning not in explanation["warnings"]:
+                explanation["warnings"].append(warning)
 
     if low_confidence:
         explanation["warnings"].append(

@@ -10,6 +10,7 @@ from src.backtesting.ablation import run_ablation_study, save_ablation_report
 from src.backtesting.backtest import run_backtest, run_backtest_all_models
 from src.backtesting.reports import save_comparison_report
 from src.backtesting.walk_forward import run_walk_forward, save_walk_forward_report
+from src.cli_capabilities import print_capabilities
 from src.cli_status import print_status
 from src.cli_validate import print_validate
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
@@ -30,7 +31,14 @@ def cmd_validate(args: argparse.Namespace) -> int:
     settings = load_settings()
     setup_logging(settings.log_level)
     league_id = args.league or settings.default_league_id
-    return print_validate(settings, league_id)
+    return print_validate(settings, league_id, profile=args.profile)
+
+
+def cmd_capabilities(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    return print_capabilities(settings, league_id, profile=args.profile)
 
 
 def cmd_walk_forward(args: argparse.Namespace) -> int:
@@ -303,7 +311,23 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate_p = sub.add_parser("validate", help="Controlli data quality su dataset e fixture")
     validate_p.add_argument("--league", type=int, default=None)
+    validate_p.add_argument(
+        "--profile",
+        choices=["base", "advanced", "all_in_no_predictions"],
+        default=None,
+        help="Profilo dati (default: DATA_PROFILE da .env)",
+    )
     validate_p.set_defaults(func=cmd_validate)
+
+    cap_p = sub.add_parser("capabilities", help="Capability dati e completeness per profilo")
+    cap_p.add_argument("--league", type=int, default=None)
+    cap_p.add_argument(
+        "--profile",
+        choices=["base", "advanced", "all_in_no_predictions"],
+        default=None,
+        help="Profilo dati (default: DATA_PROFILE da .env)",
+    )
+    cap_p.set_defaults(func=cmd_capabilities)
 
     walk_p = sub.add_parser("walk-forward", help="Backtest walk-forward nel tempo")
     walk_p.add_argument("--league", type=int, default=None)

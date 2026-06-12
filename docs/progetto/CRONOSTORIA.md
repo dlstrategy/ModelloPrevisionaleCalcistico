@@ -124,6 +124,20 @@ Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue)
 
 ---
 
+## Fase 2f — Data Capability Layer (completata)
+
+| Area | Modifica |
+|------|----------|
+| Capability layer | `src/data_capabilities/` — profili base / advanced / all_in_no_predictions |
+| Config | `DATA_PROFILE=base` in `.env` |
+| CLI `capabilities` | Report capability, feature groups, completeness score |
+| Integrazione | `status`, `validate --profile`, `predict --explain` |
+| Policy | PREDICTIONS e ODDS sempre disabilitati |
+
+**Test:** 115+ passed.
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
@@ -144,6 +158,7 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M6] Fase 2c — Feature engineering + ablation
 ├── [M6b] Fase 2d — Hardening anti-leakage + status CLI
 ├── [M6c] Fase 2e — Data quality + walk-forward
+├── [M6d] Fase 2f — Data Capability Layer + fallback
 └── [M7] Fase 3 — API live (futuro)
 ```
 
