@@ -48,3 +48,6 @@ def test_explain_includes_edges():
     assert "xg" in explanation["edges"]
     assert "model_contributions" in explanation
     assert "probabilities" in explanation
+    assert "data_sources" in explanation
+    assert explanation["data_sources"]["player_lineup"] == "mock_fixture"
+    assert explanation["data_sources"]["tactical"] == "mock_fixture"

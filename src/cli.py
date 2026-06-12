@@ -9,6 +9,7 @@ import sys
 from src.backtesting.ablation import run_ablation_study, save_ablation_report
 from src.backtesting.backtest import run_backtest, run_backtest_all_models
 from src.backtesting.reports import save_comparison_report
+from src.cli_status import print_status
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
 from src.data_pipeline.sync import load_dataset, sync_league_data
 from src.features.feature_vector import summarize_feature_groups
@@ -21,6 +22,13 @@ from src.prediction.predict_round import default_output_path, predict_round, sav
 
 def _resolve_model(settings, dataset, name: str):
     return get_model_by_name(name, settings, dataset)
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    return print_status(settings, league_id)
 
 
 def cmd_sync(args: argparse.Namespace) -> int:
@@ -124,14 +132,18 @@ def cmd_ablation(args: argparse.Namespace) -> int:
     report_path = save_ablation_report(results, BACKTESTS_DIR)
 
     print(f"Ablation study — lega {league_id}, campioni max {max_matches or 'all'}")
-    print(f"{'Variante':<22} {'Feat':>5} {'Acc':>6} {'Brier':>7} {'LogLoss':>8} {'BSS':>7} {'Over':>6} {'Under':>6}")
-    print("-" * 78)
+    print(
+        f"{'Variante':<22} {'Feat':>5} {'Acc':>6} {'Brier':>7} {'LogLoss':>8} "
+        f"{'BSS':>7} {'CalGap':>7} {'PickOver':>9} {'PickUnder':>10}"
+    )
+    print("-" * 92)
     for r in results:
         m = r.metrics
         print(
             f"{r.variant:<22} {r.feature_count:>5} {m.accuracy:>5.1%} "
             f"{m.brier_score:>7.4f} {m.log_loss:>8.4f} {m.brier_skill_score:>7.3f} "
-            f"{m.overconfidence_rate:>5.1%} {m.underconfidence_rate:>5.1%}"
+            f"{m.mean_calibration_gap:>7.3f} "
+            f"{m.pick_overconfidence_rate:>8.1%} {m.pick_underconfidence_rate:>9.1%}"
         )
     print(f"\nReport: {report_path}")
     return 0
@@ -169,8 +181,15 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     print(f"  Brier score: {m.brier_score:.4f}")
     print(f"  Log-loss:    {m.log_loss:.4f}")
     print(f"  Brier skill: {m.brier_skill_score:.4f}")
-    print(f"  Overconf:    {m.overconfidence_rate:.3f}")
-    print(f"  Underconf:   {m.underconfidence_rate:.3f}")
+    print(f"  Cal gap:     {m.mean_calibration_gap:.4f} (media |conf-hit| sui bin)")
+    print(
+        f"  Pick over:   {m.pick_overconfidence_rate:.3f} "
+        "(confidence pick > hit binario + margin)"
+    )
+    print(
+        f"  Pick under:  {m.pick_underconfidence_rate:.3f} "
+        "(confidence pick < hit binario - margin)"
+    )
     if m.calibration_bins:
         print("  Calibrazione (confidence vs hit rate):")
         for b in m.calibration_bins:
@@ -201,7 +220,11 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["ensemble", "poisson", "dixon_coles", "elo", "feature"],
         default="ensemble",
     )
-    predict_p.add_argument("--explain", action="store_true", help="Mostra explain prima partita")
+    predict_p.add_argument(
+        "--explain",
+        action="store_true",
+        help="Mostra explain JSON per ogni partita predetta",
+    )
     predict_p.set_defaults(func=cmd_predict)
 
     backtest_p = sub.add_parser("backtest", help="Backtest senza data leakage")
@@ -223,6 +246,10 @@ def build_parser() -> argparse.ArgumentParser:
     ablation_p.add_argument("--league", type=int, default=None)
     ablation_p.add_argument("--rounds", type=int, default=5)
     ablation_p.set_defaults(func=cmd_ablation)
+
+    status_p = sub.add_parser("status", help="Stato dataset, fixture companion e feature")
+    status_p.add_argument("--league", type=int, default=None)
+    status_p.set_defaults(func=cmd_status)
 
     return parser
 

@@ -19,7 +19,7 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         CLI (src/cli.py)                     │
-│     sync | predict | backtest | features | ablation          │
+│     sync | predict | backtest | features | ablation | status          │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -86,7 +86,13 @@ sequenceDiagram
 
 ### Regola anti-leakage
 
-Per ogni partita, `as_of = match.starting_at`. Tutte le feature usano **solo** partite con `starting_at < as_of`. Vale per backtest e ablation.
+Per ogni partita, `as_of = match.starting_at`. Tutte le feature storiche usano **solo** partite con `starting_at < as_of`. Vale per backtest e ablation.
+
+Lineup e tactical aggiuntivi:
+- Partite **finite**: solo righe con `data_availability = known_pre_match`
+- Partite **future**: solo righe con `data_availability = forecast`
+- Validazione `home_id` / `away_id` contro i partecipanti reali del match
+- Fallback neutro se dati non disponibili (`default_fallback`)
 
 ---
 
@@ -135,8 +141,9 @@ ABLATION_VARIANTS (cumulative):
 | `xg_features.py` | xG rolling, overperformance, split H/A |
 | `shots_features.py` | Volume tiri, conversione, big chances |
 | `schedule_strength.py` | SOS, points vs expected |
-| `lineup_features.py` | XI ratings, assenze, bench, continuity |
-| `tactical_features.py` | Formazioni, duelli tattici |
+| `lineup_features.py` | XI ratings, assenze, gate pre-match, `resolve_lineup_for_match()` |
+| `tactical_features.py` | Formazioni, duelli tattici, gate pre-match |
+| `data_sources.py` | Tracciamento origine dati per gruppi feature (explain/status) |
 | `fatigue_features.py` | Riposo, midweek, fatigue score |
 | `motivation_features.py` | Pressione classifica (top4, retrocessione) |
 | `recent_form.py`, `team_strength.py`, `standings_features.py`, `home_away.py` | Feature base |
@@ -147,12 +154,14 @@ ABLATION_VARIANTS (cumulative):
 |--------|----------|
 | `backtest.py` | Walk-forward multi-modello |
 | `ablation.py` | Studio incrementale gruppi feature |
-| `metrics.py` | Accuracy, Brier, log-loss, Brier skill, over/underconf |
+| `metrics.py` | Accuracy, Brier, log-loss, Brier skill, pick over/underconf, mean_calibration_gap |
 | `reports.py` | Report JSON/CSV comparativi |
 
 ### `src/prediction/explain.py`
 
-Explain arricchito: probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue), fattori positivi/negativi, warning confidenza.
+Explain arricchito: probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue), fattori positivi/negativi, `data_sources`, warning confidenza e fallback.
+
+**Diagnostica:** `src/cli_status.py` — comando `status` per ispezione dataset offline.
 
 ---
 

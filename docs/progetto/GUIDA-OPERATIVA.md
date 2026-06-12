@@ -24,6 +24,14 @@ Modalità **offline** di default (nessun token richiesto).
 python -m src.cli sync --league 384
 ```
 
+### Stato sistema
+
+```bash
+python -m src.cli status --league 384
+```
+
+Mostra modalità offline/API, conteggi partite, fixture companion e feature attive su una partita futura di esempio. Se manca il dataset processato, suggerisce di eseguire `sync`.
+
 ### Predizioni
 
 ```bash
@@ -66,7 +74,7 @@ Varianti: `base`, `base+xg`, `base+shots`, `base+player_lineup`, `base+tactical`
 python scripts/generate_fixtures.py
 ```
 
-Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/fixtures/`.
+Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/fixtures/`. Lineup e tactical usano le squadre reali di ogni fixture; le partite finite hanno `data_availability: known_pre_match`, le future `forecast`.
 
 ---
 
@@ -76,7 +84,7 @@ Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/
 python -m pytest -q
 ```
 
-Risultato atteso: **42 passed**.
+Risultato atteso: **53 passed**.
 
 CI automatica su GitHub Actions (`.github/workflows/ci.yml`).
 
@@ -123,3 +131,4 @@ Sync scarica partite passate (180gg) + future (30gg).
 - [CRONOSTORIA.md](CRONOSTORIA.md)
 - [06-feature-engineering.md](implementazioni/06-feature-engineering.md)
 - [14-ablation-e-valutazione.md](implementazioni/14-ablation-e-valutazione.md)
+- [16-hardening-feature-anti-leakage.md](implementazioni/16-hardening-feature-anti-leakage.md)

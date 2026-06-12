@@ -7,6 +7,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from src.config import FIXTURES_DIR
+from src.domain.match import Match
+
+# Convenzione disponibilità dati pre-match vs post-match
+KNOWN_PRE_MATCH = "known_pre_match"  # snapshot noto prima del kickoff (valido in backtest)
+FORECAST = "forecast"  # proiezione per partite future (valido in predict)
 
 
 @dataclass(frozen=True)
@@ -21,6 +26,9 @@ class LineupImpact:
     home_formation: str | None = None
     away_formation: str | None = None
     duel_edges: dict[str, float] = field(default_factory=dict)
+    data_availability: str = KNOWN_PRE_MATCH
+    home_id: int | None = None
+    away_id: int | None = None
 
 
 @dataclass(frozen=True)
@@ -46,6 +54,14 @@ class PlayerLineupSnapshot:
     away_bench_strength: float
     home_lineup_continuity: float
     away_lineup_continuity: float
+    data_availability: str = KNOWN_PRE_MATCH
+
+
+@dataclass(frozen=True)
+class ResolvedLineup:
+    lineup: LineupImpact | None
+    player_lineup: PlayerLineupSnapshot | None
+    source: str  # mock_fixture | default_fallback
 
 
 def _lineup_fixture_path(league_id: int) -> Path:
@@ -59,41 +75,54 @@ def _load_lineup_payload(league_id: int) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def load_lineup_impacts(league_id: int) -> dict[int, LineupImpact]:
-    payload = _load_lineup_payload(league_id)
-    impacts: dict[int, LineupImpact] = {}
-    for fixture_id, row in payload.get("fixtures", {}).items():
-        impacts[int(fixture_id)] = LineupImpact(
-            fixture_id=int(fixture_id),
-            home_offensive_quality=float(row.get("home_offensive_quality", 1.0)),
-            home_defensive_quality=float(row.get("home_defensive_quality", 1.0)),
-            away_offensive_quality=float(row.get("away_offensive_quality", 1.0)),
-            away_defensive_quality=float(row.get("away_defensive_quality", 1.0)),
-            home_absences=int(row.get("home_absences", 0)),
-            away_absences=int(row.get("away_absences", 0)),
-            home_formation=row.get("home_formation"),
-            away_formation=row.get("away_formation"),
-            duel_edges=row.get("duel_edges", {}),
-        )
-    return impacts
-
-
-def get_lineup_impact(league_id: int, fixture_id: int) -> LineupImpact | None:
-    return load_lineup_impacts(league_id).get(fixture_id)
-
-
-def get_player_lineup_snapshot(league_id: int, fixture_id: int) -> PlayerLineupSnapshot | None:
+def get_fixture_lineup_row(league_id: int, fixture_id: int) -> dict | None:
     payload = _load_lineup_payload(league_id)
     row = payload.get("fixtures", {}).get(str(fixture_id))
-    if row is None:
-        return None
+    return row if isinstance(row, dict) else None
 
+
+def is_pre_match_lineup_usable(row: dict, match: Match) -> bool:
+    """True se i dati lineup/tactical sono utilizzabili senza leakage."""
+    availability = row.get("data_availability")
+    if availability not in {KNOWN_PRE_MATCH, FORECAST}:
+        return False
+    home_id = row.get("home_id")
+    away_id = row.get("away_id")
+    if home_id is not None and int(home_id) != match.home.team_id:
+        return False
+    if away_id is not None and int(away_id) != match.away.team_id:
+        return False
+    if match.is_finished:
+        return availability == KNOWN_PRE_MATCH
+    return availability == FORECAST
+
+
+def _lineup_from_row(fixture_id: int, row: dict) -> LineupImpact:
+    return LineupImpact(
+        fixture_id=fixture_id,
+        home_offensive_quality=float(row.get("home_offensive_quality", 1.0)),
+        home_defensive_quality=float(row.get("home_defensive_quality", 1.0)),
+        away_offensive_quality=float(row.get("away_offensive_quality", 1.0)),
+        away_defensive_quality=float(row.get("away_defensive_quality", 1.0)),
+        home_absences=int(row.get("home_absences", 0)),
+        away_absences=int(row.get("away_absences", 0)),
+        home_formation=row.get("home_formation"),
+        away_formation=row.get("away_formation"),
+        duel_edges=row.get("duel_edges", {}),
+        data_availability=str(row.get("data_availability", KNOWN_PRE_MATCH)),
+        home_id=int(row["home_id"]) if row.get("home_id") is not None else None,
+        away_id=int(row["away_id"]) if row.get("away_id") is not None else None,
+    )
+
+
+def _player_from_row(fixture_id: int, row: dict) -> PlayerLineupSnapshot:
     def side(prefix: str, defaults: dict) -> dict:
         block = row.get(prefix, defaults)
         return block if isinstance(block, dict) else defaults
 
     home = side("home_player", {})
     away = side("away_player", {})
+    availability = str(row.get("data_availability", KNOWN_PRE_MATCH))
 
     return PlayerLineupSnapshot(
         fixture_id=fixture_id,
@@ -113,8 +142,12 @@ def get_player_lineup_snapshot(league_id: int, fixture_id: int) -> PlayerLineupS
         away_starting_xi_midfield_rating=float(away.get("starting_xi_midfield_rating", 1.0)),
         home_goalkeeper_rating=float(home.get("goalkeeper_rating", 0.75)),
         away_goalkeeper_rating=float(away.get("goalkeeper_rating", 0.75)),
-        home_missing_starters_count=int(home.get("missing_starters_count", row.get("home_absences", 0))),
-        away_missing_starters_count=int(away.get("missing_starters_count", row.get("away_absences", 0))),
+        home_missing_starters_count=int(
+            home.get("missing_starters_count", row.get("home_absences", 0))
+        ),
+        away_missing_starters_count=int(
+            away.get("missing_starters_count", row.get("away_absences", 0))
+        ),
         home_missing_minutes_share=float(home.get("missing_minutes_share", 0.0)),
         away_missing_minutes_share=float(away.get("missing_minutes_share", 0.0)),
         home_missing_goals_share=float(home.get("missing_goals_share", 0.0)),
@@ -125,7 +158,47 @@ def get_player_lineup_snapshot(league_id: int, fixture_id: int) -> PlayerLineupS
         away_bench_strength=float(away.get("bench_strength", 0.65)),
         home_lineup_continuity=float(home.get("lineup_continuity", 0.8)),
         away_lineup_continuity=float(away.get("lineup_continuity", 0.8)),
+        data_availability=availability,
     )
+
+
+def resolve_lineup_for_match(league_id: int, match: Match) -> ResolvedLineup:
+    row = get_fixture_lineup_row(league_id, match.id)
+    if row and is_pre_match_lineup_usable(row, match):
+        return ResolvedLineup(
+            lineup=_lineup_from_row(match.id, row),
+            player_lineup=_player_from_row(match.id, row),
+            source="mock_fixture",
+        )
+    return ResolvedLineup(lineup=None, player_lineup=None, source="default_fallback")
+
+
+def load_lineup_impacts(league_id: int) -> dict[int, LineupImpact]:
+    payload = _load_lineup_payload(league_id)
+    impacts: dict[int, LineupImpact] = {}
+    for fixture_id, row in payload.get("fixtures", {}).items():
+        impacts[int(fixture_id)] = _lineup_from_row(int(fixture_id), row)
+    return impacts
+
+
+def get_lineup_impact(league_id: int, fixture_id: int, match: Match | None = None) -> LineupImpact | None:
+    if match is not None:
+        resolved = resolve_lineup_for_match(league_id, match)
+        return resolved.lineup
+    row = get_fixture_lineup_row(league_id, fixture_id)
+    return _lineup_from_row(fixture_id, row) if row else None
+
+
+def get_player_lineup_snapshot(
+    league_id: int,
+    fixture_id: int,
+    match: Match | None = None,
+) -> PlayerLineupSnapshot | None:
+    if match is not None:
+        resolved = resolve_lineup_for_match(league_id, match)
+        return resolved.player_lineup
+    row = get_fixture_lineup_row(league_id, fixture_id)
+    return _player_from_row(fixture_id, row) if row else None
 
 
 def player_lineup_to_features(snap: PlayerLineupSnapshot) -> dict[str, float]:
@@ -176,4 +249,5 @@ def default_player_lineup_snapshot(fixture_id: int) -> PlayerLineupSnapshot:
         away_bench_strength=0.65,
         home_lineup_continuity=0.8,
         away_lineup_continuity=0.8,
+        data_availability="default_fallback",
     )

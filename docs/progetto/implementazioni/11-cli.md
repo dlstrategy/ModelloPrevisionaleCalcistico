@@ -9,6 +9,7 @@
 | Comando | Descrizione |
 |---------|-------------|
 | `sync` | Carica dataset (offline o API) |
+| `status` | Stato dataset, companion e feature attive |
 | `predict` | Predizioni per data |
 | `backtest` | Valutazione modelli |
 | `features` | Riepilogo feature engineering |
@@ -25,6 +26,30 @@ python -m src.cli sync --league 384
 Offline: legge `tests/fixtures/league_384_matches.json`  
 API (Fase 3): passate 180gg + future 30gg
 
+Salva in `data/processed/league_{id}_dataset.json`.
+
+---
+
+### `status`
+
+```bash
+python -m src.cli status --league 384
+```
+
+**File:** `src/cli_status.py`
+
+Stampa:
+- Modalità (offline / API Sportmonks)
+- Lega default e richiesta
+- Partite totali / finite / future
+- Squadre distinte
+- Fixture companion (xg, shots, lineups, tactical, calendar)
+- Feature attive su partita futura di esempio
+
+Se il dataset processato non esiste, esce con codice 1 e suggerisce `python -m src.cli sync --league {id}`.
+
+**Test:** `tests/test_status.py`
+
 ---
 
 ### `predict`
@@ -38,7 +63,7 @@ python -m src.cli predict --date 2025-10-18 --model ensemble [--explain]
 | `--date` | obbligatorio |
 | `--model` | `ensemble` |
 | `--league` | 384 |
-| `--explain` | off |
+| `--explain` | off — JSON explain per **ogni** partita predetta |
 
 Output: `data/predictions/predictions_{date}.json`
 
@@ -49,6 +74,8 @@ Output: `data/predictions/predictions_{date}.json`
 ```bash
 python -m src.cli backtest --league 384 [--model X | --all-models] [--rounds N]
 ```
+
+Mostra accuracy, Brier, log-loss, Brier skill, mean calibration gap, pick over/underconfidence.
 
 ---
 
@@ -71,7 +98,7 @@ Mostra:
 python -m src.cli ablation --league 384 --rounds 5
 ```
 
-Tabella comparativa 7 varianti + report JSON.
+Tabella comparativa 7 varianti (con CalGap, PickOver, PickUnder) + report JSON.
 
 ---
 
@@ -83,4 +110,4 @@ Tabella comparativa 7 varianti + report JSON.
 
 ## Fase di sviluppo
 
-Fase 1 (sync, predict, backtest) → Fase 2c (features, ablation, explain multi-match)
+Fase 1 (sync, predict, backtest) → Fase 2c (features, ablation, explain multi-match) → Fase 2d (`status`)

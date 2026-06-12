@@ -83,6 +83,12 @@ Orchestrazione:
 | `missing_minutes/goals/xg_share` | Impatto assenze |
 | `bench_strength`, `lineup_continuity` | Panchina e continuità |
 
+**Gate anti-leakage** (`resolve_lineup_for_match`):
+- `known_pre_match` — partite finite, valido in backtest
+- `forecast` — partite future, valido in predict
+- Validazione `home_id` / `away_id` vs partecipanti match
+- `source`: `mock_fixture` | `default_fallback`
+
 ### 7. Tactical matchup — 8 feature
 
 **File:** `tactical_features.py`  
@@ -144,10 +150,17 @@ build_match_context(dataset, match, settings, enabled_feature_groups?)
 
 ## Anti-leakage
 
-Tutte le feature storiche usano `dataset.finished_before(as_of)` o `team_history(team_id, as_of)`.
+Tutte le feature storiche usano `dataset.finished_before(as_of)` o `team_history(team_id, as_of)` con `starting_at < as_of`.
+
+Lineup/tactical mock:
+- Backtest su partite finite → solo `data_availability = known_pre_match`
+- Predict su partite future → solo `data_availability = forecast`
+- Il match corrente non entra mai nel proprio storico
+
+Tracciamento fonti: `data_sources.py` → usato in explain e status.
 
 ---
 
 ## Fase di sviluppo
 
-Fase 2 (base) → Fase 2c (9 gruppi completi + ablation)
+Fase 2 (base) → Fase 2c (9 gruppi completi + ablation) → Fase 2d (gate pre-match lineup/tactical)

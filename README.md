@@ -10,6 +10,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2** | Completata | Multi-modello, ensemble, calibrazione — offline |
 | **Fase 2b** | Completata | Hardening: fix Elo, sync future, CI, normalize |
 | **Fase 2c** | Completata | 9 gruppi feature, ablation, fixture 10 squadre |
+| **Fase 2d** | Completata | Hardening: status, anti-leakage lineup, explain data_sources |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -59,6 +60,9 @@ Senza token funziona in **modalità offline** (default).
 # Sync (offline Fase 2, oppure API se Fase 3 abilitata)
 python -m src.cli sync --league 384
 
+# Stato dataset, fixture companion e feature attive
+python -m src.cli status --league 384
+
 # Predizioni
 python -m src.cli predict --date 2025-09-20 --model ensemble
 python -m src.cli predict --date 2025-09-20 --model poisson --explain
@@ -101,7 +105,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (15 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (16 moduli)
 
 ## Documentazione Sportmonks API
 

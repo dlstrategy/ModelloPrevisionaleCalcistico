@@ -94,6 +94,23 @@ Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue)
 
 ---
 
+## Fase 2d — Hardening feature e anti-leakage (completata)
+
+**Obiettivo:** Consolidare Fase 2c prima di nuove feature — diagnostica, gate pre-match, test leakage, metriche calibrazione.
+
+| Area | Modifica |
+|------|----------|
+| CLI `status` | Riepilogo modalità, dataset, companion, feature attive |
+| Fixture generator | Lineup/tactical con home/away reali per ogni match |
+| Pre-match gate | `known_pre_match` (finite) / `forecast` (future) |
+| Explain | Sezione `data_sources`, warning fallback lineup/tactical |
+| Metriche | `mean_calibration_gap`, `pick_overconfidence_rate` |
+| Test | `test_status`, `test_anti_leakage`, `test_metrics` |
+
+**Test:** 53 passed.
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
@@ -112,6 +129,7 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M4] Documentazione progetto completa
 ├── [M5] Fase 2b — Hardening (Elo, sync, CI)
 ├── [M6] Fase 2c — Feature engineering + ablation
+├── [M6b] Fase 2d — Hardening anti-leakage + status CLI
 └── [M7] Fase 3 — API live (futuro)
 ```
 
@@ -126,6 +144,8 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 | Date invalide in fixture generator | `datetime + timedelta` |
 | SSL Windows | `urllib` + `certifi` |
 | SQLite lock test | Cache `:memory:` |
+| Lineup con squadre sbagliate in fixture | `MatchRef` con home/away reali in `generate_fixtures.py` |
+| Leakage lineup post-match | Gate `data_availability` + `resolve_lineup_for_match()` |
 
 ---
 

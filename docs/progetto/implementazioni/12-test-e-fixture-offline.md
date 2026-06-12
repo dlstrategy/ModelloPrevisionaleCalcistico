@@ -2,7 +2,7 @@
 
 ## Test suite
 
-**42 test** — `python -m pytest -q`
+**53 test** — `python -m pytest -q`
 
 | File | Copertura |
 |------|-----------|
@@ -11,8 +11,11 @@
 | `test_elo.py` | Elo + fix away prob |
 | `test_ensemble.py` | Ensemble |
 | `test_features.py` | Team strength base |
-| `test_feature_engineering.py` | Advanced strength, xG, shots, explain |
+| `test_feature_engineering.py` | Advanced strength, xG, shots, explain + data_sources |
 | `test_ablation.py` | 7 varianti ablation |
+| `test_anti_leakage.py` | Gate pre-match, storico, coerenza lineup |
+| `test_status.py` | Comando CLI status |
+| `test_metrics.py` | Calibration gap, pick confidence rates |
 | `test_normalize.py` | Datetime Sportmonks/ISO |
 | `test_sync.py` | Sync past+future, merge |
 | `test_client.py` | HTTP mock (auth, 429, cache) |
@@ -32,9 +35,18 @@ Generatore: `scripts/generate_fixtures.py`
 | `league_384_matches.json` | 50 partite: 40 finite + 10 future |
 | `league_384_xg.json` | xG per team + match_history |
 | `league_384_shots.json` | Shot profile + match_history |
-| `league_384_lineups.json` | Lineup, player impact, assenze |
-| `league_384_tactical.json` | Formazioni, duelli tattici |
+| `league_384_lineups.json` | Lineup, player impact, assenze (tutte le 50 partite) |
+| `league_384_tactical.json` | Formazioni, duelli tattici (tutte le 50 partite) |
 | `league_384_calendar.json` | Midweek, rotation risk |
+
+### Convenzione `data_availability`
+
+| Valore | Partite | Uso |
+|--------|---------|-----|
+| `known_pre_match` | Finite (40) | Backtest — snapshot pre-kickoff |
+| `forecast` | Future (10) | Predict — proiezione pre-match |
+
+Ogni riga lineup/tactical include `home_id`, `away_id` coerenti con `league_384_matches.json`. I rating offensive corrispondono alla tabella strength del generatore.
 
 ### Squadre mock (ID)
 
@@ -69,10 +81,11 @@ GitHub Actions: `.github/workflows/ci.yml` — pytest su push/PR.
 ```bash
 python scripts/generate_fixtures.py
 python -m src.cli sync --league 384
+python -m src.cli status --league 384
 ```
 
 ---
 
 ## Fase di sviluppo
 
-Fase 1 (10 match, 4 squadre) → Fase 2c (50 match, 10 squadre, 6 file JSON)
+Fase 1 (10 match, 4 squadre) → Fase 2c (50 match, 10 squadre, 6 file JSON) → Fase 2d (lineup/tactical su tutte le partite, test anti-leakage)

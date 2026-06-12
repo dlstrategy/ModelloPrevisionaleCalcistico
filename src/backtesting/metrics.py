@@ -8,6 +8,9 @@ from dataclasses import dataclass, field
 from src.domain.enums import MatchOutcome
 from src.domain.models import OutcomeProbabilities, Prediction
 
+# Soglia per pick over/underconfidence (hit binario 0/1 vs confidence del pick)
+PICK_CONFIDENCE_MARGIN = 0.05
+
 
 @dataclass(frozen=True)
 class BacktestMetrics:
@@ -16,9 +19,22 @@ class BacktestMetrics:
     brier_score: float
     log_loss: float
     brier_skill_score: float
-    overconfidence_rate: float
-    underconfidence_rate: float
+    # Frazione di pick in cui confidence > hit + margin (hit binario 0/1)
+    pick_overconfidence_rate: float
+    # Frazione di pick in cui confidence < hit - margin
+    pick_underconfidence_rate: float
+    mean_calibration_gap: float
     calibration_bins: list[dict[str, float]] = field(default_factory=list)
+
+    @property
+    def overconfidence_rate(self) -> float:
+        """Alias retrocompatibile."""
+        return self.pick_overconfidence_rate
+
+    @property
+    def underconfidence_rate(self) -> float:
+        """Alias retrocompatibile."""
+        return self.pick_underconfidence_rate
 
     def as_dict(self) -> dict:
         return {
@@ -27,8 +43,11 @@ class BacktestMetrics:
             "brier_score": self.brier_score,
             "log_loss": self.log_loss,
             "brier_skill_score": self.brier_skill_score,
-            "overconfidence_rate": self.overconfidence_rate,
-            "underconfidence_rate": self.underconfidence_rate,
+            "pick_overconfidence_rate": self.pick_overconfidence_rate,
+            "pick_underconfidence_rate": self.pick_underconfidence_rate,
+            "mean_calibration_gap": self.mean_calibration_gap,
+            "overconfidence_rate": self.pick_overconfidence_rate,
+            "underconfidence_rate": self.pick_underconfidence_rate,
             "calibration_bins": self.calibration_bins,
         }
 
@@ -91,18 +110,31 @@ def compute_calibration_bins(
     return bins
 
 
-def compute_confidence_rates(
+def compute_mean_calibration_gap(bins: list[dict[str, float]]) -> float:
+    if not bins:
+        return 0.0
+    total = sum(float(b["count"]) for b in bins)
+    if total <= 0:
+        return 0.0
+    weighted = sum(float(b["gap"]) * float(b["count"]) for b in bins)
+    return weighted / total
+
+
+def compute_pick_confidence_rates(
     predictions: list[Prediction],
     actuals: list[MatchOutcome],
+    *,
+    margin: float = PICK_CONFIDENCE_MARGIN,
 ) -> tuple[float, float]:
+    """Metriche grezze: confronto confidence del pick vs hit binario (0/1)."""
     if not predictions:
         return 0.0, 0.0
     over = under = 0
     for pred, actual in zip(predictions, actuals):
         hit = 1.0 if pred.pick == actual else 0.0
-        if pred.confidence > hit + 0.05:
+        if pred.confidence > hit + margin:
             over += 1
-        elif pred.confidence < hit - 0.05:
+        elif pred.confidence < hit - margin:
             under += 1
     n = len(predictions)
     return over / n, under / n
@@ -116,8 +148,9 @@ def compute_metrics(predictions: list[Prediction], actuals: list[MatchOutcome]) 
             brier_score=0.0,
             log_loss=0.0,
             brier_skill_score=0.0,
-            overconfidence_rate=0.0,
-            underconfidence_rate=0.0,
+            pick_overconfidence_rate=0.0,
+            pick_underconfidence_rate=0.0,
+            mean_calibration_gap=0.0,
         )
 
     correct = 0
@@ -144,7 +177,9 @@ def compute_metrics(predictions: list[Prediction], actuals: list[MatchOutcome]) 
     else:
         brier_skill = 0.0
 
-    over, under = compute_confidence_rates(predictions, actuals)
+    over, under = compute_pick_confidence_rates(predictions, actuals)
+    bins = compute_calibration_bins(predictions, actuals)
+    mean_gap = compute_mean_calibration_gap(bins)
 
     return BacktestMetrics(
         samples=n,
@@ -152,7 +187,8 @@ def compute_metrics(predictions: list[Prediction], actuals: list[MatchOutcome]) 
         brier_score=brier_score,
         log_loss=log_loss / n,
         brier_skill_score=brier_skill,
-        overconfidence_rate=over,
-        underconfidence_rate=under,
-        calibration_bins=compute_calibration_bins(predictions, actuals),
+        pick_overconfidence_rate=over,
+        pick_underconfidence_rate=under,
+        mean_calibration_gap=mean_gap,
+        calibration_bins=bins,
     )

@@ -48,9 +48,12 @@ save_ablation_report(results, output_dir)
 | `brier_score` | Errore quadratico probabilità |
 | `log_loss` | Penalità probabilità calibrate |
 | `brier_skill_score` | `1 - brier / brier_baseline` (baseline = freq. marginali) |
-| `calibration_bins` | Confidence vs hit rate per bin |
-| `overconfidence_rate` | % volte confidenza > hit + 5% |
-| `underconfidence_rate` | % volte confidenza < hit - 5% |
+| `mean_calibration_gap` | Media pesata `\|conf - hit\|` sui bin di calibrazione |
+| `calibration_bins` | Confidence vs hit rate per bin (con campo `gap`) |
+| `pick_overconfidence_rate` | % volte confidence pick > hit binario + 5% |
+| `pick_underconfidence_rate` | % volte confidence pick < hit binario - 5% |
+
+Alias retrocompatibili: `overconfidence_rate`, `underconfidence_rate`.
 
 Implementate in `src/backtesting/metrics.py`.
 
@@ -70,8 +73,8 @@ Output console + `data/backtests/ablation_YYYYMMDD_HHMMSS.json`.
 
 - **Brier skill > 0** — modello migliore del baseline naive
 - **Delta Brier tra varianti** — valore marginale del gruppo aggiunto
-- **Overconfidence alto** — modello troppo sicuro → calibrare temperature
-- **Calibration gap** — probabilità non allineate alla frequenza reale
+- **Pick overconfidence alto** — modello troppo sicuro sul pick (metrica grezza hit 0/1)
+- **Mean calibration gap** — distanza media tra confidence e hit rate nei bin
 
 ---
 

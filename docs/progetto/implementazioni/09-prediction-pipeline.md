@@ -7,6 +7,7 @@
 | `predict_match.py` | Singola partita → `Prediction` |
 | `predict_round.py` | Giornata → lista + JSON |
 | `explain.py` | Explain arricchito |
+| `data_sources.py` | Origine dati per gruppo feature |
 
 ---
 
@@ -45,6 +46,12 @@ probs = model.predict(context)
     "tactical": 0.05,
     "fatigue": -0.03
   },
+  "data_sources": {
+    "base": "historical",
+    "xg": "mock_fixture_historical",
+    "player_lineup": "mock_fixture",
+    "tactical": "mock_fixture"
+  },
   "top_factors": {
     "positive": [{"feature": "home_xg_diff_avg", "value": 0.45}],
     "negative": [{"feature": "away_fatigue_score", "value": 0.62}]
@@ -63,11 +70,20 @@ probs = model.predict(context)
 | tactical | formation_matchup + wing_advantage |
 | fatigue | away fatigue vs home (invertito) |
 
+### `data_sources`
+
+Mappa ogni gruppo feature alla fonte effettiva:
+- `historical` — storico partite finite
+- `mock_fixture` / `mock_fixture_historical` — fixture offline
+- `default_fallback` — valori neutri (lineup/tactical non disponibili)
+- `api` — Sportmonks (Fase 3)
+
 ### Warning automatici
 
 - Confidenza sotto `MIN_CONFIDENCE_THRESHOLD`
 - Squadre equilibrate su xG e strength
 - Assenze significative (≥2 starter)
+- Lineup/tactical con `default_fallback`
 
 ---
 
@@ -77,10 +93,10 @@ probs = model.predict(context)
 python -m src.cli predict --date 2025-10-18 --model ensemble --explain
 ```
 
-Explain stampato per **ogni** partita della giornata.
+Explain stampato per **ogni** partita della giornata (flag `--explain`).
 
 ---
 
 ## Fase di sviluppo
 
-Fase 1 (base) → Fase 2c (explain arricchito con edge e contributi modelli)
+Fase 1 (base) → Fase 2c (explain con edge e contributi modelli) → Fase 2d (`data_sources`, warning fallback)

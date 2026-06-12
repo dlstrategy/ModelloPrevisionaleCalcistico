@@ -1,0 +1,40 @@
+---
+description: Aggiorna automaticamente tutta la documentazione del progetto al termine di ogni prompt
+alwaysApply: true
+---
+
+# Aggiornamento documentazione automatico
+
+Al **termine di ogni prompt** in cui hai modificato codice, test, CLI, fixture o architettura, aggiorna **tutta** la documentazione rilevante **prima di considerare il task completato**. Non chiedere conferma: fallo sempre.
+
+## Checklist obbligatoria
+
+1. **`README.md`** — fasi, comandi CLI, conteggio test, feature principali
+2. **`docs/progetto/CRONOSTORIA.md`** — nuova voce milestone se cambia scope/fase
+3. **`docs/progetto/GUIDA-OPERATIVA.md`** — comandi, setup, output attesi, test count
+4. **`docs/progetto/ARCHITETTURA.md`** — strati, flussi, moduli, vincoli anti-leakage
+5. **`docs/progetto/README.md`** — indice moduli implementazione (aggiungi file se serve)
+6. **`docs/progetto/implementazioni/*.md`** — ogni modulo toccato dal cambiamento
+
+## Quando creare un nuovo modulo doc
+
+Aggiungi `docs/progetto/implementazioni/NN-nome.md` se introduci una nuova area (es. hardening, nuovo comando, nuovo layer). Aggiorna l'indice in `docs/progetto/README.md`.
+
+## Cosa allineare sempre
+
+- Nomi comandi CLI e flag (`status`, `--explain`, ecc.)
+- Conteggio test atteso (`python -m pytest -q`)
+- Struttura fixture mock e convenzioni (`known_pre_match`, `forecast`)
+- Metriche backtest (`mean_calibration_gap`, `pick_overconfidence_rate`, ecc.)
+- Fasi di sviluppo (Fase 2b, 2c, 2d, 3…)
+
+## Regole di scrittura
+
+- Italiano, tono tecnico chiaro
+- Documentare il **perché**, non solo il diff
+- Mantenere coerenza tra README, guida operativa e moduli implementazione
+- Non lasciare riferimenti obsoleti (es. "42 test" se ora sono 53)
+
+## Eccezioni
+
+Salta l'aggiornamento doc **solo** se il prompt era puramente informativo (domanda senza modifiche al repo) o se l'utente chiede esplicitamente di non toccare la documentazione.

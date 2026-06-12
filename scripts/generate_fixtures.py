@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import random
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -31,6 +32,17 @@ STRENGTH = {
 
 FORMATIONS = ["4-3-3", "4-4-2", "3-5-2", "4-2-3-1", "3-4-3"]
 
+KNOWN_PRE_MATCH = "known_pre_match"
+FORECAST = "forecast"
+
+
+@dataclass(frozen=True)
+class MatchRef:
+    fixture_id: int
+    home_id: int
+    away_id: int
+    finished: bool
+
 
 def _pairings(round_num: int) -> list[tuple[int, int]]:
     ids = list(TEAMS.keys())
@@ -49,11 +61,83 @@ def _simulate_score(home: int, away: int) -> tuple[int, int, float, float]:
     return hg, ag, round(hxg, 2), round(axg, 2)
 
 
-def generate_matches() -> dict:
+def _lineup_entry(match: MatchRef) -> dict:
+    random.seed(match.fixture_id)
+    h, a = match.home_id, match.away_id
+    hf = random.choice(FORMATIONS)
+    af = random.choice(FORMATIONS)
+    availability = KNOWN_PRE_MATCH if match.finished else FORECAST
+    return {
+        "fixture_id": match.fixture_id,
+        "home_id": h,
+        "away_id": a,
+        "data_availability": availability,
+        "home_offensive_quality": round(STRENGTH[h], 2),
+        "home_defensive_quality": round(1.5 - STRENGTH[h] * 0.2, 2),
+        "away_offensive_quality": round(STRENGTH[a], 2),
+        "away_defensive_quality": round(1.5 - STRENGTH[a] * 0.2, 2),
+        "home_absences": random.randint(0, 2),
+        "away_absences": random.randint(0, 2),
+        "home_formation": hf,
+        "away_formation": af,
+        "duel_edges": {
+            "wing": round(random.uniform(-0.3, 0.3), 2),
+            "midfield": round(random.uniform(-0.3, 0.3), 2),
+            "aerial": round(random.uniform(-0.2, 0.2), 2),
+            "pressing": round(random.uniform(-0.25, 0.25), 2),
+            "defensive_line": round(random.uniform(0, 0.3), 2),
+        },
+        "home_player": {
+            "starting_xi_attack_rating": round(STRENGTH[h], 2),
+            "starting_xi_defense_rating": round(1.4 - STRENGTH[h] * 0.15, 2),
+            "starting_xi_midfield_rating": round(STRENGTH[h] * 0.95, 2),
+            "goalkeeper_rating": round(0.7 + random.uniform(0, 0.2), 2),
+            "missing_starters_count": random.randint(0, 2),
+            "missing_minutes_share": round(random.uniform(0, 0.15), 2),
+            "missing_goals_share": round(random.uniform(0, 0.1), 2),
+            "missing_xg_share": round(random.uniform(0, 0.12), 2),
+            "bench_strength": round(0.55 + STRENGTH[h] * 0.08, 2),
+            "lineup_continuity": round(random.uniform(0.65, 0.95), 2),
+        },
+        "away_player": {
+            "starting_xi_attack_rating": round(STRENGTH[a], 2),
+            "starting_xi_defense_rating": round(1.4 - STRENGTH[a] * 0.15, 2),
+            "starting_xi_midfield_rating": round(STRENGTH[a] * 0.95, 2),
+            "goalkeeper_rating": round(0.7 + random.uniform(0, 0.2), 2),
+            "missing_starters_count": random.randint(0, 2),
+            "missing_minutes_share": round(random.uniform(0, 0.15), 2),
+            "missing_goals_share": round(random.uniform(0, 0.1), 2),
+            "missing_xg_share": round(random.uniform(0, 0.12), 2),
+            "bench_strength": round(0.55 + STRENGTH[a] * 0.08, 2),
+            "lineup_continuity": round(random.uniform(0.65, 0.95), 2),
+        },
+    }
+
+
+def _tactical_entry(match: MatchRef) -> dict:
+    random.seed(match.fixture_id + 7)
+    availability = KNOWN_PRE_MATCH if match.finished else FORECAST
+    return {
+        "fixture_id": match.fixture_id,
+        "home_id": match.home_id,
+        "away_id": match.away_id,
+        "data_availability": availability,
+        "home_formation": random.choice(FORMATIONS),
+        "away_formation": random.choice(FORMATIONS),
+        "wing_advantage": round(random.uniform(-0.35, 0.35), 2),
+        "midfield_advantage": round(random.uniform(-0.35, 0.35), 2),
+        "aerial_advantage": round(random.uniform(-0.2, 0.2), 2),
+        "pressing_mismatch": round(random.uniform(-0.3, 0.3), 2),
+        "defensive_line_risk": round(random.uniform(0, 0.35), 2),
+    }
+
+
+def generate_matches() -> tuple[dict, dict, dict, list[MatchRef]]:
     data = []
     match_id = 1001
     xg_history: dict = {}
     shots_history: dict = {}
+    match_refs: list[MatchRef] = []
     season_start = datetime(2025, 8, 23)
 
     for round_num in range(1, 11):
@@ -83,6 +167,7 @@ def generate_matches() -> dict:
                 ],
                 "scores": scores,
             })
+            match_refs.append(MatchRef(match_id, home, away, finished))
             if finished:
                 hs = max(6, int(hxg * 9 + random.uniform(0, 4)))
                 aws = max(6, int(axg * 9 + random.uniform(0, 4)))
@@ -103,7 +188,7 @@ def generate_matches() -> dict:
                 }
             match_id += 1
 
-    return {"data": data}, xg_history, shots_history
+    return {"data": data}, xg_history, shots_history, match_refs
 
 
 def generate_xg(xg_history: dict) -> dict:
@@ -134,71 +219,16 @@ def generate_shots(shots_history: dict) -> dict:
     return {"teams": teams, "match_history": shots_history}
 
 
-def generate_lineups(match_ids_future: list[int]) -> dict:
-    fixtures = {}
-    for fid in match_ids_future:
-        random.seed(fid)
-        h, a = _pairings(fid)[0]
-        hf = random.choice(FORMATIONS)
-        af = random.choice(FORMATIONS)
-        fixtures[str(fid)] = {
-            "home_offensive_quality": round(STRENGTH[h], 2),
-            "home_defensive_quality": round(1.5 - STRENGTH[h] * 0.2, 2),
-            "away_offensive_quality": round(STRENGTH[a], 2),
-            "away_defensive_quality": round(1.5 - STRENGTH[a] * 0.2, 2),
-            "home_absences": random.randint(0, 2),
-            "away_absences": random.randint(0, 2),
-            "home_formation": hf,
-            "away_formation": af,
-            "duel_edges": {
-                "wing": round(random.uniform(-0.3, 0.3), 2),
-                "midfield": round(random.uniform(-0.3, 0.3), 2),
-                "aerial": round(random.uniform(-0.2, 0.2), 2),
-                "pressing": round(random.uniform(-0.25, 0.25), 2),
-                "defensive_line": round(random.uniform(0, 0.3), 2),
-            },
-            "home_player": {
-                "starting_xi_attack_rating": round(STRENGTH[h], 2),
-                "starting_xi_defense_rating": round(1.4 - STRENGTH[h] * 0.15, 2),
-                "starting_xi_midfield_rating": round(STRENGTH[h] * 0.95, 2),
-                "goalkeeper_rating": round(0.7 + random.uniform(0, 0.2), 2),
-                "missing_starters_count": random.randint(0, 2),
-                "missing_minutes_share": round(random.uniform(0, 0.15), 2),
-                "missing_goals_share": round(random.uniform(0, 0.1), 2),
-                "missing_xg_share": round(random.uniform(0, 0.12), 2),
-                "bench_strength": round(0.55 + STRENGTH[h] * 0.08, 2),
-                "lineup_continuity": round(random.uniform(0.65, 0.95), 2),
-            },
-            "away_player": {
-                "starting_xi_attack_rating": round(STRENGTH[a], 2),
-                "starting_xi_defense_rating": round(1.4 - STRENGTH[a] * 0.15, 2),
-                "starting_xi_midfield_rating": round(STRENGTH[a] * 0.95, 2),
-                "goalkeeper_rating": round(0.7 + random.uniform(0, 0.2), 2),
-                "missing_starters_count": random.randint(0, 2),
-                "missing_minutes_share": round(random.uniform(0, 0.15), 2),
-                "missing_goals_share": round(random.uniform(0, 0.1), 2),
-                "missing_xg_share": round(random.uniform(0, 0.12), 2),
-                "bench_strength": round(0.55 + STRENGTH[a] * 0.08, 2),
-                "lineup_continuity": round(random.uniform(0.65, 0.95), 2),
-            },
-        }
-    return {"fixtures": fixtures}
+def generate_lineups(match_refs: list[MatchRef]) -> dict:
+    return {
+        "fixtures": {str(m.fixture_id): _lineup_entry(m) for m in match_refs},
+    }
 
 
-def generate_tactical(future_ids: list[int]) -> dict:
-    fixtures = {}
-    for fid in future_ids:
-        random.seed(fid + 7)
-        fixtures[str(fid)] = {
-            "home_formation": random.choice(FORMATIONS),
-            "away_formation": random.choice(FORMATIONS),
-            "wing_advantage": round(random.uniform(-0.35, 0.35), 2),
-            "midfield_advantage": round(random.uniform(-0.35, 0.35), 2),
-            "aerial_advantage": round(random.uniform(-0.2, 0.2), 2),
-            "pressing_mismatch": round(random.uniform(-0.3, 0.3), 2),
-            "defensive_line_risk": round(random.uniform(0, 0.35), 2),
-        }
-    return {"fixtures": fixtures}
+def generate_tactical(match_refs: list[MatchRef]) -> dict:
+    return {
+        "fixtures": {str(m.fixture_id): _tactical_entry(m) for m in match_refs},
+    }
 
 
 def generate_calendar() -> dict:
@@ -214,8 +244,8 @@ def generate_calendar() -> dict:
 
 def main() -> None:
     FIXTURES.mkdir(parents=True, exist_ok=True)
-    matches, xg_hist, shots_hist = generate_matches()
-    future_ids = [m["id"] for m in matches["data"] if not m["scores"]]
+    matches, xg_hist, shots_hist, match_refs = generate_matches()
+    future = [m for m in match_refs if not m.finished]
 
     (FIXTURES / "league_384_matches.json").write_text(
         json.dumps(matches, indent=2), encoding="utf-8"
@@ -227,16 +257,19 @@ def main() -> None:
         json.dumps(generate_shots(shots_hist), indent=2), encoding="utf-8"
     )
     (FIXTURES / "league_384_lineups.json").write_text(
-        json.dumps(generate_lineups(future_ids), indent=2), encoding="utf-8"
+        json.dumps(generate_lineups(match_refs), indent=2), encoding="utf-8"
     )
     (FIXTURES / "league_384_tactical.json").write_text(
-        json.dumps(generate_tactical(future_ids), indent=2), encoding="utf-8"
+        json.dumps(generate_tactical(match_refs), indent=2), encoding="utf-8"
     )
     (FIXTURES / "league_384_calendar.json").write_text(
         json.dumps(generate_calendar(), indent=2), encoding="utf-8"
     )
-    finished = sum(1 for m in matches["data"] if m["scores"])
-    print(f"Generated {len(matches['data'])} matches ({finished} finished, {len(future_ids)} future)")
+    finished = sum(1 for m in match_refs if m.finished)
+    print(
+        f"Generated {len(match_refs)} matches ({finished} finished, {len(future)} future), "
+        f"lineups/tactical for all fixtures"
+    )
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.config import Settings
 from src.data_pipeline.dataset_builder import MatchDataset
 from src.domain.models import Prediction
+from src.features.data_sources import build_data_sources
 from src.features.feature_groups import FEATURE_GROUPS
 from src.features.match_context import MatchContext
 from src.models.registry import build_base_models
@@ -53,7 +54,8 @@ def explain_prediction(
     settings: Settings | None = None,
 ) -> dict:
     probs = prediction.probabilities
-    low_confidence = prediction.confidence < (settings.min_confidence_threshold if settings else 0.38)
+    threshold = settings.min_confidence_threshold if settings else 0.38
+    low_confidence = prediction.confidence < threshold
 
     xg_edge = _edge(
         context.home_xg_profile.xg_diff_avg,
@@ -82,6 +84,8 @@ def explain_prediction(
         for group, keys in FEATURE_GROUPS.items()
     }
 
+    data_sources = build_data_sources(context, settings) if settings else {}
+
     explanation = {
         "fixture_id": prediction.fixture_id,
         "match": f"{prediction.home_team} vs {prediction.away_team}",
@@ -100,6 +104,7 @@ def explain_prediction(
         "top_factors": _top_factors(context.feature_vector),
         "feature_groups_active": group_counts,
         "enabled_groups": sorted(context.enabled_feature_groups),
+        "data_sources": data_sources,
         "warnings": [],
     }
 
@@ -112,7 +117,15 @@ def explain_prediction(
         )
     if abs(xg_edge) < 0.05 and abs(strength_edge) < 0.05:
         explanation["warnings"].append("Squadre equilibrate su xG e strength — alta incertezza")
-    if context.player_lineup and (
+    if context.lineup_source == "default_fallback":
+        explanation["warnings"].append(
+            "Lineup/player impact usa default fallback — dati pre-match non disponibili"
+        )
+    if context.tactical_source == "default_fallback":
+        explanation["warnings"].append(
+            "Tactical matchup usa default fallback — dati pre-match non disponibili"
+        )
+    elif context.player_lineup and (
         context.player_lineup.home_missing_starters_count >= 2
         or context.player_lineup.away_missing_starters_count >= 2
     ):

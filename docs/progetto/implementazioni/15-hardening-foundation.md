@@ -77,3 +77,5 @@ Azione: `python -m pytest -q`
 ## Fase di sviluppo
 
 Fase 2b — tra Fase 2 e Fase 2c feature engineering.
+
+Per l'hardening successivo (status CLI, anti-leakage lineup, metriche calibrazione) vedi [16-hardening-feature-anti-leakage.md](16-hardening-feature-anti-leakage.md).

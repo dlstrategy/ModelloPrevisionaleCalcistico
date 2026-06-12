@@ -16,15 +16,14 @@ from src.features.home_away import ScheduleSnapshot, compute_schedule_snapshot
 from src.features.lineup_features import (
     LineupImpact,
     PlayerLineupSnapshot,
-    get_lineup_impact,
-    get_player_lineup_snapshot,
+    resolve_lineup_for_match,
 )
 from src.features.motivation_features import MotivationSnapshot, compute_motivation
 from src.features.recent_form import TeamFormSnapshot, compute_team_form
 from src.features.schedule_strength import ScheduleStrengthSnapshot, compute_schedule_strength
 from src.features.shots_features import TeamShotsProfile, get_team_shots_profile
 from src.features.standings_features import TeamStandingsSnapshot, get_team_standings
-from src.features.tactical_features import TacticalMatchup, get_tactical_matchup
+from src.features.tactical_features import TacticalMatchup, resolve_tactical_for_match
 from src.features.team_strength import TeamStrength, compute_team_strengths
 from src.features.xg_features import TeamXgProfile, TeamXgSnapshot, get_team_xg, get_team_xg_profile
 
@@ -59,6 +58,8 @@ class MatchContext:
     away_xg: TeamXgSnapshot | None = None
     lineup_impact: LineupImpact | None = None
     player_lineup: PlayerLineupSnapshot | None = None
+    lineup_source: str = "default_fallback"
+    tactical_source: str = "default_fallback"
     feature_vector: dict[str, float] = field(default_factory=dict)
     enabled_feature_groups: frozenset[str] = ALL_GROUPS
 
@@ -77,9 +78,8 @@ def build_match_context(
     league_id = match.league_id
     groups = enabled_feature_groups or ALL_GROUPS
 
-    lineup = get_lineup_impact(league_id, match.id)
-    player_lineup = get_player_lineup_snapshot(league_id, match.id)
-    tactical = get_tactical_matchup(league_id, match.id, lineup)
+    resolved_lineup = resolve_lineup_for_match(league_id, match)
+    resolved_tactical = resolve_tactical_for_match(league_id, match, resolved_lineup.lineup)
 
     partial = MatchContext(
         match=match,
@@ -105,11 +105,13 @@ def build_match_context(
         away_motivation=compute_motivation(get_team_standings(dataset, away_id, cutoff)),
         home_fatigue=compute_fatigue_snapshot(dataset, home_id, cutoff, league_id),
         away_fatigue=compute_fatigue_snapshot(dataset, away_id, cutoff, league_id),
-        tactical=tactical,
+        tactical=resolved_tactical.tactical,
         home_xg=get_team_xg(league_id, home_id),
         away_xg=get_team_xg(league_id, away_id),
-        lineup_impact=lineup,
-        player_lineup=player_lineup,
+        lineup_impact=resolved_lineup.lineup,
+        player_lineup=resolved_lineup.player_lineup,
+        lineup_source=resolved_lineup.source,
+        tactical_source=resolved_tactical.source,
         enabled_feature_groups=groups,
     )
 
@@ -145,6 +147,8 @@ def build_match_context(
         away_xg=partial.away_xg,
         lineup_impact=partial.lineup_impact,
         player_lineup=partial.player_lineup,
+        lineup_source=partial.lineup_source,
+        tactical_source=partial.tactical_source,
         feature_vector=filtered,
         enabled_feature_groups=groups,
     )

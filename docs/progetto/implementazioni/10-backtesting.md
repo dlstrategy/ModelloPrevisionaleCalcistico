@@ -30,9 +30,12 @@ Walk-forward su partite finite, `as_of = match.starting_at`, no leakage.
 | `brier_score` | Media (p - y)² su one-hot |
 | `log_loss` | -log(p_actual) |
 | `brier_skill_score` | 1 - brier_model / brier_baseline |
-| `overconfidence_rate` | conf > hit + 5% |
-| `underconfidence_rate` | conf < hit - 5% |
-| `calibration_bins` | Confidence vs hit rate |
+| `pick_overconfidence_rate` | Frazione pick con conf > hit binario (0/1) + 5% |
+| `pick_underconfidence_rate` | Frazione pick con conf < hit binario - 5% |
+| `mean_calibration_gap` | Media pesata `\|avg_confidence - hit_rate\|` sui bin |
+| `calibration_bins` | Confidence vs hit rate + `gap` per bin |
+
+> **Nota:** `pick_overconfidence_rate` e `pick_underconfidence_rate` sono metriche **grezze** basate su hit binario 0/1 del pick vs confidence. Alias retrocompatibili: `overconfidence_rate`, `underconfidence_rate`.
 
 Baseline Brier = probabilità marginali empiriche (freq. 1/X/2 nel campione).
 
@@ -46,7 +49,7 @@ Vedi [14-ablation-e-valutazione.md](14-ablation-e-valutazione.md).
 python -m src.cli ablation --league 384 --rounds 5
 ```
 
-Output: `data/backtests/ablation_*.json`
+Output tabella con `CalGap`, `PickOver`, `PickUnder` + `data/backtests/ablation_*.json`.
 
 ---
 
@@ -67,9 +70,11 @@ data/backtests/
 - `tests/test_backtest_no_leakage.py`
 - `tests/test_backtest_all_models.py`
 - `tests/test_ablation.py`
+- `tests/test_anti_leakage.py`
+- `tests/test_metrics.py`
 
 ---
 
 ## Fase di sviluppo
 
-Fase 1 (accuracy, Brier) → Fase 2 (log-loss, calibration) → Fase 2c (Brier skill, ablation, over/underconf)
+Fase 1 (accuracy, Brier) → Fase 2 (log-loss, calibration) → Fase 2c (Brier skill, ablation) → Fase 2d (mean_calibration_gap, pick confidence rates)
