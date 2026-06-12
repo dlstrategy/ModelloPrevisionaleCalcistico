@@ -16,6 +16,7 @@ from src.backtesting.walk_forward_trained import (
 )
 from src.cli_capabilities import print_capabilities
 from src.cli_status import print_status
+from src.cli_evaluate import print_evaluate_models
 from src.cli_train import print_train
 from src.cli_validate import print_validate
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
@@ -155,6 +156,24 @@ def cmd_status(args: argparse.Namespace) -> int:
     setup_logging(settings.log_level)
     league_id = args.league or settings.default_league_id
     return print_status(settings, league_id)
+
+
+def cmd_evaluate_models(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    return print_evaluate_models(
+        settings,
+        league_id,
+        profile=args.profile,
+        baseline_policy=args.baseline_policy,
+        candidate_policy=args.candidate_policy,
+        min_train_matches=args.min_train_matches,
+        test_window_size=args.test_window_size,
+        step_size=args.step_size,
+        include_ensemble_baseline=args.include_ensemble_baseline,
+        as_json=args.json,
+    )
 
 
 def cmd_train(args: argparse.Namespace) -> int:
@@ -528,6 +547,37 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override feature clipping post-scaling",
     )
     walk_p.set_defaults(func=cmd_walk_forward)
+
+    eval_p = sub.add_parser(
+        "evaluate-models",
+        help="Valutazione promotion gate feature_trained (walk-forward refit)",
+    )
+    eval_p.add_argument("--league", type=int, default=None)
+    eval_p.add_argument(
+        "--profile",
+        choices=["base", "advanced", "all_in_no_predictions"],
+        default=None,
+    )
+    eval_p.add_argument(
+        "--baseline-policy",
+        choices=["full", "compact"],
+        default="full",
+    )
+    eval_p.add_argument(
+        "--candidate-policy",
+        choices=["full", "compact"],
+        default="compact",
+    )
+    eval_p.add_argument("--min-train-matches", type=int, default=10)
+    eval_p.add_argument("--test-window-size", type=int, default=5)
+    eval_p.add_argument("--step-size", type=int, default=5)
+    eval_p.add_argument(
+        "--include-ensemble-baseline",
+        action="store_true",
+        help="Include ensemble walk-forward (informativo, non equivalente a refit)",
+    )
+    eval_p.add_argument("--json", action="store_true", help="Output JSON su stdout")
+    eval_p.set_defaults(func=cmd_evaluate_models)
 
     te_p = sub.add_parser(
         "transfer-estimate",

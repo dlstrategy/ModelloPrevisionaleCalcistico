@@ -211,6 +211,12 @@ Policy `full` (default) vs `compact` per ridurre overfitting: selezione feature 
 
 Vedi [implementazioni/25-feature-trained-compact-regularization.md](implementazioni/25-feature-trained-compact-regularization.md).
 
+### Model evaluation & promotion gate (Fase 2k)
+
+Report comparativo walk-forward full vs compact con giudizio `promoted`/`rejected`/`inconclusive`. Non modifica il modello usato in predict.
+
+Vedi [implementazioni/26-model-evaluation-promotion-gate.md](implementazioni/26-model-evaluation-promotion-gate.md).
+
 ---
 
 Vedi anche: [implementazioni/20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md)

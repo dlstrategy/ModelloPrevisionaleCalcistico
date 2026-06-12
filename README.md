@@ -21,6 +21,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2i** | Completata | Transfer-aware lineup features (gruppo player_lineup) |
 | **Fase 2i-audit** | Completata | Audit documentazione flow giocatori/trasferimenti |
 | **Fase 2j** | Completata | FeatureTrained compact & regularization (full/compact) |
+| **Fase 2k** | Completata | Model evaluation report & promotion gate |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -130,7 +131,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (25 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (26 moduli)
 - [Logica di funzionamento (audit)](docs/progetto/LOGICA-FUNZIONAMENTO.md)
 
 ## Documentazione Sportmonks API

@@ -40,6 +40,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 23 | [23-transfer-aware-lineup-features.md](implementazioni/23-transfer-aware-lineup-features.md) | Transfer-aware lineup features (gruppo player_lineup) |
 | 24 | [24-player-transfer-flow-audit.md](implementazioni/24-player-transfer-flow-audit.md) | Audit flow giocatori/trasferimenti (Fase 2i-audit) |
 | 25 | [25-feature-trained-compact-regularization.md](implementazioni/25-feature-trained-compact-regularization.md) | FeatureTrained compact & regularization (Fase 2j) |
+| 26 | [26-model-evaluation-promotion-gate.md](implementazioni/26-model-evaluation-promotion-gate.md) | Model evaluation & promotion gate (Fase 2k) |
 
 ## Documentazione API esterna
 
