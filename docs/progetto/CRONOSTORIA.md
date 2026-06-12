@@ -151,6 +151,19 @@ Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue)
 
 ---
 
+## Fase 2g.1 — Audit logico e correzioni valutazione (completata)
+
+| Area | Modifica |
+|------|----------|
+| Backtest | Warning `in_sample_artifact` per feature_trained |
+| Walk-forward | Refit automatico per feature_trained |
+| Modello | `FeatureTrainedModel.from_artifact()` |
+| Docs | `LOGICA-FUNZIONAMENTO.md`, modulo 20 |
+
+**Test:** 148+ passed.
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.

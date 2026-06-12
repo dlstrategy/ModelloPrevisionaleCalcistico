@@ -14,6 +14,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2e** | Completata | Data quality, validate CLI, walk-forward backtest |
 | **Fase 2f** | Completata | Data Capability Layer, profili dati, fallback intelligenti |
 | **Fase 2g** | Completata | FeatureTrainedModel offline (train + artifact JSON) |
+| **Fase 2g.1** | Completata | Audit logico, warning in-sample, walk-forward refit |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -94,7 +95,8 @@ python -m src.cli walk-forward --league 384 --model ensemble
 
 # Training offline feature_trained
 python -m src.cli train --league 384 --model feature_trained --profile advanced
-python -m src.cli predict --date 2025-10-18 --model feature_trained
+python -m src.cli backtest --league 384 --model feature_trained --rounds 5
+python -m src.cli walk-forward --league 384 --model feature_trained --profile advanced
 ```
 
 ## Fase 3 — Attivare Sportmonks API
@@ -122,7 +124,8 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (19 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (20 moduli)
+- [Logica di funzionamento (audit)](docs/progetto/LOGICA-FUNZIONAMENTO.md)
 
 ## Documentazione Sportmonks API
 

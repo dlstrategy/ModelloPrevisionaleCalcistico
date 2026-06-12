@@ -9,7 +9,8 @@ from datetime import datetime, timezone
 from src.training.dataset import TrainingSample
 
 CLASSES: tuple[str, ...] = ("HOME", "DRAW", "AWAY")
-MODEL_VERSION = "1.0.0"
+MODEL_VERSION = "2g.1"
+TRAINING_ALGORITHM = "softmax_regression_python"
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,7 @@ class FeatureTrainedArtifact:
     created_at: str
     training_config: dict
     warnings: tuple[str, ...] = ()
+    training_algorithm: str = TRAINING_ALGORITHM
 
 
 def _safe_float(value: float) -> float:
@@ -184,6 +186,7 @@ def train_softmax_model(
             "min_samples": cfg.min_samples,
         },
         warnings=tuple(warnings),
+        training_algorithm=TRAINING_ALGORITHM,
     )
 
 

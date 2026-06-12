@@ -103,6 +103,14 @@ python -m src.cli backtest --league 384 --model feature_trained --rounds 5
 
 Allena softmax regression su match finiti (`as_of=starting_at`), salva artifact in `data/models/feature_trained_384.json`. Richiede training prima del primo predict.
 
+**Attenzione:** `backtest --model feature_trained` produce metriche **in-sample** (warning esplicito). Per valutazione onesta:
+
+```bash
+python -m src.cli walk-forward --league 384 --model feature_trained --profile advanced
+```
+
+Vedi [LOGICA-FUNZIONAMENTO.md](LOGICA-FUNZIONAMENTO.md) per audit completo.
+
 ---
 
 ## Rigenerare fixture mock

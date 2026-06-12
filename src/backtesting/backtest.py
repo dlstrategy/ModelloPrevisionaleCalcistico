@@ -24,6 +24,14 @@ class BacktestResult:
     metrics: BacktestMetrics
     predictions: list[Prediction]
     actuals: list[MatchOutcome]
+    evaluation_mode: str | None = None
+    training_leakage_risk: bool = False
+    warning: str | None = None
+
+
+IN_SAMPLE_ARTIFACT_WARNING = (
+    "feature_trained artifact may have been trained on the same matches used for evaluation"
+)
 
 
 def run_backtest(
@@ -46,12 +54,23 @@ def run_backtest(
         predictions.append(pred)
         actuals.append(match.actual_outcome)  # type: ignore[arg-type]
 
+    evaluation_mode: str | None = None
+    training_leakage_risk = False
+    warning: str | None = None
+    if model.name == "feature_trained" and model.is_ready():
+        evaluation_mode = "in_sample_artifact"
+        training_leakage_risk = True
+        warning = IN_SAMPLE_ARTIFACT_WARNING
+
     return BacktestResult(
         model_name=model.name,
         league_id=dataset.league_id,
         metrics=compute_metrics(predictions, actuals),
         predictions=predictions,
         actuals=actuals,
+        evaluation_mode=evaluation_mode,
+        training_leakage_risk=training_leakage_risk,
+        warning=warning,
     )
 
 
@@ -92,6 +111,11 @@ def save_report(result: BacktestResult, output_dir: Path) -> tuple[Path, Path]:
             for p, a in zip(result.predictions, result.actuals)
         ],
     }
+    if result.evaluation_mode is not None:
+        payload["evaluation_mode"] = result.evaluation_mode
+        payload["training_leakage_risk"] = result.training_leakage_risk
+    if result.warning is not None:
+        payload["warning"] = result.warning
     json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     lines = [

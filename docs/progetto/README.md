@@ -7,7 +7,8 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | Documento | Contenuto |
 |-----------|-----------|
 | [ARCHITETTURA.md](ARCHITETTURA.md) | Architettura a strati, 9 gruppi feature, ablation, flussi |
-| [CRONOSTORIA.md](CRONOSTORIA.md) | Timeline Fase 0 → 2f → 3 |
+| [LOGICA-FUNZIONAMENTO.md](LOGICA-FUNZIONAMENTO.md) | Audit end-to-end, anti-leakage, buchi/rischi |
+| [CRONOSTORIA.md](CRONOSTORIA.md) | Timeline Fase 0 → 2g.1 → 3 |
 | [GUIDA-OPERATIVA.md](GUIDA-OPERATIVA.md) | Setup, comandi CLI, fixture, test |
 
 ## Documentazione per implementazione
@@ -33,6 +34,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 17 | [17-data-quality-walk-forward.md](implementazioni/17-data-quality-walk-forward.md) | Data quality, validate, walk-forward |
 | 18 | [18-data-capability-layer.md](implementazioni/18-data-capability-layer.md) | Data Capability Layer, profili, fallback |
 | 19 | [19-feature-trained-model.md](implementazioni/19-feature-trained-model.md) | FeatureTrainedModel offline, CLI train |
+| 20 | [20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md) | Audit logico, in-sample warning, walk-forward refit |
 
 ## Documentazione API esterna
 

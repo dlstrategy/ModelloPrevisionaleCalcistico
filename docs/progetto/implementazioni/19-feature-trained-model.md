@@ -38,14 +38,31 @@ python -m src.cli train --league 384 --model feature_trained --profile advanced
 
 Opzioni: `--epochs`, `--learning-rate`, `--l2`, `--min-samples`, `--profile`.
 
-## Predict / backtest
+## Predict / backtest / walk-forward
 
 ```bash
 python -m src.cli predict --date 2025-10-18 --model feature_trained --explain
 python -m src.cli backtest --league 384 --model feature_trained --rounds 5
+python -m src.cli walk-forward --league 384 --model feature_trained --profile advanced
 ```
 
-Se l'artifact manca: messaggio chiaro, exit code 1, nessun traceback sporco.
+### Attenzione: backtest in-sample
+
+`backtest --model feature_trained` con artifact già allenato valuta spesso **gli stessi match del training** → metriche optimistiche (es. accuracy 100%). Il report include:
+
+- `evaluation_mode: in_sample_artifact`
+- `training_leakage_risk: true`
+- Warning console
+
+### Valutazione onesta
+
+Usa **walk-forward refit** (`training_mode: walk_forward_refit`): ogni finestra allena solo sui match precedenti e testa sui successivi.
+
+Se l'artifact manca: messaggio chiaro, exit code 1.
+
+## Artifact version
+
+`model_version: 2g.1`, `training_algorithm: softmax_regression_python`
 
 ## Limiti
 

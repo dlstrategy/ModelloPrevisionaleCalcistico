@@ -31,11 +31,14 @@ def build_training_samples(
     *,
     profile: str | None = None,
     min_finished_matches: int = 10,
+    only_match_ids: frozenset[int] | None = None,
 ) -> list[TrainingSample]:
     profile_name = parse_data_profile(profile or settings.data_profile)
     samples: list[TrainingSample] = []
 
     for match in dataset.matches:
+        if only_match_ids is not None and match.id not in only_match_ids:
+            continue
         if not match.is_finished:
             continue
         outcome = match.actual_outcome

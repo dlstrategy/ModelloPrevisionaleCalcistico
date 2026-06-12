@@ -10,6 +10,7 @@ from src.backtesting.ablation import run_ablation_study, save_ablation_report
 from src.backtesting.backtest import run_backtest, run_backtest_all_models
 from src.backtesting.reports import save_comparison_report
 from src.backtesting.walk_forward import run_walk_forward, save_walk_forward_report
+from src.backtesting.walk_forward_trained import run_walk_forward_refit
 from src.cli_capabilities import print_capabilities
 from src.cli_status import print_status
 from src.cli_train import print_train
@@ -48,20 +49,33 @@ def cmd_walk_forward(args: argparse.Namespace) -> int:
     league_id = args.league or settings.default_league_id
     model_name = args.model or "ensemble"
     dataset = load_dataset(settings, league_id)
-    model = _resolve_model(settings, dataset, model_name)
 
-    report = run_walk_forward(
-        dataset,
-        model,
-        settings,
-        min_train_matches=args.min_train_matches,
-        test_window_size=args.test_window_size,
-        step_size=args.step_size,
-    )
+    if model_name == "feature_trained":
+        report = run_walk_forward_refit(
+            dataset,
+            settings,
+            profile=args.profile,
+            min_train_matches=args.min_train_matches,
+            test_window_size=args.test_window_size,
+            step_size=args.step_size,
+        )
+    else:
+        model = _resolve_model(settings, dataset, model_name)
+        report = run_walk_forward(
+            dataset,
+            model,
+            settings,
+            min_train_matches=args.min_train_matches,
+            test_window_size=args.test_window_size,
+            step_size=args.step_size,
+        )
     json_path, csv_path = save_walk_forward_report(report, BACKTESTS_DIR)
 
     m = report.aggregate_metrics
     print(f"Walk-forward backtest — league {league_id}, model {model_name}")
+    print(f"Training mode: {report.training_mode}")
+    if report.data_profile:
+        print(f"Data profile: {report.data_profile}")
     print(f"Train iniziale: {report.min_train_matches}")
     print(f"Test window: {report.test_window_size}")
     print(f"Step: {report.step_size}")
@@ -272,6 +286,13 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     json_path, csv_path = save_report(result, BACKTESTS_DIR)
     m = result.metrics
     print(f"Backtest — modello: {result.model_name}, campioni: {m.samples}")
+    if result.evaluation_mode == "in_sample_artifact":
+        print("Evaluation mode: in_sample_artifact")
+        print(
+            "WARNING: feature_trained artifact was evaluated on historical matches "
+            "that may overlap with training data."
+        )
+        print("Use walk-forward refit for honest temporal evaluation.")
     print(f"  Accuracy:    {m.accuracy:.3f}")
     print(f"  Brier score: {m.brier_score:.4f}")
     print(f"  Log-loss:    {m.log_loss:.4f}")
@@ -386,6 +407,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--model",
         choices=list(MODEL_NAMES),
         default="ensemble",
+    )
+    walk_p.add_argument(
+        "--profile",
+        choices=["base", "advanced", "all_in_no_predictions"],
+        default=None,
+        help="Profilo dati per feature_trained walk-forward refit",
     )
     walk_p.add_argument("--min-train-matches", type=int, default=10)
     walk_p.add_argument("--test-window-size", type=int, default=5)

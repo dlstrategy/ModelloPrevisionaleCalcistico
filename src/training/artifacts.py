@@ -44,4 +44,5 @@ def load_feature_trained_artifact(league_id: int) -> FeatureTrainedArtifact:
         created_at=payload["created_at"],
         training_config=dict(payload["training_config"]),
         warnings=tuple(payload.get("warnings", ())),
+        training_algorithm=payload.get("training_algorithm", "softmax_regression_python"),
     )

@@ -58,10 +58,37 @@ def test_model_not_ready_without_artifact(tmp_path, monkeypatch):
     dataset = load_offline_dataset(384)
     model = FeatureTrainedModel(settings, dataset)
     assert model.is_ready() is False
-    with pytest.raises(RuntimeError, match="feature_trained non trovato"):
+    with pytest.raises(RuntimeError, match="train --league 384"):
         model.predict(
             build_match_context(dataset, dataset.matches[0], settings, profile="advanced")
         )
+
+
+def test_missing_artifact_message_uses_league_id(tmp_path, monkeypatch):
+    from src.config import MODELS_DIR
+    from src.data_pipeline.dataset_builder import MatchDataset
+
+    monkeypatch.setattr("src.training.artifacts.MODELS_DIR", tmp_path)
+    settings = load_settings()
+    base = load_offline_dataset(384)
+    dataset = MatchDataset(league_id=999, season_id=base.season_id, matches=base.matches)
+    model = FeatureTrainedModel(settings, dataset)
+    with pytest.raises(RuntimeError, match="train --league 999"):
+        model.predict(
+            build_match_context(dataset, dataset.matches[0], settings, profile="base")
+        )
+
+
+def test_from_artifact_in_memory(trained_artifact):
+    settings = load_settings()
+    dataset = load_offline_dataset(384)
+    model = FeatureTrainedModel.from_artifact(settings, dataset, trained_artifact)
+    assert model.is_ready()
+    assert model.data_profile == "advanced"
+    upcoming = next(m for m in dataset.matches if not m.is_finished)
+    ctx = build_match_context(dataset, upcoming, settings, profile="advanced")
+    probs = model.predict(ctx)
+    assert abs(probs.home + probs.draw + probs.away - 1.0) < 1e-6
 
 
 def test_model_predict_normalized(trained_artifact, tmp_path, monkeypatch):
@@ -75,8 +102,7 @@ def test_model_predict_normalized(trained_artifact, tmp_path, monkeypatch):
     upcoming = next(m for m in dataset.matches if not m.is_finished)
     ctx = build_match_context(dataset, upcoming, settings, profile="advanced")
     probs = model.predict(ctx)
-    total = probs.home + probs.draw + probs.away
-    assert abs(total - 1.0) < 1e-6
+    assert abs(probs.home + probs.draw + probs.away - 1.0) < 1e-6
 
 
 def test_missing_features_do_not_crash(trained_artifact, tmp_path, monkeypatch):

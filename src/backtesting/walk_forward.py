@@ -32,6 +32,9 @@ class WalkForwardWindow:
     metrics: BacktestMetrics
     predictions: tuple[Prediction, ...]
     actuals: tuple[MatchOutcome, ...]
+    train_from: str | None = None
+    training_features: int | None = None
+    training_warnings: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -46,10 +49,11 @@ class WalkForwardReport:
     total_tested_matches: int
     windows: tuple[WalkForwardWindow, ...]
     aggregate_metrics: BacktestMetrics
+    data_profile: str | None = None
 
     def as_dict(self) -> dict:
         def window_dict(window: WalkForwardWindow) -> dict:
-            return {
+            payload = {
                 "window_index": window.window_index,
                 "train_until": window.train_until,
                 "test_from": window.test_from,
@@ -72,8 +76,15 @@ class WalkForwardReport:
                     for p, a in zip(window.predictions, window.actuals)
                 ],
             }
+            if window.train_from is not None:
+                payload["train_from"] = window.train_from
+            if window.training_features is not None:
+                payload["training_features"] = window.training_features
+            if window.training_warnings is not None:
+                payload["training_warnings"] = list(window.training_warnings)
+            return payload
 
-        return {
+        result = {
             "model_name": self.model_name,
             "league_id": self.league_id,
             "generated_at": self.generated_at,
@@ -85,6 +96,9 @@ class WalkForwardReport:
             "aggregate_metrics": self.aggregate_metrics.as_dict(),
             "windows": [window_dict(w) for w in self.windows],
         }
+        if self.data_profile is not None:
+            result["data_profile"] = self.data_profile
+        return result
 
 
 def run_walk_forward(
