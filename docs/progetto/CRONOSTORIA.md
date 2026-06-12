@@ -111,6 +111,19 @@ Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue)
 
 ---
 
+## Fase 2e — Data quality e walk-forward (completata)
+
+| Area | Modifica |
+|------|----------|
+| Data quality | `src/data_quality/` — controlli dataset, companion, feature |
+| CLI `validate` | Report JSON/CSV in `data/quality/` |
+| Walk-forward | `src/backtesting/walk_forward.py` — finestre temporali |
+| CLI `walk-forward` | Backtest realistico pre-kickoff |
+
+**Test:** 74 passed.
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
@@ -130,6 +143,7 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M5] Fase 2b — Hardening (Elo, sync, CI)
 ├── [M6] Fase 2c — Feature engineering + ablation
 ├── [M6b] Fase 2d — Hardening anti-leakage + status CLI
+├── [M6c] Fase 2e — Data quality + walk-forward
 └── [M7] Fase 3 — API live (futuro)
 ```
 

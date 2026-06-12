@@ -19,7 +19,7 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         CLI (src/cli.py)                     │
-│     sync | predict | backtest | features | ablation | status          │
+│     sync | predict | backtest | features | ablation | status | validate | walk-forward │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -41,8 +41,13 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
+│              DATA QUALITY LAYER (Fase 2e)                      │
+│   checks.py | report.py — validate dataset + companion        │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
 │              EVALUATION LAYER                                  │
-│   backtest.py | ablation.py | metrics.py | reports.py         │
+│   backtest.py | walk_forward.py | ablation.py | metrics.py    │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐

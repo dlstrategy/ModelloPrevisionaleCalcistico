@@ -5,6 +5,7 @@
 | Modulo | Funzione |
 |--------|----------|
 | `backtest.py` | Walk-forward multi-modello |
+| `walk_forward.py` | Backtest walk-forward a finestre |
 | `ablation.py` | Ablation test gruppi feature |
 | `metrics.py` | Metriche estese |
 | `reports.py` | Report JSON/CSV |
@@ -53,6 +54,16 @@ Output tabella con `CalGap`, `PickOver`, `PickUnder` + `data/backtests/ablation_
 
 ---
 
+## Walk-forward backtest
+
+```bash
+python -m src.cli walk-forward --league 384 --model ensemble
+```
+
+Vedi [17-data-quality-walk-forward.md](17-data-quality-walk-forward.md).
+
+---
+
 ## Output report
 
 ```
@@ -60,6 +71,8 @@ data/backtests/
   backtest_{model}_{timestamp}.json
   backtest_{model}_{timestamp}.csv
   backtest_comparison_{timestamp}.json
+  walk_forward_{model}_{league_id}.json
+  walk_forward_{model}_{league_id}.csv
   ablation_{timestamp}.json
 ```
 
@@ -71,10 +84,10 @@ data/backtests/
 - `tests/test_backtest_all_models.py`
 - `tests/test_ablation.py`
 - `tests/test_anti_leakage.py`
-- `tests/test_metrics.py`
+- `tests/test_walk_forward.py`
 
 ---
 
 ## Fase di sviluppo
 
-Fase 1 (accuracy, Brier) → Fase 2 (log-loss, calibration) → Fase 2c (Brier skill, ablation) → Fase 2d (mean_calibration_gap, pick confidence rates)
+Fase 1 (accuracy, Brier) → Fase 2c (ablation) → Fase 2d (metriche calibrazione) → Fase 2e (walk-forward)

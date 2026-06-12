@@ -66,6 +66,22 @@ Esegue 7 varianti cumulative e salva report in `data/backtests/ablation_*.json`.
 
 Varianti: `base`, `base+xg`, `base+shots`, `base+player_lineup`, `base+tactical`, `base+calendar`, `full`
 
+### Data quality
+
+```bash
+python -m src.cli validate --league 384
+```
+
+Controlla consistenza dataset, fixture companion, feature vector e probabilità modelli. Report in `data/quality/`.
+
+### Walk-forward backtest
+
+```bash
+python -m src.cli walk-forward --league 384 --model ensemble
+```
+
+Simula predizioni nel tempo usando solo informazione disponibile prima del kickoff. Report in `data/backtests/walk_forward_*.json`.
+
 ---
 
 ## Rigenerare fixture mock
@@ -84,7 +100,7 @@ Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/
 python -m pytest -q
 ```
 
-Risultato atteso: **53 passed**.
+Risultato atteso: **74 passed**.
 
 CI automatica su GitHub Actions (`.github/workflows/ci.yml`).
 
@@ -109,7 +125,9 @@ data/
   processed/league_384_dataset.json
   predictions/predictions_YYYY-MM-DD.json
   backtests/backtest_*.json
+  backtests/walk_forward_*.json
   backtests/ablation_*.json
+  quality/quality_*_latest.json
 ```
 
 ---
@@ -131,4 +149,4 @@ Sync scarica partite passate (180gg) + future (30gg).
 - [CRONOSTORIA.md](CRONOSTORIA.md)
 - [06-feature-engineering.md](implementazioni/06-feature-engineering.md)
 - [14-ablation-e-valutazione.md](implementazioni/14-ablation-e-valutazione.md)
-- [16-hardening-feature-anti-leakage.md](implementazioni/16-hardening-feature-anti-leakage.md)
+- [17-data-quality-walk-forward.md](implementazioni/17-data-quality-walk-forward.md)

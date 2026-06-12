@@ -11,6 +11,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2b** | Completata | Hardening: fix Elo, sync future, CI, normalize |
 | **Fase 2c** | Completata | 9 gruppi feature, ablation, fixture 10 squadre |
 | **Fase 2d** | Completata | Hardening: status, anti-leakage lineup, explain data_sources |
+| **Fase 2e** | Completata | Data quality, validate CLI, walk-forward backtest |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -78,6 +79,12 @@ python -m src.cli features --league 384
 
 # Ablation test gruppi feature
 python -m src.cli ablation --league 384 --rounds 5
+
+# Data quality — consistenza dataset, fixture companion, feature e probabilità
+python -m src.cli validate --league 384
+
+# Walk-forward — predizioni nel tempo con solo info pre-kickoff
+python -m src.cli walk-forward --league 384 --model ensemble
 ```
 
 ## Fase 3 — Attivare Sportmonks API
@@ -105,7 +112,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (16 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (17 moduli)
 
 ## Documentazione Sportmonks API
 

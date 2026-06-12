@@ -2,7 +2,7 @@
 
 ## Test suite
 
-**53 test** — `python -m pytest -q`
+**74 test** — `python -m pytest -q`
 
 | File | Copertura |
 |------|-----------|
@@ -15,6 +15,9 @@
 | `test_ablation.py` | 7 varianti ablation |
 | `test_anti_leakage.py` | Gate pre-match, storico, coerenza lineup |
 | `test_status.py` | Comando CLI status |
+| `test_data_quality.py` | Controlli data quality |
+| `test_validate_cli.py` | CLI validate + report |
+| `test_walk_forward.py` | Walk-forward backtest |
 | `test_metrics.py` | Calibration gap, pick confidence rates |
 | `test_normalize.py` | Datetime Sportmonks/ISO |
 | `test_sync.py` | Sync past+future, merge |

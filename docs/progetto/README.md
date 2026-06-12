@@ -25,11 +25,12 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 09 | [09-prediction-pipeline.md](implementazioni/09-prediction-pipeline.md) | Inferenza, explain arricchito |
 | 10 | [10-backtesting.md](implementazioni/10-backtesting.md) | Backtest e metriche estese |
 | 11 | [11-cli.md](implementazioni/11-cli.md) | CLI (sync, status, predict, backtest, features, ablation) |
-| 12 | [12-test-e-fixture-offline.md](implementazioni/12-test-e-fixture-offline.md) | 53 test, fixture 10 squadre |
+| 12 | [12-test-e-fixture-offline.md](implementazioni/12-test-e-fixture-offline.md) | 74 test, fixture 10 squadre |
 | 13 | [13-fase-3-sportmonks-api.md](implementazioni/13-fase-3-sportmonks-api.md) | API live (da attivare) |
 | 14 | [14-ablation-e-valutazione.md](implementazioni/14-ablation-e-valutazione.md) | Ablation test e valutazione feature |
 | 15 | [15-hardening-foundation.md](implementazioni/15-hardening-foundation.md) | Fix Elo, sync, CI, normalize |
 | 16 | [16-hardening-feature-anti-leakage.md](implementazioni/16-hardening-feature-anti-leakage.md) | Status CLI, anti-leakage lineup, metriche calibrazione |
+| 17 | [17-data-quality-walk-forward.md](implementazioni/17-data-quality-walk-forward.md) | Data quality, validate, walk-forward |
 
 ## Documentazione API esterna
 

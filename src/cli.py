@@ -9,7 +9,9 @@ import sys
 from src.backtesting.ablation import run_ablation_study, save_ablation_report
 from src.backtesting.backtest import run_backtest, run_backtest_all_models
 from src.backtesting.reports import save_comparison_report
+from src.backtesting.walk_forward import run_walk_forward, save_walk_forward_report
 from src.cli_status import print_status
+from src.cli_validate import print_validate
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
 from src.data_pipeline.sync import load_dataset, sync_league_data
 from src.features.feature_vector import summarize_feature_groups
@@ -22,6 +24,54 @@ from src.prediction.predict_round import default_output_path, predict_round, sav
 
 def _resolve_model(settings, dataset, name: str):
     return get_model_by_name(name, settings, dataset)
+
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    return print_validate(settings, league_id)
+
+
+def cmd_walk_forward(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    model_name = args.model or "ensemble"
+    dataset = load_dataset(settings, league_id)
+    model = _resolve_model(settings, dataset, model_name)
+
+    report = run_walk_forward(
+        dataset,
+        model,
+        settings,
+        min_train_matches=args.min_train_matches,
+        test_window_size=args.test_window_size,
+        step_size=args.step_size,
+    )
+    json_path, csv_path = save_walk_forward_report(report, BACKTESTS_DIR)
+
+    m = report.aggregate_metrics
+    print(f"Walk-forward backtest — league {league_id}, model {model_name}")
+    print(f"Train iniziale: {report.min_train_matches}")
+    print(f"Test window: {report.test_window_size}")
+    print(f"Step: {report.step_size}")
+    print()
+    print(f"Windows: {len(report.windows)}")
+    print(f"Partite testate: {report.total_tested_matches}")
+    print()
+    print("Aggregate:")
+    print(f"  Accuracy:    {m.accuracy:.3f}")
+    print(f"  Brier score: {m.brier_score:.4f}")
+    print(f"  Log-loss:    {m.log_loss:.4f}")
+    print(f"  Brier skill: {m.brier_skill_score:.4f}")
+    print(f"  Cal gap:     {m.mean_calibration_gap:.4f}")
+    print(f"  Pick over:   {m.pick_overconfidence_rate:.3f}")
+    print(f"  Pick under:  {m.pick_underconfidence_rate:.3f}")
+    print()
+    print(f"Report JSON: {json_path}")
+    print(f"Report CSV:  {csv_path}")
+    return 0
 
 
 def cmd_status(args: argparse.Namespace) -> int:
@@ -250,6 +300,22 @@ def build_parser() -> argparse.ArgumentParser:
     status_p = sub.add_parser("status", help="Stato dataset, fixture companion e feature")
     status_p.add_argument("--league", type=int, default=None)
     status_p.set_defaults(func=cmd_status)
+
+    validate_p = sub.add_parser("validate", help="Controlli data quality su dataset e fixture")
+    validate_p.add_argument("--league", type=int, default=None)
+    validate_p.set_defaults(func=cmd_validate)
+
+    walk_p = sub.add_parser("walk-forward", help="Backtest walk-forward nel tempo")
+    walk_p.add_argument("--league", type=int, default=None)
+    walk_p.add_argument(
+        "--model",
+        choices=["ensemble", "poisson", "dixon_coles", "elo", "feature"],
+        default="ensemble",
+    )
+    walk_p.add_argument("--min-train-matches", type=int, default=10)
+    walk_p.add_argument("--test-window-size", type=int, default=5)
+    walk_p.add_argument("--step-size", type=int, default=5)
+    walk_p.set_defaults(func=cmd_walk_forward)
 
     return parser
 

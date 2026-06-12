@@ -14,6 +14,8 @@
 | `backtest` | Valutazione modelli |
 | `features` | Riepilogo feature engineering |
 | `ablation` | Ablation test gruppi feature |
+| `validate` | Data quality su dataset e fixture |
+| `walk-forward` | Backtest walk-forward nel tempo |
 
 ---
 
@@ -102,6 +104,26 @@ Tabella comparativa 7 varianti (con CalGap, PickOver, PickUnder) + report JSON.
 
 ---
 
+### `validate`
+
+```bash
+python -m src.cli validate --league 384
+```
+
+Exit code 1 se errori, 0 se passed (anche con warning). Report in `data/quality/`.
+
+---
+
+### `walk-forward`
+
+```bash
+python -m src.cli walk-forward --league 384 --model ensemble
+```
+
+Parametri: `--min-train-matches`, `--test-window-size`, `--step-size`. Report in `data/backtests/walk_forward_*.json`.
+
+---
+
 ## Modelli disponibili
 
 `ensemble`, `poisson`, `dixon_coles`, `elo`, `feature`
@@ -110,4 +132,4 @@ Tabella comparativa 7 varianti (con CalGap, PickOver, PickUnder) + report JSON.
 
 ## Fase di sviluppo
 
-Fase 1 (sync, predict, backtest) → Fase 2c (features, ablation, explain multi-match) → Fase 2d (`status`)
+Fase 1 (sync, predict, backtest) → Fase 2c (features, ablation) → Fase 2d (status) → Fase 2e (validate, walk-forward)
