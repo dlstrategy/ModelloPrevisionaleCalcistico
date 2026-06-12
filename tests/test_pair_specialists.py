@@ -19,6 +19,16 @@ def test_specialist_key_directional():
     assert specialist_key(564, 384, "forward") == "564->384:forward"
 
 
+def test_specialist_key_normalizes_fw_alias():
+    assert specialist_key(564, 384, "FW") == "564->384:forward"
+
+
+def test_find_best_specialist_accepts_fw_alias():
+    spec = find_best_specialist(564, 384, role="FW")
+    assert spec is not None
+    assert spec.role == "forward"
+
+
 def test_liga_serie_a_differs_from_reverse():
     specialists = load_pair_specialists()
     forward = specialists.get("564->384:forward")

@@ -77,17 +77,23 @@ def estimate_transfer_with_general_adapter(
     if source_profile.confidence < 0.5 or target_profile.confidence < 0.5:
         confidence *= 0.85
 
+    known = load_league_profiles()
+    source_unknown = (
+        source_league_id is not None and source_league_id not in known
+    )
+    target_unknown = target_league_id not in known
+
     notes = (
         "general_adapter",
         f"context_distance={distance:.3f}",
         f"rating_factor={rating_factor:.3f}",
         f"target_matches_played={target_matches_played}",
     )
-    if (
-        source_profile.league_id not in load_league_profiles()
-        or target_profile.league_id not in load_league_profiles()
-    ):
+    if source_unknown or target_unknown:
         notes = notes + ("fallback_league_profile",)
+        if source_unknown:
+            notes = notes + ("unknown_source_league",)
+        confidence = min(confidence, 0.25)
 
     return TransferEstimate(
         player_id=skill_vector.player_id,
@@ -102,21 +108,5 @@ def estimate_transfer_with_general_adapter(
     )
 
 
-def unknown_player_estimate(player_id: int, target_league_id: int) -> TransferEstimate:
-    neutral = PlayerSkillVector(
-        player_id=player_id,
-        role=None,
-        overall=0.50,
-        sample_confidence=0.10,
-    ).sanitized()
-    return TransferEstimate(
-        player_id=player_id,
-        source_league_id=None,
-        target_league_id=target_league_id,
-        rating=0.50,
-        skill_vector=neutral,
-        confidence=0.10,
-        adapter_type="unknown_player",
-        specialist_key=None,
-        notes=("unknown_player", "player_not_in_career_registry"),
-    )
+# Re-export per retrocompatibilità — implementazione in unknown_player_policy.
+from src.players.unknown_player_policy import unknown_player_estimate  # noqa: E402,F401

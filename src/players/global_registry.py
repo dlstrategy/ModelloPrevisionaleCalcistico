@@ -82,12 +82,17 @@ def load_player_careers(
     return careers
 
 
-def get_latest_snapshot(
+def get_best_available_snapshot(
     player_id: int,
     *,
     before_league_id: int | None = None,
     careers: dict[int, PlayerCareer] | None = None,
 ) -> PlayerLeagueSnapshot | None:
+    """Miglior snapshot disponibile per minutes/rating (non cronologico).
+
+    TODO: in futuro ordinare per snapshot_date/season_id; oggi è euristica
+    best-available, non latest temporale.
+    """
     registry = careers if careers is not None else load_player_careers()
     career = registry.get(player_id)
     if career is None or not career.snapshots:
@@ -98,6 +103,20 @@ def get_latest_snapshot(
     if not snapshots:
         return None
     return max(snapshots, key=lambda s: (s.minutes, s.rating))
+
+
+def get_latest_snapshot(
+    player_id: int,
+    *,
+    before_league_id: int | None = None,
+    careers: dict[int, PlayerCareer] | None = None,
+) -> PlayerLeagueSnapshot | None:
+    """Alias legacy di :func:`get_best_available_snapshot` (non cronologico)."""
+    return get_best_available_snapshot(
+        player_id,
+        before_league_id=before_league_id,
+        careers=careers,
+    )
 
 
 def get_player_snapshot_for_league(

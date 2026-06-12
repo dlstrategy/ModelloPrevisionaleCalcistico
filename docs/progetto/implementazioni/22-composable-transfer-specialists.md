@@ -73,3 +73,21 @@ python -m src.cli transfer-estimate --player-id 1006 --target-league 384 --json
 ## Retrocompatibilità
 
 `transfer_adaptation.py` (Fase 2h) resta per test legacy. `player_value.py` usa il composable resolver.
+
+## Unknown Player Policy (Fase 2h-c)
+
+Modulo: `src/players/unknown_player_policy.py`
+
+**Principio:** il sistema preferisce una stima neutra a bassa confidence rispetto a inventare un valore preciso.
+
+| Categoria | Comportamento |
+|-----------|---------------|
+| `unknown_player` | Assente dal registry → rating 0.50, confidence 0.10 |
+| `known_player_unknown_target_league` | Snapshot da altra lega → general/specialist + note |
+| `unknown_source_league` | Lega origine senza profilo → fallback + confidence cap 0.25 |
+| `low_sample_player` | Pochi minuti o sample_confidence bassa → confidence cap 0.30 |
+| `unknown_role` | Alias non riconosciuto (es. WINGBACK) → penalty confidence, no crash |
+
+Role alias normalizzati: FW/ST/CF→forward, CB/FB→defender, GK→goalkeeper, AM/CM→midfielder.
+
+`get_best_available_snapshot` sostituisce semanticamente `get_latest_snapshot` (non cronologico; TODO season ordering).

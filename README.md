@@ -17,6 +17,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2g.1** | Completata | Audit logico, warning in-sample, walk-forward refit |
 | **Fase 2h** | Completata | Multi-league isolation, player global, transfer adaptation |
 | **Fase 2h-b** | Completata | Composable transfer specialists (general + pair) |
+| **Fase 2h-c** | Completata | Unknown player policy e hardening transfer layer |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)

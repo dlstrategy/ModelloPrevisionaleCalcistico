@@ -30,13 +30,18 @@ def clamp01(value: float | None, default: float | None = None) -> float | None:
     return max(0.0, min(float(value), 1.0))
 
 
+CANONICAL_ROLES = frozenset({"forward", "midfielder", "defender", "goalkeeper"})
+
+
 def normalize_role(position: str | None) -> str | None:
     if position is None:
         return None
     key = position.strip().upper()
-    if key.lower() in {"forward", "midfielder", "defender", "goalkeeper"}:
+    if key.lower() in CANONICAL_ROLES:
         return key.lower()
-    return ROLE_ALIASES.get(key, key.lower() if key else None)
+    if key in ROLE_ALIASES:
+        return ROLE_ALIASES[key]
+    return None
 
 
 @dataclass(frozen=True)

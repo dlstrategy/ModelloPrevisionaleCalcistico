@@ -183,6 +183,16 @@ python -m src.cli transfer-estimate --player-id 1006 --target-league 384 --role 
 
 Vedi [implementazioni/22-composable-transfer-specialists.md](implementazioni/22-composable-transfer-specialists.md).
 
+### Gestione giocatori sconosciuti o con dati insufficienti (Fase 2h-c)
+
+Il sistema preferisce una stima neutra a bassa confidence rispetto a inventare un valore preciso.
+
+- Giocatore assente → rating neutro 0.50, confidence ~0.10
+- Noto ma senza storico nella lega target → transfer da best snapshot + note `known_player_unknown_target_league`
+- Lega non coperta dai profili → `fallback_league_profile`, confidence ridotta
+- Pochi minuti / sample basso → rating usabile ma confidence cap ~0.30
+- Ruolo sconosciuto → skill generico, nessun crash
+
 ---
 
 Vedi anche: [implementazioni/20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md)

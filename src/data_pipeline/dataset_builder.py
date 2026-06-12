@@ -7,8 +7,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from pathlib import Path
-
 from src.data_pipeline.scope import DataScope, scope_metadata_dict
 from src.domain.enums import ParticipantLocation
 from src.domain.match import Match

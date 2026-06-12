@@ -8,7 +8,7 @@ from pathlib import Path
 
 from src.config import FIXTURES_DIR
 from src.players.general_transfer_adapter import TransferEstimate
-from src.players.player_skill import clamp01
+from src.players.player_skill import clamp01, normalize_role
 
 PAIR_SPECIALISTS_PATH = FIXTURES_DIR / "pair_transfer_specialists.json"
 
@@ -41,7 +41,8 @@ def specialist_key(
     target_league_id: int,
     role: str | None = None,
 ) -> str:
-    role_part = role or "any"
+    normalized = normalize_role(role) if role is not None else None
+    role_part = normalized or "any"
     return f"{source_league_id}->{target_league_id}:{role_part}"
 
 
@@ -85,9 +86,10 @@ def find_best_specialist(
     specialists: dict[str, PairSpecialist] | None = None,
 ) -> PairSpecialist | None:
     registry = specialists if specialists is not None else load_pair_specialists()
+    normalized_role = normalize_role(role) if role is not None else None
     candidates: list[PairSpecialist] = []
-    if role is not None:
-        key = specialist_key(source_league_id, target_league_id, role)
+    if normalized_role is not None:
+        key = specialist_key(source_league_id, target_league_id, normalized_role)
         candidate = registry.get(key)
         if candidate is not None and candidate.is_valid:
             candidates.append(candidate)
@@ -98,8 +100,8 @@ def find_best_specialist(
     if not candidates:
         return None
     # Role-specific wins over general when both valid.
-    if role is not None:
-        role_key = specialist_key(source_league_id, target_league_id, role)
+    if normalized_role is not None:
+        role_key = specialist_key(source_league_id, target_league_id, normalized_role)
         role_spec = registry.get(role_key)
         if role_spec is not None and role_spec.is_valid:
             return role_spec
