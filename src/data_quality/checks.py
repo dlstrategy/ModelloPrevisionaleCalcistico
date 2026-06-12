@@ -633,7 +633,10 @@ def check_features(
     dataset: MatchDataset,
     settings: Settings,
     collector: IssueCollector,
+    *,
+    profile: str | None = None,
 ) -> None:
+    profile_name = parse_data_profile(profile or settings.data_profile)
     samples = []
     finished = next((m for m in dataset.matches if m.is_finished), None)
     future = next((m for m in dataset.matches if not m.is_finished), None)
@@ -647,7 +650,13 @@ def check_features(
 
     model = get_model_by_name("ensemble", settings, dataset)
     for match in samples:
-        ctx = build_match_context(dataset, match, settings, as_of=match.starting_at)
+        ctx = build_match_context(
+            dataset,
+            match,
+            settings,
+            as_of=match.starting_at,
+            profile=profile_name,
+        )
         if not ctx.feature_vector:
             collector.add(
                 "error",
@@ -709,7 +718,7 @@ def run_all_checks(
         check_tactical_companion(dataset, league_id, collector)
     if DataCapability.CALENDAR in profile_caps:
         check_calendar_companion(dataset, league_id, collector)
-    check_features(dataset, settings, collector)
+    check_features(dataset, settings, collector, profile=profile_name)
     return collector.issues, _dataset_summary(dataset)
 
 

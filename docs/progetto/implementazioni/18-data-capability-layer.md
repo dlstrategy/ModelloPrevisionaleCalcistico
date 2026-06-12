@@ -86,6 +86,8 @@ Data completeness score: 0.91
 
 Output predizione invariato: **P(1), P(X), P(2), pick, confidence** only.
 
+Gli edge mostrati in explain rispettano i feature group abilitati dal profilo. Se un gruppo è disabilitato, il relativo edge viene omesso (`null`) e marcato in `edge_status` come `disabled_by_profile`, per evitare explain fuorvianti.
+
 ## Moduli
 
 ```

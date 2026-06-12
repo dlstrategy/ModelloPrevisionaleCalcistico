@@ -58,3 +58,24 @@ def test_explain_includes_edges():
     assert explanation["data_sources"]["tactical"] == "mock_fixture"
     assert explanation["data_sources"]["xg"] == "mock_fixture_historical"
     assert explanation["data_sources"]["shots"] == "mock_fixture_historical"
+    assert explanation["edge_status"]["xg"] == "active"
+    assert isinstance(explanation["edges"]["xg"], (int, float))
+    assert explanation["edge_status"]["team_strength"] == "active"
+
+
+def test_explain_edge_status_base_profile():
+    settings = load_settings()
+    dataset = load_offline_dataset(384)
+    upcoming = next(m for m in dataset.matches if not m.is_finished)
+    model = FeatureModel()
+    pred = predict_match(dataset, upcoming, model, settings)
+    ctx = build_match_context(dataset, upcoming, settings, profile="base")
+    explanation = explain_prediction(ctx, pred, dataset=dataset, settings=settings)
+
+    assert explanation["data_profile"] == "base"
+    assert explanation["edges"]["xg"] is None
+    assert explanation["edge_status"]["xg"] == "disabled_by_profile"
+    assert explanation["edge_status"]["team_strength"] == "active"
+    assert "probabilities" in explanation
+    assert "pick" in explanation
+    assert "confidence" in explanation

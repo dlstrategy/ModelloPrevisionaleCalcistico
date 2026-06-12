@@ -75,12 +75,18 @@ def build_match_context(
     as_of: datetime | None = None,
     *,
     enabled_feature_groups: frozenset[str] | None = None,
+    profile: str | None = None,
 ) -> MatchContext:
     cutoff = as_of or match.starting_at
     home_id = match.home.team_id
     away_id = match.away.team_id
     league_id = match.league_id
-    cap_resolution = resolve_capabilities(settings, league_id, dataset)
+    cap_resolution = resolve_capabilities(
+        settings,
+        league_id,
+        dataset,
+        profile=profile or settings.data_profile,
+    )
     if enabled_feature_groups is None:
         groups = cap_resolution.enabled_feature_groups & ALL_GROUPS
     else:
