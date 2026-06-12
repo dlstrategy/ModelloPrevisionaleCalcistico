@@ -51,7 +51,8 @@ Se manca `data/processed/league_{id}_dataset.json`, esce con errore leggibile e 
 API pubblica:
 - `resolve_lineup_for_match(league_id, match)` → `ResolvedLineup(lineup, player_lineup, source)`
 - `resolve_tactical_for_match(league_id, match, lineup)` → `ResolvedTactical(tactical, source)`
-- `is_pre_match_lineup_usable(row, match)` — valida home/away id + availability
+- `is_pre_match_fixture_row_usable(row, match)` — gate generico pre-match (lineup, tactical, …)
+- `is_pre_match_lineup_usable(row, match)` — wrapper retrocompatibile
 
 `MatchContext` espone `lineup_source` e `tactical_source` (`mock_fixture` | `default_fallback`).
 
@@ -61,8 +62,12 @@ API pubblica:
 
 **File:** `src/features/data_sources.py`, `src/prediction/explain.py`
 
-`build_data_sources(context, settings)` mappa ogni gruppo feature alla fonte:
-- `historical`, `mock_fixture`, `mock_fixture_historical`, `default_fallback`, `api`
+`build_data_sources(context, settings)` mappa ogni gruppo feature alla fonte effettiva:
+- `historical` / `api_base` — storico partite (base, strength, motivation)
+- `mock_fixture_historical` — xG/shots offline
+- `api_not_connected_yet` — companion non ancora collegati in Fase 3
+- `mock_fixture_not_api` — lineup/tactical mock con API sync attiva
+- `default_fallback` — valori neutri
 
 Explain JSON include:
 - `data_sources` — per gruppo feature

@@ -2,7 +2,7 @@
 
 ## Test suite
 
-**74 test** — `python -m pytest -q`
+**92 test** — `python -m pytest -q`
 
 | File | Copertura |
 |------|-----------|
@@ -18,6 +18,8 @@
 | `test_data_quality.py` | Controlli data quality |
 | `test_validate_cli.py` | CLI validate + report |
 | `test_walk_forward.py` | Walk-forward backtest |
+| `test_pre_match_gate.py` | Gate generico `is_pre_match_fixture_row_usable` |
+| `test_data_sources.py` | Fonti explain prudenti (offline vs API mode) |
 | `test_metrics.py` | Calibration gap, pick confidence rates |
 | `test_normalize.py` | Datetime Sportmonks/ISO |
 | `test_sync.py` | Sync past+future, merge |

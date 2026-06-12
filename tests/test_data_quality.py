@@ -9,12 +9,12 @@ import pytest
 from src.config import QUALITY_DIR, load_settings
 from src.data_pipeline.sync import load_offline_dataset, sync_league_data
 from src.data_quality.checks import (
+    IssueCollector,
     _check_lineup_tactical_row,
-    check_matches,
+    _check_tactical_numeric_fields,
     copy_dataset,
     copy_match,
     run_all_checks,
-    IssueCollector,
 )
 from src.data_quality.report import build_report, save_quality_report
 from src.domain.enums import ParticipantLocation
@@ -131,3 +131,60 @@ def test_quality_report_serializable(valid_dataset, settings, tmp_path):
     assert "passed" in payload
     assert "issues" in payload
     assert csv_path.exists()
+
+
+def test_tactical_nan_generates_error(valid_dataset):
+    collector = IssueCollector()
+    match = valid_dataset.matches[0]
+    row = {
+        "home_id": match.home.team_id,
+        "away_id": match.away.team_id,
+        "data_availability": KNOWN_PRE_MATCH if match.is_finished else FORECAST,
+        "wing_advantage": float("nan"),
+    }
+    _check_tactical_numeric_fields(collector, match.id, row)
+    assert any(i.severity == "error" and "nan_inf" in i.code for i in collector.issues)
+
+
+def test_tactical_non_numeric_generates_error(valid_dataset):
+    collector = IssueCollector()
+    match = valid_dataset.matches[0]
+    row = {
+        "home_id": match.home.team_id,
+        "away_id": match.away.team_id,
+        "data_availability": KNOWN_PRE_MATCH if match.is_finished else FORECAST,
+        "midfield_advantage": "bad",
+    }
+    _check_tactical_numeric_fields(collector, match.id, row)
+    assert any(i.severity == "error" for i in collector.issues)
+
+
+def test_tactical_wing_out_of_range_generates_warning(valid_dataset):
+    collector = IssueCollector()
+    match = valid_dataset.matches[0]
+    row = {
+        "home_id": match.home.team_id,
+        "away_id": match.away.team_id,
+        "data_availability": KNOWN_PRE_MATCH if match.is_finished else FORECAST,
+        "wing_advantage": 5.0,
+    }
+    _check_tactical_numeric_fields(collector, match.id, row)
+    assert any(i.severity == "warning" and i.code == "tactical_out_of_range" for i in collector.issues)
+
+
+def test_tactical_defensive_line_risk_negative_generates_warning(valid_dataset):
+    collector = IssueCollector()
+    match = valid_dataset.matches[0]
+    row = {
+        "home_id": match.home.team_id,
+        "away_id": match.away.team_id,
+        "data_availability": KNOWN_PRE_MATCH if match.is_finished else FORECAST,
+        "defensive_line_risk": -0.5,
+    }
+    _check_tactical_numeric_fields(collector, match.id, row)
+    assert any(
+        i.severity == "warning"
+        and i.code == "tactical_out_of_range"
+        and "defensive_line_risk" in i.message
+        for i in collector.issues
+    )

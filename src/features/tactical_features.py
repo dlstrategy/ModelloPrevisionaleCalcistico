@@ -9,11 +9,9 @@ from pathlib import Path
 from src.config import FIXTURES_DIR
 from src.domain.match import Match
 from src.features.lineup_features import (
-    KNOWN_PRE_MATCH,
-    FORECAST,
     LineupImpact,
     get_fixture_lineup_row,
-    is_pre_match_lineup_usable,
+    is_pre_match_fixture_row_usable,
 )
 
 
@@ -131,7 +129,7 @@ def resolve_tactical_for_match(
     row = get_fixture_tactical_row(league_id, match.id)
     if row is None:
         lineup_row = get_fixture_lineup_row(league_id, match.id)
-        if lineup_row and is_pre_match_lineup_usable(lineup_row, match) and lineup:
+        if lineup_row and is_pre_match_fixture_row_usable(lineup_row, match) and lineup:
             return ResolvedTactical(
                 tactical=_build_tactical_from_row(match.id, {}, lineup, source="mock_fixture"),
                 source="mock_fixture",
@@ -140,7 +138,7 @@ def resolve_tactical_for_match(
             tactical=default_tactical_matchup(match.id),
             source="default_fallback",
         )
-    if not is_pre_match_lineup_usable(row, match):
+    if not is_pre_match_fixture_row_usable(row, match):
         return ResolvedTactical(
             tactical=default_tactical_matchup(match.id),
             source="default_fallback",

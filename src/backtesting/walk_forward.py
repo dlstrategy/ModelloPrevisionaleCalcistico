@@ -16,6 +16,10 @@ from src.domain.models import Prediction
 from src.models.base import BaseModel
 from src.prediction.predict_match import predict_match
 
+# I modelli attuali non vengono ri-addestrati per finestra: ogni predizione rispetta
+# as_of=match.starting_at mentre train_matches definisce solo la cornice temporale.
+TRAINING_MODE = "as_of_simulation_no_refit"
+
 
 @dataclass(frozen=True)
 class WalkForwardWindow:
@@ -38,6 +42,7 @@ class WalkForwardReport:
     min_train_matches: int
     test_window_size: int
     step_size: int
+    training_mode: str
     total_tested_matches: int
     windows: tuple[WalkForwardWindow, ...]
     aggregate_metrics: BacktestMetrics
@@ -72,6 +77,7 @@ class WalkForwardReport:
             "model_name": self.model_name,
             "league_id": self.league_id,
             "generated_at": self.generated_at,
+            "training_mode": self.training_mode,
             "min_train_matches": self.min_train_matches,
             "test_window_size": self.test_window_size,
             "step_size": self.step_size,
@@ -90,6 +96,13 @@ def run_walk_forward(
     test_window_size: int = 5,
     step_size: int = 5,
 ) -> WalkForwardReport:
+    """Walk-forward pre-kickoff: simulazione temporale senza refit per finestra.
+
+    train_matches delimita la cornice storica di ogni window ma i modelli attuali
+    (Poisson, Elo, Feature, Ensemble) non vengono ri-addestrati: usano il dataset
+    completo con as_of=match.starting_at. In futuro train_matches alimenterà
+    modelli trainabili.
+    """
     finished = [
         m
         for m in dataset.matches
@@ -150,6 +163,7 @@ def run_walk_forward(
         min_train_matches=min_train_matches,
         test_window_size=test_window_size,
         step_size=step_size,
+        training_mode=TRAINING_MODE,
         total_tested_matches=len(all_predictions),
         windows=tuple(windows),
         aggregate_metrics=aggregate,

@@ -110,6 +110,73 @@ def _check_numeric(
         )
 
 
+def _check_numeric_ideal_range(
+    collector: IssueCollector,
+    area: str,
+    code_prefix: str,
+    value: Any,
+    *,
+    fixture_id: int | None,
+    label: str,
+    ideal_min: float,
+    ideal_max: float,
+) -> None:
+    """NaN/inf/non numerico = error; fuori range ideale = warning."""
+    if _is_bad_number(value):
+        collector.add(
+            "error",
+            area,
+            f"{code_prefix}_nan_inf",
+            f"{label} non numerico o NaN/inf: {value!r}",
+            fixture_id=fixture_id,
+        )
+        return
+    number = float(value)
+    if number < ideal_min or number > ideal_max:
+        collector.add(
+            "warning",
+            area,
+            f"{code_prefix}_out_of_range",
+            f"{label}={number} fuori range ideale [{ideal_min}, {ideal_max}]",
+            fixture_id=fixture_id,
+        )
+
+
+def _check_tactical_numeric_fields(
+    collector: IssueCollector,
+    fixture_id: int,
+    row: dict,
+) -> None:
+    """Validazione numerica campi tactical — error su NaN/inf, warning fuori range."""
+    edge_fields = (
+        "wing_advantage",
+        "midfield_advantage",
+        "aerial_advantage",
+        "pressing_mismatch",
+    )
+    for field in edge_fields:
+        _check_numeric_ideal_range(
+            collector,
+            "tactical",
+            "tactical",
+            row.get(field),
+            fixture_id=fixture_id,
+            label=field,
+            ideal_min=-1.0,
+            ideal_max=1.0,
+        )
+    _check_numeric_ideal_range(
+        collector,
+        "tactical",
+        "tactical",
+        row.get("defensive_line_risk"),
+        fixture_id=fixture_id,
+        label="defensive_line_risk",
+        ideal_min=0.0,
+        ideal_max=1.0,
+    )
+
+
 def _dataset_summary(dataset: MatchDataset) -> dict[str, int]:
     finished = [m for m in dataset.matches if m.is_finished]
     future = [m for m in dataset.matches if not m.is_finished]
@@ -495,6 +562,9 @@ def _check_lineup_tactical_row(
                 label=f"{side}.bench_strength",
                 min_value=0.0,
             )
+
+    if area == "tactical":
+        _check_tactical_numeric_fields(collector, fixture_id, row)
 
 
 def check_lineups_companion(

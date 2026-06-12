@@ -12,6 +12,38 @@ from src.domain.match import Match
 # Convenzione disponibilità dati pre-match vs post-match
 KNOWN_PRE_MATCH = "known_pre_match"  # snapshot noto prima del kickoff (valido in backtest)
 FORECAST = "forecast"  # proiezione per partite future (valido in predict)
+POST_MATCH_ONLY = "post_match_only"  # dati post-kickoff — non usabili in backtest/predict
+
+
+def is_pre_match_fixture_row_usable(row: dict, match: Match) -> bool:
+    """Gate anti-leakage per righe fixture companion pre-match (lineup, tactical, ecc.).
+
+    Verifica data_availability, home_id, away_id e coerenza finito/futuro.
+    """
+    availability = row.get("data_availability")
+    if not availability or not isinstance(availability, str):
+        return False
+    availability = availability.strip()
+    if availability in {POST_MATCH_ONLY, "unknown", "post_match"}:
+        return False
+    if availability not in {KNOWN_PRE_MATCH, FORECAST}:
+        return False
+
+    home_id = row.get("home_id")
+    away_id = row.get("away_id")
+    if home_id is None or int(home_id) != match.home.team_id:
+        return False
+    if away_id is None or int(away_id) != match.away.team_id:
+        return False
+
+    if match.is_finished:
+        return availability == KNOWN_PRE_MATCH
+    return availability == FORECAST
+
+
+def is_pre_match_lineup_usable(row: dict, match: Match) -> bool:
+    """Wrapper retrocompatibile — usa :func:`is_pre_match_fixture_row_usable`."""
+    return is_pre_match_fixture_row_usable(row, match)
 
 
 @dataclass(frozen=True)
@@ -81,22 +113,6 @@ def get_fixture_lineup_row(league_id: int, fixture_id: int) -> dict | None:
     return row if isinstance(row, dict) else None
 
 
-def is_pre_match_lineup_usable(row: dict, match: Match) -> bool:
-    """True se i dati lineup/tactical sono utilizzabili senza leakage."""
-    availability = row.get("data_availability")
-    if availability not in {KNOWN_PRE_MATCH, FORECAST}:
-        return False
-    home_id = row.get("home_id")
-    away_id = row.get("away_id")
-    if home_id is not None and int(home_id) != match.home.team_id:
-        return False
-    if away_id is not None and int(away_id) != match.away.team_id:
-        return False
-    if match.is_finished:
-        return availability == KNOWN_PRE_MATCH
-    return availability == FORECAST
-
-
 def _lineup_from_row(fixture_id: int, row: dict) -> LineupImpact:
     return LineupImpact(
         fixture_id=fixture_id,
@@ -164,7 +180,7 @@ def _player_from_row(fixture_id: int, row: dict) -> PlayerLineupSnapshot:
 
 def resolve_lineup_for_match(league_id: int, match: Match) -> ResolvedLineup:
     row = get_fixture_lineup_row(league_id, match.id)
-    if row and is_pre_match_lineup_usable(row, match):
+    if row and is_pre_match_fixture_row_usable(row, match):
         return ResolvedLineup(
             lineup=_lineup_from_row(match.id, row),
             player_lineup=_player_from_row(match.id, row),

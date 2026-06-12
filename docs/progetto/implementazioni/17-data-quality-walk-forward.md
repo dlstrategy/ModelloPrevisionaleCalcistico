@@ -26,7 +26,8 @@ Solidificare il motore prima della Fase 3 Sportmonks: controlli automatici su da
 | `matches` | Duplicati, home/away, starting_at, league_id, state_id |
 | `scores` | Finito senza score, futuro con score, goal negativi |
 | `xg` / `shots` | JSON valido, orphan fixture, range numerici |
-| `lineups` / `tactical` | home/away id, data_availability, NaN/inf |
+| `lineups` | home/away id, data_availability, NaN/inf, range share |
+| `tactical` | home/away id, data_availability, campi numerici (edge ±1, defensive_line_risk 0–1; fuori range = warning) |
 | `calendar` | Team orphan, rotation_risk |
 | `features` | Vector non vuoto, no NaN/inf, probabilità normalizzate |
 
@@ -61,11 +62,16 @@ Exit code `1` se errori, `0` se passed ( anche con warning ).
 
 ## Walk-forward backtest
 
-Simula uso reale: per ogni finestra usa storico `min_train_matches` e testa `test_window_size` partite successive, avanzando di `step_size`.
+Simula uso reale nel tempo con predizioni **pre-kickoff** (`as_of = match.starting_at`).
+
+**Importante — `training_mode: as_of_simulation_no_refit`:**
+
+- Ogni window definisce `train_matches` (cornice storica) e un batch di test;
+- I modelli attuali **non** vengono ri-addestrati per finestra;
+- Poisson, Elo, Feature ed Ensemble usano il dataset completo ma rispettano `as_of` via `finished_before` / `team_history`;
+- In futuro `train_matches` alimenterà modelli trainabili con refit/calibrazione per window.
 
 Default: train=10, window=5, step=5 → 6 finestre, 30 partite testate (su 40 finite mock).
-
-Ogni prediction usa `as_of = match.starting_at`. I modelli non vengono ri-addestrati (struttura pronta per modelli trainabili futuri).
 
 ### Output
 
@@ -95,7 +101,7 @@ python -m src.cli walk-forward --league 384 --model poisson --min-train-matches 
 | `tests/test_validate_cli.py` | CLI validate, JSON/CSV |
 | `tests/test_walk_forward.py` | Finestre, anti-leakage, report |
 
-**Suite totale:** 74 passed.
+**Suite totale:** 92 passed.
 
 ---
 

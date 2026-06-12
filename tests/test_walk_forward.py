@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from src.backtesting.walk_forward import run_walk_forward, save_walk_forward_report
+from src.backtesting.walk_forward import TRAINING_MODE, run_walk_forward, save_walk_forward_report
 from src.config import BACKTESTS_DIR, load_settings
 from src.data_pipeline.sync import load_offline_dataset, sync_league_data
 from src.features.match_context import build_match_context
@@ -81,6 +81,13 @@ def test_walk_forward_probabilities_sum_to_one(dataset, settings):
             assert abs(total - 1.0) < 1e-4
 
 
+def test_walk_forward_report_has_training_mode(dataset, settings):
+    model = get_model_by_name("ensemble", settings, dataset)
+    report = run_walk_forward(dataset, model, settings)
+    assert report.training_mode == TRAINING_MODE
+    assert report.as_dict()["training_mode"] == "as_of_simulation_no_refit"
+
+
 def test_walk_forward_saves_json_and_csv(dataset, settings, tmp_path):
     model = get_model_by_name("ensemble", settings, dataset)
     report = run_walk_forward(dataset, model, settings)
@@ -89,6 +96,7 @@ def test_walk_forward_saves_json_and_csv(dataset, settings, tmp_path):
     assert csv_path.exists()
     payload = json.loads(json_path.read_text(encoding="utf-8"))
     assert payload["aggregate_metrics"]["samples"] == report.total_tested_matches
+    assert payload["training_mode"] == "as_of_simulation_no_refit"
     assert "windows" in payload
     header = csv_path.read_text(encoding="utf-8").splitlines()[0]
     assert "window_index" in header

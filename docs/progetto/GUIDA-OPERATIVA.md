@@ -80,7 +80,7 @@ Controlla consistenza dataset, fixture companion, feature vector e probabilità 
 python -m src.cli walk-forward --league 384 --model ensemble
 ```
 
-Simula predizioni nel tempo usando solo informazione disponibile prima del kickoff. Report in `data/backtests/walk_forward_*.json`.
+Simula predizioni nel tempo usando solo informazione disponibile prima del kickoff (`training_mode: as_of_simulation_no_refit` — nessun refit per finestra). Report in `data/backtests/walk_forward_*.json`.
 
 ---
 
@@ -100,7 +100,7 @@ Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/
 python -m pytest -q
 ```
 
-Risultato atteso: **74 passed**.
+Risultato atteso: **92 passed**.
 
 CI automatica su GitHub Actions (`.github/workflows/ci.yml`).
 
