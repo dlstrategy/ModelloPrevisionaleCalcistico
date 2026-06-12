@@ -36,6 +36,37 @@ def save_feature_trained_artifact(artifact: FeatureTrainedArtifact) -> Path:
     return path
 
 
+def _artifact_from_payload(payload: dict) -> FeatureTrainedArtifact:
+    feature_names = tuple(payload["feature_names"])
+    count = len(feature_names)
+    clip_raw = payload.get("clip_value")
+    if clip_raw is None:
+        clip_raw = payload.get("training_config", {}).get("clip_value")
+    clip_value = float(clip_raw) if clip_raw is not None else None
+    return FeatureTrainedArtifact(
+        model_name=payload["model_name"],
+        model_version=payload["model_version"],
+        league_id=int(payload["league_id"]),
+        data_profile=payload["data_profile"],
+        feature_names=feature_names,
+        scaler_means=dict(payload["scaler_means"]),
+        scaler_stds=dict(payload["scaler_stds"]),
+        weights={k: list(v) for k, v in payload["weights"].items()},
+        bias=dict(payload["bias"]),
+        training_matches=int(payload["training_matches"]),
+        created_at=payload["created_at"],
+        training_config=dict(payload["training_config"]),
+        warnings=tuple(payload.get("warnings", ())),
+        training_algorithm=payload.get("training_algorithm", "softmax_regression_python"),
+        feature_policy=payload.get("feature_policy", "full"),
+        selected_feature_count=int(payload.get("selected_feature_count", count)),
+        original_feature_count=int(payload.get("original_feature_count", count)),
+        feature_selection_warnings=tuple(payload.get("feature_selection_warnings", ())),
+        regularization_notes=tuple(payload.get("regularization_notes", ())),
+        clip_value=clip_value,
+    )
+
+
 def load_feature_trained_artifact(
     league_id: int,
     *,
@@ -53,19 +84,9 @@ def load_feature_trained_artifact(
         raise ArtifactLeagueMismatchError(
             artifact_league_mismatch_message(artifact_league_id, expected_league_id)
         )
-    return FeatureTrainedArtifact(
-        model_name=payload["model_name"],
-        model_version=payload["model_version"],
-        league_id=int(payload["league_id"]),
-        data_profile=payload["data_profile"],
-        feature_names=tuple(payload["feature_names"]),
-        scaler_means=dict(payload["scaler_means"]),
-        scaler_stds=dict(payload["scaler_stds"]),
-        weights={k: list(v) for k, v in payload["weights"].items()},
-        bias=dict(payload["bias"]),
-        training_matches=int(payload["training_matches"]),
-        created_at=payload["created_at"],
-        training_config=dict(payload["training_config"]),
-        warnings=tuple(payload.get("warnings", ())),
-        training_algorithm=payload.get("training_algorithm", "softmax_regression_python"),
-    )
+    return _artifact_from_payload(payload)
+
+
+def load_feature_trained_artifact_from_dict(payload: dict) -> FeatureTrainedArtifact:
+    """Carica artifact da dict — utile per test retrocompatibilità."""
+    return _artifact_from_payload(payload)

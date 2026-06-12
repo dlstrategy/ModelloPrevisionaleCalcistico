@@ -10,7 +10,10 @@ from src.backtesting.ablation import run_ablation_study, save_ablation_report
 from src.backtesting.backtest import run_backtest, run_backtest_all_models
 from src.backtesting.reports import save_comparison_report
 from src.backtesting.walk_forward import run_walk_forward, save_walk_forward_report
-from src.backtesting.walk_forward_trained import run_walk_forward_refit
+from src.backtesting.walk_forward_trained import (
+    compare_feature_policies_walk_forward,
+    run_walk_forward_refit,
+)
 from src.cli_capabilities import print_capabilities
 from src.cli_status import print_status
 from src.cli_train import print_train
@@ -50,6 +53,39 @@ def cmd_walk_forward(args: argparse.Namespace) -> int:
     model_name = args.model or "ensemble"
     dataset = load_dataset(settings, league_id)
 
+    if model_name == "feature_trained" and getattr(args, "compare_feature_policies", False):
+        comparison = compare_feature_policies_walk_forward(
+            dataset,
+            settings,
+            profile=args.profile,
+            min_train_matches=args.min_train_matches,
+            test_window_size=args.test_window_size,
+            step_size=args.step_size,
+            l2=args.l2,
+            clip_value=args.clip_value,
+        )
+        print(f"Feature policy comparison — league {league_id}, model feature_trained")
+        if args.profile:
+            print(f"Data profile: {args.profile}")
+        print()
+        for policy_name in ("full", "compact"):
+            block = comparison[policy_name]
+            metrics = block["aggregate_metrics"]
+            print(f"{policy_name.upper()}:")
+            print(f"  Windows: {block['windows']}")
+            print(f"  Avg features: {block['avg_selected_features']:.1f}")
+            print(f"  Accuracy:    {metrics['accuracy']:.3f}")
+            print(f"  Brier score: {metrics['brier_score']:.4f}")
+            print(f"  Log-loss:    {metrics['log_loss']:.4f}")
+            print(f"  Cal gap:     {metrics['mean_calibration_gap']:.4f}")
+            print()
+        if comparison.get("comparison_notes"):
+            print("Notes:")
+            for note in comparison["comparison_notes"]:
+                print(f"  - {note}")
+        print(f"Report JSON: {comparison['report_path']}")
+        return 0
+
     if model_name == "feature_trained":
         report = run_walk_forward_refit(
             dataset,
@@ -58,6 +94,9 @@ def cmd_walk_forward(args: argparse.Namespace) -> int:
             min_train_matches=args.min_train_matches,
             test_window_size=args.test_window_size,
             step_size=args.step_size,
+            feature_policy=getattr(args, "feature_policy", "full") or "full",
+            l2=args.l2,
+            clip_value=args.clip_value,
         )
     else:
         model = _resolve_model(settings, dataset, model_name)
@@ -76,11 +115,25 @@ def cmd_walk_forward(args: argparse.Namespace) -> int:
     print(f"Training mode: {report.training_mode}")
     if report.data_profile:
         print(f"Data profile: {report.data_profile}")
+    if model_name == "feature_trained" and report.windows:
+        first = report.windows[0]
+        if first.feature_policy:
+            print(f"Feature policy: {first.feature_policy}")
+        if first.original_feature_count is not None and first.training_features is not None:
+            print(
+                f"Features (avg selected): {first.training_features} "
+                f"(original pool ~{first.original_feature_count})"
+            )
     print(f"Train iniziale: {report.min_train_matches}")
     print(f"Test window: {report.test_window_size}")
     print(f"Step: {report.step_size}")
     print()
     print(f"Windows: {len(report.windows)}")
+    if len(report.windows) == 0:
+        print(
+            "WARNING: nessuna finestra walk-forward creata — "
+            "aumenta match finiti o riduci min-train-matches/test-window-size."
+        )
     print(f"Partite testate: {report.total_tested_matches}")
     print()
     print("Aggregate:")
@@ -117,6 +170,8 @@ def cmd_train(args: argparse.Namespace) -> int:
         learning_rate=args.learning_rate,
         l2=args.l2,
         min_samples=args.min_samples,
+        feature_policy=getattr(args, "feature_policy", "full") or "full",
+        clip_value=getattr(args, "clip_value", None),
     )
 
 
@@ -424,6 +479,18 @@ def build_parser() -> argparse.ArgumentParser:
     train_p.add_argument("--learning-rate", type=float, default=None)
     train_p.add_argument("--l2", type=float, default=None)
     train_p.add_argument("--min-samples", type=int, default=None)
+    train_p.add_argument(
+        "--feature-policy",
+        choices=["full", "compact"],
+        default="full",
+        help="Selezione feature per feature_trained (default: full)",
+    )
+    train_p.add_argument(
+        "--clip-value",
+        type=float,
+        default=None,
+        help="Clipping post-scaling (default: policy-specific)",
+    )
     train_p.set_defaults(func=cmd_train)
 
     walk_p = sub.add_parser("walk-forward", help="Backtest walk-forward nel tempo")
@@ -442,6 +509,24 @@ def build_parser() -> argparse.ArgumentParser:
     walk_p.add_argument("--min-train-matches", type=int, default=10)
     walk_p.add_argument("--test-window-size", type=int, default=5)
     walk_p.add_argument("--step-size", type=int, default=5)
+    walk_p.add_argument(
+        "--feature-policy",
+        choices=["full", "compact"],
+        default="full",
+        help="Feature policy per feature_trained walk-forward refit",
+    )
+    walk_p.add_argument(
+        "--compare-feature-policies",
+        action="store_true",
+        help="Confronta walk-forward full vs compact (solo feature_trained)",
+    )
+    walk_p.add_argument("--l2", type=float, default=None, help="Override L2 regularization")
+    walk_p.add_argument(
+        "--clip-value",
+        type=float,
+        default=None,
+        help="Override feature clipping post-scaling",
+    )
     walk_p.set_defaults(func=cmd_walk_forward)
 
     te_p = sub.add_parser(

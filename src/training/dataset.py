@@ -65,3 +65,16 @@ def build_training_samples(
         )
 
     return samples
+
+
+def training_samples_insufficient_message(
+    samples: list[TrainingSample],
+    min_finished_matches: int,
+) -> str | None:
+    """Messaggio se i sample finiti sono sotto la soglia consigliata."""
+    if len(samples) < min_finished_matches:
+        return (
+            f"samples insufficienti: {len(samples)} finiti, "
+            f"soglia consigliata {min_finished_matches}"
+        )
+    return None

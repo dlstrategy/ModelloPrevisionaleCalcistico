@@ -205,6 +205,12 @@ Documentazione tecnica completa: identità `player_id` globale, resolver composa
 
 Vedi [implementazioni/24-player-transfer-flow-audit.md](implementazioni/24-player-transfer-flow-audit.md).
 
+### FeatureTrained compact & regularization (Fase 2j)
+
+Policy `full` (default) vs `compact` per ridurre overfitting: selezione feature deterministica, clipping ±5, L2 più alto. Walk-forward refit calcola la policy solo sul train window.
+
+Vedi [implementazioni/25-feature-trained-compact-regularization.md](implementazioni/25-feature-trained-compact-regularization.md).
+
 ---
 
 Vedi anche: [implementazioni/20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md)

@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from src.training.dataset import TrainingSample
 
 CLASSES: tuple[str, ...] = ("HOME", "DRAW", "AWAY")
-MODEL_VERSION = "2g.1"
+MODEL_VERSION = "2j.0"
 TRAINING_ALGORITHM = "softmax_regression_python"
 
 
@@ -25,6 +25,7 @@ class SoftmaxTrainingConfig:
     epochs: int = 300
     l2: float = 0.001
     min_samples: int = 20
+    clip_value: float | None = None
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,12 @@ class FeatureTrainedArtifact:
     training_config: dict
     warnings: tuple[str, ...] = ()
     training_algorithm: str = TRAINING_ALGORITHM
+    feature_policy: str = "full"
+    selected_feature_count: int = 0
+    original_feature_count: int = 0
+    feature_selection_warnings: tuple[str, ...] = ()
+    regularization_notes: tuple[str, ...] = ()
+    clip_value: float | None = None
 
 
 def _safe_float(value: float) -> float:
@@ -82,6 +89,8 @@ def transform_features(
     features: dict[str, float],
     feature_names: list[str],
     scaler: FeatureScaler,
+    *,
+    clip_value: float | None = None,
 ) -> list[float]:
     vector: list[float] = []
     for name in feature_names:
@@ -90,7 +99,10 @@ def transform_features(
         std = scaler.stds.get(name, 1.0)
         if std < 1e-8:
             std = 1.0
-        vector.append((raw - mean) / std)
+        scaled = (raw - mean) / std
+        if clip_value is not None:
+            scaled = max(-clip_value, min(clip_value, scaled))
+        vector.append(scaled)
     return vector
 
 
@@ -115,9 +127,14 @@ def train_softmax_model(
     league_id: int,
     data_profile: str,
     config: SoftmaxTrainingConfig | None = None,
+    feature_names: list[str] | None = None,
+    feature_policy: str = "full",
+    original_feature_count: int | None = None,
+    feature_selection_warnings: tuple[str, ...] = (),
+    regularization_notes: tuple[str, ...] = (),
 ) -> FeatureTrainedArtifact:
     cfg = config or SoftmaxTrainingConfig()
-    warnings: list[str] = []
+    warnings: list[str] = list(feature_selection_warnings)
 
     if len(samples) < 3:
         raise ValueError(
@@ -137,18 +154,31 @@ def train_softmax_model(
         )
         warnings.append("modello sperimentale")
 
-    feature_names = _collect_feature_names(samples)
-    if not feature_names:
+    all_names = _collect_feature_names(samples)
+    orig_count = original_feature_count if original_feature_count is not None else len(all_names)
+    selected_names = feature_names if feature_names is not None else all_names
+    if not selected_names:
         raise ValueError("Nessuna feature disponibile nei sample di training.")
 
-    scaler = fit_scaler(samples, feature_names)
-    n_features = len(feature_names)
+    reg_notes = list(regularization_notes)
+    if cfg.clip_value is not None:
+        reg_notes.append(f"feature_clip={cfg.clip_value}")
+    if cfg.l2 > 0:
+        reg_notes.append(f"l2={cfg.l2}")
+
+    scaler = fit_scaler(samples, selected_names)
+    n_features = len(selected_names)
     weights, bias = _init_weights(n_features)
     class_index = {label: idx for idx, label in enumerate(CLASSES)}
 
     for _epoch in range(cfg.epochs):
         for sample in samples:
-            x = transform_features(sample.features, feature_names, scaler)
+            x = transform_features(
+                sample.features,
+                selected_names,
+                scaler,
+                clip_value=cfg.clip_value,
+            )
             logits = [
                 sum(weights[c][j] * x[j] for j in range(n_features)) + bias[c]
                 for c in range(len(CLASSES))
@@ -172,7 +202,7 @@ def train_softmax_model(
         model_version=MODEL_VERSION,
         league_id=league_id,
         data_profile=data_profile,
-        feature_names=tuple(feature_names),
+        feature_names=tuple(selected_names),
         scaler_means=dict(scaler.means),
         scaler_stds=dict(scaler.stds),
         weights=weights_dict,
@@ -184,9 +214,17 @@ def train_softmax_model(
             "epochs": cfg.epochs,
             "l2": cfg.l2,
             "min_samples": cfg.min_samples,
+            "clip_value": cfg.clip_value,
+            "feature_policy": feature_policy,
         },
-        warnings=tuple(warnings),
+        warnings=tuple(dict.fromkeys(warnings)),
         training_algorithm=TRAINING_ALGORITHM,
+        feature_policy=feature_policy,
+        selected_feature_count=len(selected_names),
+        original_feature_count=orig_count,
+        feature_selection_warnings=tuple(feature_selection_warnings),
+        regularization_notes=tuple(dict.fromkeys(reg_notes)),
+        clip_value=cfg.clip_value,
     )
 
 
@@ -197,7 +235,10 @@ def predict_proba_from_artifact(
     """Restituisce (P(home), P(draw), P(away))."""
     feature_names = list(artifact.feature_names)
     scaler = FeatureScaler(means=artifact.scaler_means, stds=artifact.scaler_stds)
-    x = transform_features(features, feature_names, scaler)
+    clip = artifact.clip_value
+    if clip is None:
+        clip = artifact.training_config.get("clip_value")
+    x = transform_features(features, feature_names, scaler, clip_value=clip)
     n_features = len(feature_names)
 
     logits = [

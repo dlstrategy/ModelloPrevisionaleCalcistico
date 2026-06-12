@@ -36,6 +36,11 @@ class WalkForwardWindow:
     train_from: str | None = None
     training_features: int | None = None
     training_warnings: tuple[str, ...] | None = None
+    feature_policy: str | None = None
+    original_feature_count: int | None = None
+    feature_selection_warnings: tuple[str, ...] | None = None
+    clip_value: float | None = None
+    training_l2: float | None = None
 
 
 @dataclass(frozen=True)
@@ -83,6 +88,16 @@ class WalkForwardReport:
                 payload["training_features"] = window.training_features
             if window.training_warnings is not None:
                 payload["training_warnings"] = list(window.training_warnings)
+            if window.feature_policy is not None:
+                payload["feature_policy"] = window.feature_policy
+            if window.original_feature_count is not None:
+                payload["original_feature_count"] = window.original_feature_count
+            if window.feature_selection_warnings is not None:
+                payload["feature_selection_warnings"] = list(window.feature_selection_warnings)
+            if window.clip_value is not None:
+                payload["clip_value"] = window.clip_value
+            if window.training_l2 is not None:
+                payload["training_l2"] = window.training_l2
             return payload
 
         result = {
