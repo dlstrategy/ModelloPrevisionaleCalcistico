@@ -1,0 +1,64 @@
+{
+  "leagues": [
+    {
+      "league_id": 384,
+      "name": "Serie A (mock)",
+      "strength_index": 0.82,
+      "pace_index": 0.68,
+      "physicality_index": 0.74,
+      "tactical_complexity_index": 0.80,
+      "defensive_intensity_index": 0.78,
+      "scoring_environment_index": 0.72,
+      "data_quality": 0.85,
+      "confidence": 0.80
+    },
+    {
+      "league_id": 564,
+      "name": "La Liga (mock)",
+      "strength_index": 0.86,
+      "pace_index": 0.72,
+      "physicality_index": 0.70,
+      "tactical_complexity_index": 0.83,
+      "defensive_intensity_index": 0.76,
+      "scoring_environment_index": 0.75,
+      "data_quality": 0.88,
+      "confidence": 0.82
+    },
+    {
+      "league_id": 8,
+      "name": "Premier League (mock)",
+      "strength_index": 0.90,
+      "pace_index": 0.88,
+      "physicality_index": 0.85,
+      "tactical_complexity_index": 0.78,
+      "defensive_intensity_index": 0.80,
+      "scoring_environment_index": 0.82,
+      "data_quality": 0.90,
+      "confidence": 0.85
+    },
+    {
+      "league_id": 82,
+      "name": "Bundesliga (mock)",
+      "strength_index": 0.84,
+      "pace_index": 0.86,
+      "physicality_index": 0.82,
+      "tactical_complexity_index": 0.74,
+      "defensive_intensity_index": 0.72,
+      "scoring_environment_index": 0.84,
+      "data_quality": 0.86,
+      "confidence": 0.80
+    },
+    {
+      "league_id": 61,
+      "name": "Ligue 1 (mock)",
+      "strength_index": 0.78,
+      "pace_index": 0.76,
+      "physicality_index": 0.73,
+      "tactical_complexity_index": 0.72,
+      "defensive_intensity_index": 0.70,
+      "scoring_environment_index": 0.74,
+      "data_quality": 0.80,
+      "confidence": 0.75
+    }
+  ]
+}

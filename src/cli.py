@@ -318,6 +318,31 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_transfer_estimate(args: argparse.Namespace) -> int:
+    from src.players.player_value import resolve_player_value_for_league
+
+    result = resolve_player_value_for_league(
+        args.player_id,
+        args.target_league,
+        target_matches_played=args.target_matches,
+        role=args.role,
+    )
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        print(f"Player {result['player_id']} -> league {result['target_league_id']}")
+        print(f"  Rating:     {result['rating']:.4f}")
+        print(f"  Confidence: {result['confidence']:.4f}")
+        print(f"  Adapter:    {result['source']}")
+        if result.get("specialist_key"):
+            print(f"  Specialist: {result['specialist_key']}")
+        if result.get("source_league_id") is not None:
+            print(f"  Source league: {result['source_league_id']}")
+        if result.get("notes"):
+            print(f"  Notes: {', '.join(result['notes'])}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Motore previsionale calcistico 1/X/2 — Serie A"
@@ -418,6 +443,17 @@ def build_parser() -> argparse.ArgumentParser:
     walk_p.add_argument("--test-window-size", type=int, default=5)
     walk_p.add_argument("--step-size", type=int, default=5)
     walk_p.set_defaults(func=cmd_walk_forward)
+
+    te_p = sub.add_parser(
+        "transfer-estimate",
+        help="Stima transfer composable giocatore (offline mock)",
+    )
+    te_p.add_argument("--player-id", type=int, required=True)
+    te_p.add_argument("--target-league", type=int, required=True)
+    te_p.add_argument("--role", default=None, help="forward, midfielder, defender, goalkeeper")
+    te_p.add_argument("--target-matches", type=int, default=0)
+    te_p.add_argument("--json", action="store_true", help="Output JSON")
+    te_p.set_defaults(func=cmd_transfer_estimate)
 
     return parser
 

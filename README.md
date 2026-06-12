@@ -15,6 +15,8 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2f** | Completata | Data Capability Layer, profili dati, fallback intelligenti |
 | **Fase 2g** | Completata | FeatureTrainedModel offline (train + artifact JSON) |
 | **Fase 2g.1** | Completata | Audit logico, warning in-sample, walk-forward refit |
+| **Fase 2h** | Completata | Multi-league isolation, player global, transfer adaptation |
+| **Fase 2h-b** | Completata | Composable transfer specialists (general + pair) |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -124,7 +126,7 @@ Documentazione completa su architettura, logiche, collegamenti e cronostoria:
 - [Architettura e flussi](docs/progetto/ARCHITETTURA.md)
 - [Cronostoria sviluppo](docs/progetto/CRONOSTORIA.md)
 - [Guida operativa](docs/progetto/GUIDA-OPERATIVA.md)
-- [Documentazione per implementazione](docs/progetto/implementazioni/) (20 moduli)
+- [Documentazione per implementazione](docs/progetto/implementazioni/) (22 moduli)
 - [Logica di funzionamento (audit)](docs/progetto/LOGICA-FUNZIONAMENTO.md)
 
 ## Documentazione Sportmonks API

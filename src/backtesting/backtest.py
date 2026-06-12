@@ -10,6 +10,7 @@ from pathlib import Path
 from src.backtesting.metrics import BacktestMetrics, compute_metrics
 from src.config import BACKTESTS_DIR, Settings
 from src.data_pipeline.dataset_builder import MatchDataset
+from src.data_pipeline.scope import DataScope, scope_metadata_dict
 from src.domain.enums import MatchOutcome
 from src.domain.models import Prediction
 from src.models.base import BaseModel
@@ -96,6 +97,7 @@ def save_report(result: BacktestResult, output_dir: Path) -> tuple[Path, Path]:
     payload = {
         "model": result.model_name,
         "league_id": result.league_id,
+        "data_scope": scope_metadata_dict(DataScope(league_id=result.league_id)),
         "metrics": result.metrics.as_dict(),
         "predictions": [
             {

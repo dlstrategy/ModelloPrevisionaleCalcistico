@@ -156,6 +156,32 @@ Finestra 2: train 1-15, test 16-20 → refit → predici test
 | 5 | No confronto auto feature vs feature_trained OOS | Scelta modello non guidata | Medio | Report comparativo walk-forward | Media |
 | 6 | No simulatore stagione | Valutazione strategica limitata | Basso | Simulatore round-by-round | Bassa |
 | 7 | Sync Sportmonks non attivo | Dati reali assenti | Alto (pre-stagione) | Fase 3 API | Alta (quando serve) |
+| 8 | Coefficienti transfer mock | Rating cross-league impreciso | Medio | Calibrazione con dati reali | Media |
+
+---
+
+## 9. Multi-league isolation e player transfer (Fase 2h)
+
+| Componente | Ruolo |
+|------------|-------|
+| `DataScope` | Chiavi logiche `league_384`, `league_384_season_{id}` |
+| Artifact guard | Blocco se `artifact.league_id != dataset.league_id` |
+| `PlayerCareer` | ID giocatore globale, snapshot per lega |
+| `transfer_adaptation` | Rating adattato + confidence tra leghe (coefficienti mock) |
+
+**Rischio residuo:** coefficienti transfer mock — da calibrare con dati reali (Fase 3+).
+
+Vedi [implementazioni/21-multi-league-player-transfer-layer.md](implementazioni/21-multi-league-player-transfer-layer.md).
+
+### Composable transfer specialists (Fase 2h-b)
+
+Stack ibrido: **GeneralTransferAdapter** (sempre) + **PairSpecialist** opzionale (se sample/reliability sufficienti) + **SpecialistLearning** offline.
+
+```bash
+python -m src.cli transfer-estimate --player-id 1006 --target-league 384 --role forward
+```
+
+Vedi [implementazioni/22-composable-transfer-specialists.md](implementazioni/22-composable-transfer-specialists.md).
 
 ---
 

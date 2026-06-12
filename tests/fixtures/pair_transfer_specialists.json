@@ -1,0 +1,48 @@
+{
+  "specialists": [
+    {
+      "source_league_id": 564,
+      "target_league_id": 384,
+      "role": null,
+      "sample_size": 120,
+      "reliability": 0.72,
+      "rating_multiplier": 0.96,
+      "confidence_multiplier": 1.05,
+      "learned_version": "2h-b.0-mock",
+      "notes": ["liga_to_serie_a_general", "mock_fixture"]
+    },
+    {
+      "source_league_id": 564,
+      "target_league_id": 384,
+      "role": "forward",
+      "sample_size": 45,
+      "reliability": 0.68,
+      "rating_multiplier": 0.93,
+      "confidence_multiplier": 1.02,
+      "learned_version": "2h-b.0-mock",
+      "notes": ["liga_to_serie_a_forward", "mock_fixture"]
+    },
+    {
+      "source_league_id": 8,
+      "target_league_id": 82,
+      "role": null,
+      "sample_size": 80,
+      "reliability": 0.70,
+      "rating_multiplier": 0.98,
+      "confidence_multiplier": 1.03,
+      "learned_version": "2h-b.0-mock",
+      "notes": ["premier_to_bundesliga_general", "mock_fixture"]
+    },
+    {
+      "source_league_id": 82,
+      "target_league_id": 8,
+      "role": "defender",
+      "sample_size": 35,
+      "reliability": 0.62,
+      "rating_multiplier": 0.94,
+      "confidence_multiplier": 0.98,
+      "learned_version": "2h-b.0-mock",
+      "notes": ["bundesliga_to_premier_defender", "mock_fixture"]
+    }
+  ]
+}

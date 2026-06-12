@@ -1,0 +1,111 @@
+{
+  "players": [
+    {
+      "player_id": 1001,
+      "player_name": "Mock Striker Stable",
+      "snapshots": [
+        {
+          "player_id": 1001,
+          "player_name": "Mock Striker Stable",
+          "league_id": 384,
+          "season_id": 23614,
+          "team_id": 101,
+          "position": "FW",
+          "minutes": 2800,
+          "rating": 7.4,
+          "rating_percentile": 0.88,
+          "sample_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "player_id": 1002,
+      "player_name": "Mock Winger Transfer",
+      "snapshots": [
+        {
+          "player_id": 1002,
+          "player_name": "Mock Winger Transfer",
+          "league_id": 564,
+          "season_id": 21000,
+          "team_id": 201,
+          "position": "AM",
+          "minutes": 2200,
+          "rating": 7.8,
+          "rating_percentile": 0.91,
+          "sample_confidence": 0.88
+        },
+        {
+          "player_id": 1002,
+          "player_name": "Mock Winger Transfer",
+          "league_id": 384,
+          "season_id": 23614,
+          "team_id": 102,
+          "position": "AM",
+          "minutes": 450,
+          "rating": 7.1,
+          "rating_percentile": 0.72,
+          "sample_confidence": 0.55
+        }
+      ]
+    },
+    {
+      "player_id": 1003,
+      "player_name": "Mock Midfielder Weak League",
+      "snapshots": [
+        {
+          "player_id": 1003,
+          "player_name": "Mock Midfielder Weak League",
+          "league_id": 999,
+          "season_id": 9001,
+          "team_id": 301,
+          "position": "CM",
+          "minutes": 1900,
+          "rating": 8.1,
+          "rating_percentile": 0.94,
+          "sample_confidence": 0.80
+        }
+      ]
+    },
+    {
+      "player_id": 1004,
+      "player_name": "Mock Rookie Unknown",
+      "snapshots": []
+    },
+    {
+      "player_id": 1005,
+      "player_name": "Mock Bench Star",
+      "snapshots": [
+        {
+          "player_id": 1005,
+          "player_name": "Mock Bench Star",
+          "league_id": 384,
+          "season_id": 23614,
+          "team_id": 103,
+          "position": "FW",
+          "minutes": 320,
+          "rating": 8.5,
+          "rating_percentile": 0.96,
+          "sample_confidence": 0.35
+        }
+      ]
+    },
+    {
+      "player_id": 1006,
+      "player_name": "Mock Forward Liga Only",
+      "snapshots": [
+        {
+          "player_id": 1006,
+          "player_name": "Mock Forward Liga Only",
+          "league_id": 564,
+          "season_id": 21000,
+          "team_id": 202,
+          "position": "FW",
+          "minutes": 1800,
+          "rating": 7.6,
+          "rating_percentile": 0.86,
+          "sample_confidence": 0.82
+        }
+      ]
+    }
+  ]
+}

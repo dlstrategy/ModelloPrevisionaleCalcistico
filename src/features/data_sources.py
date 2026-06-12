@@ -54,6 +54,11 @@ def build_data_sources(
         "shots": companion_source("shots", "mock_fixture_historical"),
         "player_lineup": companion_source("player_lineup", context.lineup_source),
         "tactical": companion_source("tactical", context.tactical_source),
+        "player_transfer": (
+            "disabled"
+            if "player_lineup" in disabled
+            else "mock_player_career_registry"
+        ),
     }
     return sources
 

@@ -11,6 +11,7 @@ from pathlib import Path
 from src.backtesting.metrics import BacktestMetrics, compute_metrics
 from src.config import BACKTESTS_DIR, Settings
 from src.data_pipeline.dataset_builder import MatchDataset
+from src.data_pipeline.scope import DataScope, scope_metadata_dict
 from src.domain.enums import MatchOutcome
 from src.domain.models import Prediction
 from src.models.base import BaseModel
@@ -87,6 +88,7 @@ class WalkForwardReport:
         result = {
             "model_name": self.model_name,
             "league_id": self.league_id,
+            "data_scope": scope_metadata_dict(DataScope(league_id=self.league_id)),
             "generated_at": self.generated_at,
             "training_mode": self.training_mode,
             "min_train_matches": self.min_train_matches,

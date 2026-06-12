@@ -35,6 +35,8 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 18 | [18-data-capability-layer.md](implementazioni/18-data-capability-layer.md) | Data Capability Layer, profili, fallback |
 | 19 | [19-feature-trained-model.md](implementazioni/19-feature-trained-model.md) | FeatureTrainedModel offline, CLI train |
 | 20 | [20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md) | Audit logico, in-sample warning, walk-forward refit |
+| 21 | [21-multi-league-player-transfer-layer.md](implementazioni/21-multi-league-player-transfer-layer.md) | Isolamento multi-lega, player global, transfer adaptation |
+| 22 | [22-composable-transfer-specialists.md](implementazioni/22-composable-transfer-specialists.md) | Composable transfer: general adapter + pair specialists |
 
 ## Documentazione API esterna
 

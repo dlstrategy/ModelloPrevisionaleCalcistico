@@ -7,6 +7,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+from pathlib import Path
+
+from src.data_pipeline.scope import DataScope, scope_metadata_dict
 from src.domain.enums import ParticipantLocation
 from src.domain.match import Match
 
@@ -56,9 +59,11 @@ class MatchDataset:
         raise ValueError(f"Team {team_id} not in match {match.id}")
 
     def save(self, path: Path) -> None:
+        scope = DataScope.from_dataset(self)
         payload = {
             "league_id": self.league_id,
             "season_id": self.season_id,
+            "data_scope": scope_metadata_dict(scope),
             "matches": [
                 {
                     "id": m.id,

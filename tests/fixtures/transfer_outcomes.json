@@ -1,0 +1,84 @@
+{
+  "observations": [
+    {
+      "player_id": 2001,
+      "source_league_id": 564,
+      "target_league_id": 384,
+      "role": "forward",
+      "predicted_rating": 0.72,
+      "observed_rating_after_transfer": 0.68,
+      "matches_observed": 12,
+      "minutes_observed": 980
+    },
+    {
+      "player_id": 2002,
+      "source_league_id": 564,
+      "target_league_id": 384,
+      "role": "forward",
+      "predicted_rating": 0.70,
+      "observed_rating_after_transfer": 0.66,
+      "matches_observed": 10,
+      "minutes_observed": 850
+    },
+    {
+      "player_id": 2003,
+      "source_league_id": 564,
+      "target_league_id": 384,
+      "role": "forward",
+      "predicted_rating": 0.74,
+      "observed_rating_after_transfer": 0.71,
+      "matches_observed": 8,
+      "minutes_observed": 720
+    },
+    {
+      "player_id": 2004,
+      "source_league_id": 564,
+      "target_league_id": 384,
+      "role": "forward",
+      "predicted_rating": 0.68,
+      "observed_rating_after_transfer": 0.60,
+      "matches_observed": 2,
+      "minutes_observed": 120
+    },
+    {
+      "player_id": 2005,
+      "source_league_id": 8,
+      "target_league_id": 82,
+      "role": null,
+      "predicted_rating": 0.80,
+      "observed_rating_after_transfer": 0.78,
+      "matches_observed": 15,
+      "minutes_observed": 1200
+    },
+    {
+      "player_id": 2006,
+      "source_league_id": 8,
+      "target_league_id": 82,
+      "role": null,
+      "predicted_rating": 0.76,
+      "observed_rating_after_transfer": 0.74,
+      "matches_observed": 11,
+      "minutes_observed": 900
+    },
+    {
+      "player_id": 2007,
+      "source_league_id": 82,
+      "target_league_id": 8,
+      "role": "defender",
+      "predicted_rating": 0.65,
+      "observed_rating_after_transfer": 0.62,
+      "matches_observed": 9,
+      "minutes_observed": 810
+    },
+    {
+      "player_id": 2008,
+      "source_league_id": 82,
+      "target_league_id": 8,
+      "role": "defender",
+      "predicted_rating": 0.67,
+      "observed_rating_after_transfer": 0.64,
+      "matches_observed": 7,
+      "minutes_observed": 630
+    }
+  ]
+}
