@@ -37,6 +37,8 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 20 | [20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md) | Audit logico, in-sample warning, walk-forward refit |
 | 21 | [21-multi-league-player-transfer-layer.md](implementazioni/21-multi-league-player-transfer-layer.md) | Isolamento multi-lega, player global, transfer adaptation |
 | 22 | [22-composable-transfer-specialists.md](implementazioni/22-composable-transfer-specialists.md) | Composable transfer: general adapter + pair specialists |
+| 23 | [23-transfer-aware-lineup-features.md](implementazioni/23-transfer-aware-lineup-features.md) | Transfer-aware lineup features (gruppo player_lineup) |
+| 24 | [24-player-transfer-flow-audit.md](implementazioni/24-player-transfer-flow-audit.md) | Audit flow giocatori/trasferimenti (Fase 2i-audit) |
 
 ## Documentazione API esterna
 

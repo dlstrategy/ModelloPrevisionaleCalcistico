@@ -218,6 +218,11 @@ def explain_prediction(
         and abs(strength_val) < 0.05
     ):
         explanation["warnings"].append("Squadre equilibrate su xG e strength — alta incertezza")
+    if _group_active(context, "player_lineup"):
+        from src.features.transfer_lineup_features import build_transfer_lineup_summary
+
+        explanation["transfer_lineup_summary"] = build_transfer_lineup_summary(context.match)
+
     if _group_active(context, "player_lineup") and context.lineup_source == "default_fallback":
         explanation["warnings"].append(
             "Lineup/player impact usa default fallback — dati pre-match non disponibili"

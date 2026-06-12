@@ -193,6 +193,18 @@ Il sistema preferisce una stima neutra a bassa confidence rispetto a inventare u
 - Pochi minuti / sample basso → rating usabile ma confidence cap ~0.30
 - Ruolo sconosciuto → skill generico, nessun crash
 
+### Transfer-aware lineup features (Fase 2i)
+
+27 feature aggregate nel gruppo **player_lineup**: avg rating/confidence transfer-aware, share unknown/low_sample/cross-league, diff home-away. Non cambiano l'output match.
+
+Vedi [implementazioni/23-transfer-aware-lineup-features.md](implementazioni/23-transfer-aware-lineup-features.md).
+
+### Audit flow giocatori/trasferimenti (Fase 2i-audit)
+
+Documentazione tecnica completa: identità `player_id` globale, resolver composable, policy unknown/low-sample/unknown-league, esempi fixture, impatto (o non impatto) sulle predizioni.
+
+Vedi [implementazioni/24-player-transfer-flow-audit.md](implementazioni/24-player-transfer-flow-audit.md).
+
 ---
 
 Vedi anche: [implementazioni/20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md)
