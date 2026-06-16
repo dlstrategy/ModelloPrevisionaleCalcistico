@@ -24,7 +24,8 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2k** | Completata | Model evaluation report & promotion gate |
 | **Fase 2l** | Completata | Coach impact, league adaptation & integration layer |
 | **Fase 2l-b** | Completata | Coach explain hardening & Sportmonks mapping prep |
-| **Fase 3** | Da attivare | Sync API Sportmonks reale |
+| **Fase 2m** | Completata | Real data readiness audit pre-Fase 3 |
+| **Fase 3** | Da attivare (`PARTIAL_READY`) | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
 
@@ -99,6 +100,10 @@ python -m src.cli ablation --league 384 --rounds 5
 
 # Data quality — consistenza dataset, fixture companion, feature e probabilità
 python -m src.cli validate --league 384 --profile base
+
+# Audit prontezza dati reali Sportmonks (statico, no API)
+python -m src.cli readiness --league 384 --profile advanced
+python -m src.cli readiness --league 384 --profile advanced --json --save
 
 # Walk-forward — predizioni nel tempo con solo info pre-kickoff
 python -m src.cli walk-forward --league 384 --model ensemble

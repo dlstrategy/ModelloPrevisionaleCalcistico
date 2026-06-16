@@ -43,6 +43,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 26 | [26-model-evaluation-promotion-gate.md](implementazioni/26-model-evaluation-promotion-gate.md) | Model evaluation & promotion gate (Fase 2k) |
 | 27 | [27-coach-impact-league-adaptation-layer.md](implementazioni/27-coach-impact-league-adaptation-layer.md) | Coach impact & league adaptation (Fase 2l) |
 | 28 | [28-sportmonks-coach-mapping-prep.md](implementazioni/28-sportmonks-coach-mapping-prep.md) | Sportmonks coach mapping prep (Fase 2l-b) |
+| 29 | [29-real-data-readiness-audit.md](implementazioni/29-real-data-readiness-audit.md) | Real data readiness audit pre-Fase 3 (Fase 2m) |
 
 ## Documentazione API esterna
 

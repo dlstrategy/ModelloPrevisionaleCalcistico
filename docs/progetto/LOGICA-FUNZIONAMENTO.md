@@ -1,6 +1,6 @@
 # Logica di funzionamento del motore previsionale
 
-Documento di audit end-to-end — stato attuale del programma (offline, Fase 2l-b).
+Documento di audit end-to-end — stato attuale del programma (offline, Fase 2m).
 
 ## 1. Visione generale
 
@@ -229,6 +229,12 @@ Vedi [implementazioni/27-coach-impact-league-adaptation-layer.md](implementazion
 Warning explain style-fit insufficiente; `coach_summary` arricchita (`style_fit_confidence`, `style_fit_notes`, `adaptation_notes`); mapping Sportmonks documentato senza API.
 
 Vedi [implementazioni/28-sportmonks-coach-mapping-prep.md](implementazioni/28-sportmonks-coach-mapping-prep.md).
+
+### Real data readiness audit (Fase 2m)
+
+Audit statico pre-Fase 3: client/cache/sync gated, feature groups, transfer, coach, feature_trained, explain, CLI. Comando `readiness`; raccomandazione onesta **`PARTIAL_READY`** finché mapper API avanzati non sono implementati.
+
+Vedi [implementazioni/29-real-data-readiness-audit.md](implementazioni/29-real-data-readiness-audit.md).
 
 ---
 

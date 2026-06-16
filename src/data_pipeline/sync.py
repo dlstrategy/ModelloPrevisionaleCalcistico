@@ -107,6 +107,11 @@ def _sync_from_api(settings: Settings, league_id: int) -> MatchDataset:
 def sync_league_data(settings: Settings, league_id: int) -> MatchDataset:
     processed_path = PROCESSED_DIR / f"league_{league_id}_dataset.json"
 
+    if settings.enable_sportmonks_sync and not settings.has_api_token:
+        logger.warning(
+            "ENABLE_SPORTMONKS_SYNC=true ma SPORTMONKS_API_TOKEN assente — sync resta offline"
+        )
+
     if settings.can_sync_api:
         logger.info("Fase 3: sync API Sportmonks per lega %s", league_id)
         dataset = _sync_from_api(settings, league_id)

@@ -17,6 +17,7 @@ from src.backtesting.walk_forward_trained import (
 from src.cli_capabilities import print_capabilities
 from src.cli_status import print_status
 from src.cli_evaluate import print_evaluate_models
+from src.cli_readiness import print_readiness
 from src.cli_train import print_train
 from src.cli_validate import print_validate
 from src.config import BACKTESTS_DIR, SERIE_A_LEAGUE_ID, load_settings
@@ -38,6 +39,19 @@ def cmd_validate(args: argparse.Namespace) -> int:
     setup_logging(settings.log_level)
     league_id = args.league or settings.default_league_id
     return print_validate(settings, league_id, profile=args.profile)
+
+
+def cmd_readiness(args: argparse.Namespace) -> int:
+    settings = load_settings()
+    setup_logging(settings.log_level)
+    league_id = args.league or settings.default_league_id
+    return print_readiness(
+        settings,
+        league_id,
+        profile=args.profile,
+        as_json=args.json,
+        save=args.save,
+    )
 
 
 def cmd_capabilities(args: argparse.Namespace) -> int:
@@ -475,6 +489,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="Profilo dati (default: DATA_PROFILE da .env)",
     )
     validate_p.set_defaults(func=cmd_validate)
+
+    readiness_p = sub.add_parser(
+        "readiness",
+        help="Audit prontezza dati reali Sportmonks (statico, no API)",
+    )
+    readiness_p.add_argument("--league", type=int, default=None)
+    readiness_p.add_argument(
+        "--profile",
+        choices=["base", "advanced", "all_in_no_predictions"],
+        default=None,
+        help="Profilo dati da valutare (default: DATA_PROFILE da .env)",
+    )
+    readiness_p.add_argument("--json", action="store_true", help="Output JSON su stdout")
+    readiness_p.add_argument(
+        "--save",
+        action="store_true",
+        help="Salva report in data/backtests/readiness_{timestamp}.json",
+    )
+    readiness_p.set_defaults(func=cmd_readiness)
 
     cap_p = sub.add_parser("capabilities", help="Capability dati e completeness per profilo")
     cap_p.add_argument("--league", type=int, default=None)

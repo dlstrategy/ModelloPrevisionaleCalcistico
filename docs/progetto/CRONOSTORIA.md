@@ -206,9 +206,21 @@ Gruppo `coach` (68 feature), registry mock, adaptation lega/paese, explain `coac
 
 ---
 
-## Fase 3 — Sync API Sportmonks (da attivare)
+## Fase 2m — Real data readiness audit (completata)
 
-Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
+| Area | Modifica |
+|------|----------|
+| Audit | Doc 29; raccomandazione `PARTIAL_READY` |
+| Modulo | `src/data_pipeline/readiness.py` (controlli statici, no API) |
+| CLI | `python -m src.cli readiness` |
+| Hardening | Warning sync senza token; status mostra overall readiness |
+| Test | `test_real_data_readiness.py` |
+
+---
+
+## Fase 3 — Sync API Sportmonks (da attivare, PARTIAL_READY)
+
+Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto. **Attendere mapper avanzati** (doc 29 checklist).
 
 ---
 
@@ -231,7 +243,8 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M6f] Fase 2h–2k — Transfer layer, compact, evaluation gate
 ├── [M6g] Fase 2l — Coach impact & league adaptation
 ├── [M6h] Fase 2l-b — Coach hardening & Sportmonks mapping prep
-└── [M7] Fase 3 — API live (futuro)
+├── [M6i] Fase 2m — Real data readiness audit (PARTIAL_READY)
+└── [M7] Fase 3 — API live (futuro, dopo mapper avanzati)
 ```
 
 ---

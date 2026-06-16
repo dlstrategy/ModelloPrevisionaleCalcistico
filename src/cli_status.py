@@ -7,6 +7,7 @@ from pathlib import Path
 
 from src.config import FIXTURES_DIR, PROCESSED_DIR, Settings
 from src.data_capabilities.resolver import feature_group_display_status, resolve_capabilities
+from src.data_pipeline.readiness import build_real_data_readiness_report
 from src.data_pipeline.sync import load_dataset
 from src.features.data_sources import companion_fixture_status
 from src.features.match_context import build_match_context
@@ -90,4 +91,6 @@ def print_status(settings: Settings, league_id: int) -> int:
     for group in sorted(ALL_FEATURE_GROUPS):
         print(f"  {group:<22} {feature_group_display_status(group, cap)}")
     print(f"Policy disabled:    {', '.join(cap.policy_disabled_capabilities)}")
+    readiness = build_real_data_readiness_report(settings, league_id)
+    print(f"Real data readiness: {readiness.overall_status} (python -m src.cli readiness --league {league_id})")
     return 0
