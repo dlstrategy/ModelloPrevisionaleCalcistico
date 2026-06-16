@@ -236,6 +236,12 @@ Audit statico pre-Fase 3: client/cache/sync gated, feature groups, transfer, coa
 
 Vedi [implementazioni/29-real-data-readiness-audit.md](implementazioni/29-real-data-readiness-audit.md).
 
+### Sportmonks API mappers offline-first (Fase 3a)
+
+Mapper puri JSON Sportmonks → companion/registry interni (statistics, lineups, coach, standings, player). Test su sample in `tests/fixtures/sportmonks/`. Sync non wired — resta `PARTIAL_READY`.
+
+Vedi [implementazioni/30-sportmonks-api-mappers-offline-first.md](implementazioni/30-sportmonks-api-mappers-offline-first.md).
+
 ---
 
 Vedi anche: [implementazioni/20-logica-funzionamento-audit.md](implementazioni/20-logica-funzionamento-audit.md)

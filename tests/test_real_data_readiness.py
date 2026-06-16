@@ -122,6 +122,17 @@ def test_prediction_output_unchanged(dataset, settings):
     assert 0.0 < pred.confidence <= 1.0
 
 
+def test_mapper_offline_items_present(settings):
+    report = build_real_data_readiness_report(settings, 384, profile="advanced")
+    areas = {i.area for i in report.items}
+    assert "mapper_offline_xg" in areas
+    assert "sync_wiring_xg" in areas
+    mapper_xg = next(i for i in report.items if i.area == "mapper_offline_xg")
+    assert mapper_xg.status == "partial"
+    sync_xg = next(i for i in report.items if i.area == "sync_wiring_xg")
+    assert sync_xg.status == "not_ready"
+
+
 def test_feature_trained_outside_ensemble_and_all_models(dataset, settings):
     base_names = {m.name for m in build_base_models(settings, dataset)}
     assert "feature_trained" not in base_names

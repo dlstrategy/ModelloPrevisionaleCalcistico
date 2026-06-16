@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "source": "offline_sample",
+    "description": "Sportmonks API v3 standings/season sample — NOT real API data",
+    "derived_from": "docs/sportmonks-football-v3-docs.md"
+  },
+  "data": [
+    {
+      "position": 1,
+      "points": 12,
+      "participant_id": 8,
+      "participant": {"id": 8, "name": "Lazio", "short_code": "LAZ"},
+      "details": [
+        {"type": {"developer_name": "OVERALL_MATCHES"}, "value": {"total": 5}},
+        {"type": {"developer_name": "OVERALL_WON"}, "value": {"total": 4}},
+        {"type": {"developer_name": "OVERALL_DRAW"}, "value": {"total": 0}},
+        {"type": {"developer_name": "OVERALL_LOST"}, "value": {"total": 1}},
+        {"type": {"developer_name": "OVERALL_GOALS_FOR"}, "value": {"total": 10}},
+        {"type": {"developer_name": "OVERALL_GOALS_AGAINST"}, "value": {"total": 4}}
+      ],
+      "form": "WWWLW"
+    },
+    {
+      "position": 8,
+      "points": 6,
+      "participant_id": 4,
+      "participant": {"id": 4, "name": "Torino", "short_code": "TOR"},
+      "details": [
+        {"type": {"developer_name": "OVERALL_MATCHES"}, "value": {"total": 5}},
+        {"type": {"developer_name": "OVERALL_WON"}, "value": {"total": 1}},
+        {"type": {"developer_name": "OVERALL_DRAW"}, "value": {"total": 3}},
+        {"type": {"developer_name": "OVERALL_LOST"}, "value": {"total": 1}},
+        {"type": {"developer_name": "OVERALL_GOALS_FOR"}, "value": {"total": 5}},
+        {"type": {"developer_name": "OVERALL_GOALS_AGAINST"}, "value": {"total": 6}}
+      ],
+      "form": "DWDWL"
+    }
+  ]
+}

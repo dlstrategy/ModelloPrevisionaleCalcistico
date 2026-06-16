@@ -69,6 +69,8 @@ def _sync_from_api(settings: Settings, league_id: int) -> MatchDataset:
     past_start = today - timedelta(days=PAST_SYNC_DAYS)
     future_end = today + timedelta(days=FUTURE_SYNC_DAYS)
     includes = "participants;scores;state"
+    # Fase 3b TODO: estendere includes (statistics;lineups;coaches;formations) e
+    # applicare mapper offline-first da src/sportmonks/mappers/ — non attivato in 3a.
 
     past_response = fixtures_api.fetch_fixtures_between(
         client,

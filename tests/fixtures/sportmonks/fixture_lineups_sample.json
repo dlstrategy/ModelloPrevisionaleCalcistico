@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "source": "offline_sample",
+    "description": "Sportmonks API v3 fixture + lineups + formations sample — NOT real API data",
+    "derived_from": "docs/sportmonks-football-v3-docs.md",
+    "fixture_ref": "league_384_matches.json id=1001"
+  },
+  "data": {
+    "id": 1001,
+    "league_id": 384,
+    "season_id": 25000,
+    "lineups_confirmed": true,
+    "participants": [
+      {"id": 8, "name": "Lazio", "meta": {"location": "home"}},
+      {"id": 4, "name": "Torino", "meta": {"location": "away"}}
+    ],
+    "formations": [
+      {"participant_id": 8, "location": "home", "formation": "4-3-3"},
+      {"participant_id": 4, "location": "away", "formation": "4-4-2"}
+    ],
+    "lineups": [
+      {"player_id": 5001, "team_id": 8, "type_id": 11, "player_name": "Home GK", "formation_position": 1},
+      {"player_id": 5002, "team_id": 8, "type_id": 11, "player_name": "Home DF1", "formation_position": 2},
+      {"player_id": 5003, "team_id": 8, "type_id": 11, "player_name": "Home DF2", "formation_position": 3},
+      {"player_id": 5004, "team_id": 8, "type_id": 11, "player_name": "Home DF3", "formation_position": 4},
+      {"player_id": 5005, "team_id": 8, "type_id": 11, "player_name": "Home DF4", "formation_position": 5},
+      {"player_id": 5006, "team_id": 8, "type_id": 11, "player_name": "Home MF1", "formation_position": 6},
+      {"player_id": 5007, "team_id": 8, "type_id": 11, "player_name": "Home MF2", "formation_position": 7},
+      {"player_id": 5008, "team_id": 8, "type_id": 11, "player_name": "Home MF3", "formation_position": 8},
+      {"player_id": 5009, "team_id": 8, "type_id": 11, "player_name": "Home FW1", "formation_position": 9},
+      {"player_id": 5010, "team_id": 8, "type_id": 11, "player_name": "Home FW2", "formation_position": 10},
+      {"player_id": 5011, "team_id": 8, "type_id": 11, "player_name": "Home FW3", "formation_position": 11},
+      {"player_id": 5012, "team_id": 8, "type_id": 12, "player_name": "Home Sub1", "formation_position": null},
+      {"player_id": 6001, "team_id": 4, "type_id": 11, "player_name": "Away GK", "formation_position": 1},
+      {"player_id": 6002, "team_id": 4, "type_id": 11, "player_name": "Away DF1", "formation_position": 2},
+      {"player_id": 6003, "team_id": 4, "type_id": 11, "player_name": "Away DF2", "formation_position": 3},
+      {"player_id": 6004, "team_id": 4, "type_id": 11, "player_name": "Away DF3", "formation_position": 4},
+      {"player_id": 6005, "team_id": 4, "type_id": 11, "player_name": "Away DF4", "formation_position": 5},
+      {"player_id": 6006, "team_id": 4, "type_id": 11, "player_name": "Away MF1", "formation_position": 6},
+      {"player_id": 6007, "team_id": 4, "type_id": 11, "player_name": "Away MF2", "formation_position": 7},
+      {"player_id": 6008, "team_id": 4, "type_id": 11, "player_name": "Away MF3", "formation_position": 8},
+      {"player_id": 6009, "team_id": 4, "type_id": 11, "player_name": "Away MF4", "formation_position": 9},
+      {"player_id": 6010, "team_id": 4, "type_id": 11, "player_name": "Away FW1", "formation_position": 10},
+      {"player_id": 6011, "team_id": 4, "type_id": 11, "player_name": "Away FW2", "formation_position": 11}
+    ]
+  }
+}

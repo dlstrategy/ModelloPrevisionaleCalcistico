@@ -25,7 +25,8 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2l** | Completata | Coach impact, league adaptation & integration layer |
 | **Fase 2l-b** | Completata | Coach explain hardening & Sportmonks mapping prep |
 | **Fase 2m** | Completata | Real data readiness audit pre-Fase 3 |
-| **Fase 3** | Da attivare (`PARTIAL_READY`) | Sync API Sportmonks reale |
+| **Fase 3a** | Completata | Sportmonks API mappers offline-first |
+| **Fase 3** | Da attivare (`PARTIAL_READY`) | Sync API Sportmonks reale + wire mapper (3b) |
 
 ## Output (solo 1/X/2)
 

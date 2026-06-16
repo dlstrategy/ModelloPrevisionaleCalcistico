@@ -2,7 +2,9 @@
 
 Audit strutturato di prontezza **prima** dell'attivazione sync Sportmonks reale (Fase 3). Nessuna chiamata API in questa fase.
 
-**Raccomandazione finale: `PARTIAL_READY`**
+**Raccomandazione finale: `PARTIAL_READY`** (post Fase 3a: mapper offline-first presenti, sync non wired)
+
+Aggiornamento Fase 3a: vedi [30-sportmonks-api-mappers-offline-first.md](30-sportmonks-api-mappers-offline-first.md).
 
 ---
 

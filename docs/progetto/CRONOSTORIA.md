@@ -218,6 +218,18 @@ Gruppo `coach` (68 feature), registry mock, adaptation lega/paese, explain `coac
 
 ---
 
+## Fase 3a — Sportmonks API mappers offline-first (completata)
+
+| Area | Modifica |
+|------|----------|
+| Mapper | `src/sportmonks/mappers/` (statistics, lineups, coach, standings, player) |
+| Sample JSON | `tests/fixtures/sportmonks/*.json` (offline_sample) |
+| Readiness | mapper_offline partial + sync_wiring blocking |
+| Test | 5 nuovi file test_sportmonks_* |
+| Doc | Modulo 30 |
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare, PARTIAL_READY)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto. **Attendere mapper avanzati** (doc 29 checklist).
@@ -244,7 +256,8 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto. *
 ├── [M6g] Fase 2l — Coach impact & league adaptation
 ├── [M6h] Fase 2l-b — Coach hardening & Sportmonks mapping prep
 ├── [M6i] Fase 2m — Real data readiness audit (PARTIAL_READY)
-└── [M7] Fase 3 — API live (futuro, dopo mapper avanzati)
+├── [M6j] Fase 3a — Sportmonks API mappers offline-first
+└── [M7] Fase 3b — Wire mapper + API live (futuro)
 ```
 
 ---

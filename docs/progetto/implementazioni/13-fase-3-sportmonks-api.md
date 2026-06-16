@@ -4,7 +4,7 @@
 
 **Predisposto ma non attivato.** Tutto il codice esiste; la sync usa fixture offline finché non si abilita esplicitamente l'API.
 
-**Prontezza Fase 3: `PARTIAL_READY`** — audit completo in [29-real-data-readiness-audit.md](29-real-data-readiness-audit.md). Attivare sync reale solo dopo mapper avanzati (xG, shots, lineups, player careers, coach) e checklist doc 29.
+**Prontezza Fase 3: `PARTIAL_READY`** — audit [29](29-real-data-readiness-audit.md). Mapper offline-first in [30](30-sportmonks-api-mappers-offline-first.md); sync wiring in Fase 3b.
 
 ## Prerequisiti
 
@@ -116,7 +116,8 @@ python -m pytest tests/test_client.py -v
 Prima di tutto: `python -m src.cli readiness --league 384 --profile advanced` (vedi [29-real-data-readiness-audit.md](29-real-data-readiness-audit.md)).
 
 - [ ] Token e flag in `.env`
-- [ ] Readiness overall = `READY` (attualmente `PARTIAL_READY`)
+- [ ] Mapper offline-first implementati (Fase 3a — doc 30)
+- [ ] Wire mapper nel sync staging (Fase 3b)
 - [ ] Sync produzione dati reali in `data/processed/`
 - [ ] Completare `standings.py` per classifica ufficiale
 - [ ] Collegare `xg_features.py` a statistics API

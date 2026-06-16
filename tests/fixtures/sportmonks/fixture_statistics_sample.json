@@ -1,0 +1,121 @@
+{
+  "_meta": {
+    "source": "offline_sample",
+    "description": "Sportmonks API v3 fixture + statistics sample — NOT real API data",
+    "derived_from": "docs/sportmonks-football-v3-docs.md",
+    "fixture_ref": "league_384_matches.json id=1001"
+  },
+  "data": {
+    "id": 1001,
+    "league_id": 384,
+    "season_id": 25000,
+    "state_id": 5,
+    "starting_at": "2025-08-23 20:00:00",
+    "participants": [
+      {"id": 8, "name": "Lazio", "meta": {"location": "home"}},
+      {"id": 4, "name": "Torino", "meta": {"location": "away"}}
+    ],
+    "scores": [
+      {"description": "CURRENT", "score": {"participant": "home", "goals": 2}},
+      {"description": "CURRENT", "score": {"participant": "away", "goals": 1}}
+    ],
+    "statistics": [
+      {
+        "fixture_id": 1001,
+        "type_id": 5304,
+        "participant_id": 8,
+        "location": "home",
+        "data": {"value": 1.21},
+        "type": {"developer_name": "EXPECTED_GOALS"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 5304,
+        "participant_id": 4,
+        "location": "away",
+        "data": {"value": 1.05},
+        "type": {"developer_name": "EXPECTED_GOALS"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 9687,
+        "participant_id": 8,
+        "location": "home",
+        "data": {"value": 1.05},
+        "type": {"developer_name": "EXPECTED_GOALS_AGAINST"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 9687,
+        "participant_id": 4,
+        "location": "away",
+        "data": {"value": 1.21},
+        "type": {"developer_name": "EXPECTED_GOALS_AGAINST"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 42,
+        "participant_id": 8,
+        "location": "home",
+        "data": {"value": 17},
+        "type": {"developer_name": "SHOTS_TOTAL"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 42,
+        "participant_id": 4,
+        "location": "away",
+        "data": {"value": 13},
+        "type": {"developer_name": "SHOTS_TOTAL"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 86,
+        "participant_id": 8,
+        "location": "home",
+        "data": {"value": 6},
+        "type": {"developer_name": "SHOTS_ON_TARGET"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 86,
+        "participant_id": 4,
+        "location": "away",
+        "data": {"value": 4},
+        "type": {"developer_name": "SHOTS_ON_TARGET"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 52,
+        "participant_id": 8,
+        "location": "home",
+        "data": {"value": 2},
+        "type": {"developer_name": "GOALS"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 52,
+        "participant_id": 4,
+        "location": "away",
+        "data": {"value": 1},
+        "type": {"developer_name": "GOALS"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 44,
+        "participant_id": 8,
+        "location": "home",
+        "data": {"value": 3},
+        "type": {"developer_name": "DANGEROUS_ATTACKS"}
+      },
+      {
+        "fixture_id": 1001,
+        "type_id": 44,
+        "participant_id": 4,
+        "location": "away",
+        "data": {"value": 2},
+        "type": {"developer_name": "DANGEROUS_ATTACKS"}
+      }
+    ]
+  }
+}

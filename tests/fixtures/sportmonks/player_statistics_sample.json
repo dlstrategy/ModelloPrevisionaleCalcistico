@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "source": "offline_sample",
+    "description": "Sportmonks API v3 player + statistics.details sample — NOT real API data",
+    "derived_from": "docs/sportmonks-football-v3-docs.md"
+  },
+  "data": {
+    "id": 1001,
+    "display_name": "Sample Striker",
+    "name": "Sample Striker",
+    "position": {"developer_name": "FW", "name": "Forward"},
+    "league_id": 384,
+    "season_id": 25000,
+    "statistics": [
+      {
+        "team_id": 8,
+        "season_id": 25000,
+        "league_id": 384,
+        "details": [
+          {"type_id": 119, "value": {"total": 2800}, "type": {"developer_name": "MINUTES"}},
+          {"type_id": 118, "value": {"average": 7.4}, "type": {"developer_name": "RATING"}},
+          {"type_id": 52, "value": {"total": 12}, "type": {"developer_name": "GOALS"}},
+          {"type_id": 79, "value": {"total": 5}, "type": {"developer_name": "ASSISTS"}},
+          {"type_id": 5304, "value": {"total": 9.8}, "type": {"developer_name": "EXPECTED_GOALS"}}
+        ]
+      }
+    ]
+  }
+}

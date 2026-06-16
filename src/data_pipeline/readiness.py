@@ -24,23 +24,29 @@ READINESS_AUDIT_DOC = (
 PROMOTION_GATE_PATH = PROJECT_ROOT / "src/backtesting/promotion_gate.py"
 FEATURE_POLICY_PATH = PROJECT_ROOT / "src/training/feature_policy.py"
 SPORTMONKS_CLIENT_PATH = PROJECT_ROOT / "src/sportmonks/client.py"
+MAPPERS_DIR = PROJECT_ROOT / "src/sportmonks/mappers"
+SPORTMONKS_FIXTURES_DIR = PROJECT_ROOT / "tests/fixtures/sportmonks"
+TESTS_DIR = PROJECT_ROOT / "tests"
 
-# Gruppi che richiedono mapper API reali oltre fixture base (participants/scores/state).
-ADVANCED_API_MAPPER_GROUPS: frozenset[str] = frozenset(
-    {"xg", "shots", "player_lineup", "tactical", "coach"}
-)
+MAPPER_OFFLINE_BY_GROUP: dict[str, tuple[str, str, str]] = {
+    "xg": ("statistics_mapper.py", "fixture_statistics_sample.json", "test_sportmonks_statistics_mapper.py"),
+    "shots": ("statistics_mapper.py", "fixture_statistics_sample.json", "test_sportmonks_statistics_mapper.py"),
+    "player_lineup": ("lineup_mapper.py", "fixture_lineups_sample.json", "test_sportmonks_lineup_mapper.py"),
+    "tactical": ("lineup_mapper.py", "fixture_lineups_sample.json", "test_sportmonks_lineup_mapper.py"),
+    "coach": ("coach_mapper.py", "coach_sample.json", "test_sportmonks_coach_mapper.py"),
+}
 
 FEATURE_GROUP_API_NOTES: dict[str, str] = {
     "base": "fixtures + standings da sync base",
     "advanced_strength": "derivato da storico fixture/scores",
-    "xg": "statistics fixture — mapper non collegato a sync",
-    "shots": "statistics fixture — mapper non collegato a sync",
+    "xg": "statistics fixture — mapper offline-first presente (3a)",
+    "shots": "statistics fixture — mapper offline-first presente (3a)",
     "strength_of_schedule": "derivato da storico fixture",
-    "player_lineup": "lineups/expectedLineups — mapper non collegato",
-    "tactical": "lineups + formation — parzialmente mock",
-    "coach": "coaches include + registry API — solo offline fixture",
+    "player_lineup": "lineups — mapper offline-first presente (3a)",
+    "tactical": "lineups + formation — mapper offline-first presente (3a)",
+    "coach": "coaches include — mapper offline-first presente (3a)",
     "calendar": "starting_at fixture — disponibile con sync base",
-    "motivation": "standings — parziale con sync base",
+    "motivation": "standings — mapper offline-first presente (3a)",
 }
 
 
@@ -72,6 +78,44 @@ class ReadinessReport:
     @property
     def info_items(self) -> tuple[ReadinessItem, ...]:
         return tuple(i for i in self.items if i.severity == "info")
+
+
+def _mapper_offline_ready(module_file: str, sample_file: str, test_file: str) -> bool:
+    return (
+        (MAPPERS_DIR / module_file).exists()
+        and (SPORTMONKS_FIXTURES_DIR / sample_file).exists()
+        and (TESTS_DIR / test_file).exists()
+    )
+
+
+def _check_mapper_offline(group: str) -> ReadinessItem:
+    module_file, sample_file, test_file = MAPPER_OFFLINE_BY_GROUP[group]
+    ready = _mapper_offline_ready(module_file, sample_file, test_file)
+    if ready:
+        return _item(
+            f"mapper_offline_{group}",
+            "partial",
+            "warning",
+            f"Mapper offline-first '{group}' presente e testato su JSON sample",
+            "Collegare al sync in Fase 3b con flag controllato",
+        )
+    return _item(
+        f"mapper_offline_{group}",
+        "not_ready",
+        "blocking",
+        f"Mapper offline-first '{group}' incompleto (modulo/sample/test)",
+        f"Implementare src/sportmonks/mappers/{module_file} + sample + test",
+    )
+
+
+def _check_sync_wiring(group: str) -> ReadinessItem:
+    return _item(
+        f"sync_wiring_{group}",
+        "not_ready",
+        "blocking",
+        f"Mapper '{group}' non collegato al sync reale (_sync_from_api)",
+        "Fase 3b: wire mapper + extend includes senza attivare production",
+    )
 
 
 def _item(
@@ -270,16 +314,18 @@ def build_real_data_readiness_report(
         )
     )
 
+    advanced_groups = frozenset(MAPPER_OFFLINE_BY_GROUP.keys())
+
     for group in sorted(ALL_FEATURE_GROUPS):
         if group in FEATURE_GROUPS:
             items.append(
                 _item(
                     f"feature_group_{group}",
-                    "ready" if group not in ADVANCED_API_MAPPER_GROUPS else "partial",
-                    "info" if group not in ADVANCED_API_MAPPER_GROUPS else "warning",
+                    "ready" if group not in advanced_groups else "partial",
+                    "info" if group not in advanced_groups else "warning",
                     f"Gruppo '{group}' definito ({len(FEATURE_GROUPS[group])} chiavi). "
                     f"{FEATURE_GROUP_API_NOTES.get(group, '')}",
-                    "Mapper API" if group in ADVANCED_API_MAPPER_GROUPS else "OK offline",
+                    "Mapper offline OK" if group in advanced_groups else "OK offline",
                 )
             )
         else:
@@ -300,18 +346,63 @@ def build_real_data_readiness_report(
                 "ready",
                 "info",
                 "Gruppo coach presente nel feature vector",
-                "Popolare CoachProfile da API al cutover",
+                "Popolare CoachProfile da mapper/sync al cutover",
             )
         )
 
-    for group in sorted(ADVANCED_API_MAPPER_GROUPS):
+    for group in sorted(MAPPER_OFFLINE_BY_GROUP.keys()):
+        items.append(_check_mapper_offline(group))
+        items.append(_check_sync_wiring(group))
+
+    if _mapper_offline_ready(
+        "standings_mapper.py",
+        "standings_season_sample.json",
+        "test_sportmonks_standings_mapper.py",
+    ):
         items.append(
             _item(
-                f"api_mapper_{group}",
+                "mapper_offline_standings",
+                "partial",
+                "warning",
+                "Mapper standings offline-first presente e testato su JSON sample",
+                "Collegare al sync in Fase 3b",
+            )
+        )
+        items.append(_check_sync_wiring("standings"))
+    else:
+        items.append(
+            _item(
+                "mapper_offline_standings",
                 "not_ready",
                 "blocking",
-                f"Mapper API Sportmonks per '{group}' non collegato al sync pipeline",
-                f"Implementare normalizer + sync include per {group}",
+                "Mapper standings offline-first incompleto",
+                "Implementare standings_mapper + sample + test",
+            )
+        )
+
+    if _mapper_offline_ready(
+        "player_mapper.py",
+        "player_statistics_sample.json",
+        "test_sportmonks_player_mapper.py",
+    ):
+        items.append(
+            _item(
+                "mapper_offline_player",
+                "partial",
+                "warning",
+                "Mapper player offline-first presente e testato su JSON sample",
+                "Collegare al sync player careers in Fase 3b",
+            )
+        )
+        items.append(_check_sync_wiring("player_careers"))
+    else:
+        items.append(
+            _item(
+                "mapper_offline_player",
+                "not_ready",
+                "blocking",
+                "Mapper player offline-first incompleto",
+                "Implementare player_mapper + sample + test",
             )
         )
 
@@ -364,11 +455,13 @@ def build_real_data_readiness_report(
 
     items.append(
         _item(
-            "player_careers_api_mapper",
-            "not_ready",
-            "blocking",
-            "player_careers.json popolato solo da fixture offline",
-            "Aggiungere pipeline API per career registry cross-league",
+            "player_careers_sync",
+            "partial" if (MAPPERS_DIR / "player_mapper.py").exists() else "not_ready",
+            "warning" if (MAPPERS_DIR / "player_mapper.py").exists() else "blocking",
+            "player_careers: mapper offline-first presente; sync non collegato"
+            if (MAPPERS_DIR / "player_mapper.py").exists()
+            else "player_careers.json popolato solo da fixture offline mock",
+            "Wire player_mapper al sync in Fase 3b",
         )
     )
 
@@ -382,8 +475,8 @@ def build_real_data_readiness_report(
                 "coach_layer_offline",
                 "partial",
                 "warning",
-                "Coach layer offline OK; mapper API documentato ma non implementato",
-                "Collegare fetch coaches + statistics.details al sync",
+                "Coach layer offline OK; mapper offline-first presente (3a), sync non wired",
+                "Collegare coach_mapper al sync in Fase 3b",
             )
         )
 

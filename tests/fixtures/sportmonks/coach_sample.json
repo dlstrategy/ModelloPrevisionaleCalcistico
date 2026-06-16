@@ -1,0 +1,48 @@
+{
+  "_meta": {
+    "source": "offline_sample",
+    "description": "Sportmonks API v3 coach + statistics.details sample — NOT real API data",
+    "derived_from": "docs/progetto/implementazioni/28-sportmonks-coach-mapping-prep.md"
+  },
+  "data": {
+    "id": 90001,
+    "display_name": "Sample Coach Alpha",
+    "name": "Sample Coach Alpha",
+    "country": {"iso2": "IT", "name": "Italy"},
+    "team_id": 8,
+    "league_id": 384,
+    "season_id": 25000,
+    "statistics": [
+      {
+        "season_id": 25000,
+        "details": [
+          {
+            "type_id": 188,
+            "value": {"total": 24},
+            "type": {"developer_name": "MATCHES"}
+          },
+          {
+            "type_id": 214,
+            "value": {"total": 12},
+            "type": {"developer_name": "WIN"}
+          },
+          {
+            "type_id": 215,
+            "value": {"total": 6},
+            "type": {"developer_name": "DRAW"}
+          },
+          {
+            "type_id": 216,
+            "value": {"total": 6},
+            "type": {"developer_name": "LOST"}
+          },
+          {
+            "type_id": 9676,
+            "value": {"average": 1.75},
+            "type": {"developer_name": "AVERAGE_POINTS_PER_GAME"}
+          }
+        ]
+      }
+    ]
+  }
+}
