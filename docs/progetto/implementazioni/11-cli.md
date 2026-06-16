@@ -100,7 +100,7 @@ Mostra:
 python -m src.cli ablation --league 384 --rounds 5
 ```
 
-Tabella comparativa 7 varianti (con CalGap, PickOver, PickUnder) + report JSON.
+Tabella comparativa 8 varianti (con CalGap, PickOver, PickUnder) + report JSON.
 
 ---
 

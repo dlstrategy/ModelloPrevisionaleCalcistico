@@ -24,6 +24,7 @@ PROFILE_ADVANCED: frozenset[DataCapability] = frozenset(
         DataCapability.XG,
         DataCapability.SHOTS,
         DataCapability.TACTICAL_DATA,
+        DataCapability.COACH_PROFILES,
     }
 )
 

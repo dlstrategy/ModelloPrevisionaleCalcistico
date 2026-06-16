@@ -69,6 +69,24 @@ COMPACT_TRANSFER_DIFF = frozenset(
     }
 )
 
+COMPACT_COACH_DIFF = frozenset(
+    {
+        "coach_ppg_delta_diff",
+        "coach_attack_delta_diff",
+        "coach_defense_delta_diff",
+        "coach_tactical_stability_diff",
+        "coach_confidence_diff",
+        "unknown_coach_diff",
+        "low_sample_coach_diff",
+        "coach_adaptation_score_diff",
+        "coach_adaptation_confidence_diff",
+        "coach_integration_progress_diff",
+        "coach_early_adaptation_risk_diff",
+        "coach_style_fit_diff",
+        "coach_potential_signal_diff",
+    }
+)
+
 
 def _compact_allowlist() -> frozenset[str]:
     return (
@@ -77,6 +95,7 @@ def _compact_allowlist() -> frozenset[str]:
         | COMPACT_SHOTS_FEATURES
         | COMPACT_LINEUP_LEGACY
         | COMPACT_TRANSFER_DIFF
+        | COMPACT_COACH_DIFF
     )
 
 
@@ -129,6 +148,8 @@ POLICY_COMPACT = FeaturePolicy(
         "away_lineup_general_adapter_",
         "lineup_pair_specialist_share_diff",
         "lineup_general_adapter_share_diff",
+        "home_coach_",
+        "away_coach_",
     ),
     max_features=None,
     min_non_zero_ratio=0.05,
@@ -254,6 +275,10 @@ def apply_feature_policy_to_sample(
 
 def compact_transfer_diff_features() -> frozenset[str]:
     return COMPACT_TRANSFER_DIFF
+
+
+def compact_coach_diff_features() -> frozenset[str]:
+    return COMPACT_COACH_DIFF
 
 
 def count_features_for_policy(samples: list[TrainingSample], policy_name: str) -> tuple[int, int]:

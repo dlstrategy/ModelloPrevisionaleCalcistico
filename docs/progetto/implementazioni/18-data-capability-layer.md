@@ -15,7 +15,7 @@ Il **Data Capability Layer** (`src/data_capabilities/`) centralizza:
 | Profilo | Uso |
 |---------|-----|
 | `base` | Dati standard senza add-on avanzati (default) |
-| `advanced` | Base + xG, shots, tactical, historical |
+| `advanced` | Base + xG, shots, tactical, coach, historical |
 | `all_in_no_predictions` | Pacchetto completo tranne Predictions/Odds |
 
 Configurazione: `DATA_PROFILE=base` in `.env` (valori validi: `base`, `advanced`, `all_in_no_predictions`).
@@ -34,10 +34,11 @@ Configurazione: `DATA_PROFILE=base` in `.env` (valori validi: `base`, `advanced`
 | Shots | Stesso comportamento di xG |
 | Player lineup | Fallback neutro (`default_neutral_lineup`) |
 | Tactical | Default tactical fallback |
+| Coach | Gruppo disabilitato (profilo `base`) o `unknown_coach_fallback` se profilo attivo ma coach assente |
 | Calendar | `basic_rest_days` o neutral fatigue |
 | Motivation | Neutral motivation se standings assenti |
 
-Con profilo `base`, xG/shots/tactical avanzato **non attesi** → nessun errore in validate.
+Con profilo `base`, xG/shots/tactical/coach avanzato **non attesi** → nessun errore in validate.
 
 ## Data completeness score
 

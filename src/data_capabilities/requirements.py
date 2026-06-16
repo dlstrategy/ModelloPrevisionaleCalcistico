@@ -53,6 +53,11 @@ FEATURE_REQUIREMENTS: dict[str, FeatureRequirement] = {
         ],
         "fallback": "default_tactical",
     },
+    "coach": {
+        "required": [DataCapability.COACH_PROFILES],
+        "optional": [],
+        "fallback": "unknown_coach_fallback",
+    },
     "calendar": {
         "required": [DataCapability.CALENDAR],
         "optional": [],

@@ -53,7 +53,7 @@ Multi-modello (Poisson, Dixon-Coles, Elo, Feature, Ensemble), calibrazione, expl
 
 **Obiettivo:** Sistema serio di feature testabile con ablation, tutto offline.
 
-### Moduli feature (9 gruppi)
+### Moduli feature (evoluzione: 9 → 10 gruppi)
 
 | Gruppo | File |
 |--------|------|
@@ -164,6 +164,38 @@ Probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue)
 
 ---
 
+## Fase 2h — Multi-league player transfer (completata)
+
+Isolamento multi-lega, player global registry, transfer adaptation layer.
+
+---
+
+## Fase 2i — Transfer-aware lineup (completata)
+
+27 feature aggregate nel gruppo `player_lineup`; explain `transfer_lineup_summary`.
+
+---
+
+## Fase 2j — FeatureTrained compact (completata)
+
+Policy `full` vs `compact`, clipping, L2, feature importance.
+
+---
+
+## Fase 2k — Model evaluation & promotion gate (completata)
+
+CLI `evaluate-models`, report walk-forward full vs compact.
+
+---
+
+## Fase 2l — Coach impact layer (completata)
+
+Gruppo `coach` (68 feature), registry mock, adaptation lega/paese, explain `coach_summary`. Capability `COACH_PROFILES`.
+
+**Test:** 305 passed.
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
@@ -186,6 +218,8 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M6c] Fase 2e — Data quality + walk-forward
 ├── [M6d] Fase 2f — Data Capability Layer + fallback
 ├── [M6e] Fase 2g — FeatureTrainedModel offline
+├── [M6f] Fase 2h–2k — Transfer layer, compact, evaluation gate
+├── [M6g] Fase 2l — Coach impact & league adaptation
 └── [M7] Fase 3 — API live (futuro)
 ```
 
@@ -209,5 +243,5 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 
 - Training pesi FeatureModel da ablation/backtest
 - Calibrazione isotonica
-- Fase 3 API live (xG, shots, lineup da Sportmonks)
+- Fase 3 API live (xG, shots, lineup, **coach statistics** da Sportmonks)
 - Estensione altre leghe

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from src.features.coach_features import COACH_FEATURE_KEYS
+
 # Chiavi per gruppo — usate per filtrare feature_vector in ablation
 FEATURE_GROUPS: dict[str, frozenset[str]] = {
     "base": frozenset(
@@ -169,6 +171,7 @@ FEATURE_GROUPS: dict[str, frozenset[str]] = {
             "defensive_line_risk",
         }
     ),
+    "coach": COACH_FEATURE_KEYS,
     "calendar": frozenset(
         {
             "days_rest_home",
@@ -235,6 +238,19 @@ ABLATION_VARIANTS: dict[str, frozenset[str]] = {
             "shots",
             "player_lineup",
             "tactical",
+        }
+    ),
+    "base+coach": frozenset(
+        {
+            "base",
+            "advanced_strength",
+            "strength_of_schedule",
+            "motivation",
+            "xg",
+            "shots",
+            "player_lineup",
+            "tactical",
+            "coach",
         }
     ),
     "base+calendar": frozenset(

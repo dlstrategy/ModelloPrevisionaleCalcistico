@@ -237,4 +237,42 @@ def explain_prediction(
     ):
         explanation["warnings"].append("Assenze significative in formazione")
 
+    if _group_active(context, "coach"):
+        from src.features.coach_features import build_coach_summary
+
+        explanation["coach_summary"] = build_coach_summary(context.match, tactical=context.tactical)
+        coach_src = data_sources.get("coach", "missing")
+        explanation["coach_summary"]["source"] = coach_src
+
+        home_c = explanation["coach_summary"]["home"]
+        away_c = explanation["coach_summary"]["away"]
+        if home_c.get("unknown_coach") or away_c.get("unknown_coach"):
+            explanation["warnings"].append(
+                "Coach data fallback — allenatore sconosciuto per una squadra"
+            )
+        if home_c.get("recent_change") or away_c.get("recent_change"):
+            explanation["warnings"].append(
+                "Recent coach change — possibile instabilità/new manager bounce"
+            )
+        if (
+            home_c.get("integration_progress", 1.0) < 0.5
+            or away_c.get("integration_progress", 1.0) < 0.5
+        ):
+            explanation["warnings"].append(
+                "Coach adaptation risk — allenatore in fase di inserimento"
+            )
+        if home_c.get("cross_country") or away_c.get("cross_country"):
+            explanation["warnings"].append(
+                "Cross-country coach adaptation — trasferimento tecnico tra paesi/campionati"
+            )
+        if (
+            home_c.get("data_confidence", 1.0) < 0.35
+            or away_c.get("data_confidence", 1.0) < 0.35
+        ):
+            explanation["warnings"].append(
+                "Coach impact low confidence — pochi match o dati mock"
+            )
+        if coach_src == "fallback":
+            pass  # unknown warning already added
+
     return explanation

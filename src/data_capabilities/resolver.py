@@ -70,6 +70,10 @@ def detect_available_capabilities(
     if companions.get("calendar"):
         available.add(DataCapability.CALENDAR)
 
+    coach_path = FIXTURES_DIR / "coaches" / "coach_profiles.json"
+    if coach_path.exists():
+        available.add(DataCapability.COACH_PROFILES)
+
     return frozenset(available)
 
 

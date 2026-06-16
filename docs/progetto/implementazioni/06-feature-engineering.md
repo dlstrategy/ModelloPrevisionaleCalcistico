@@ -1,8 +1,8 @@
-# 06 — Feature engineering (9 gruppi)
+# 06 — Feature engineering (10 gruppi)
 
 ## Panoramica
 
-Sistema modulare di feature engineering con **~137 chiavi** nel `feature_vector`, organizzate in **9 gruppi** testabili con ablation.
+Sistema modulare di feature engineering con **~232 chiavi** nel `feature_vector` (profilo `advanced` con tutti i gruppi), organizzate in **10 gruppi** testabili con ablation.
 
 Orchestrazione:
 - `match_context.py` — `build_match_context()`
@@ -70,18 +70,17 @@ Orchestrazione:
 | `points_vs_expected_last_5` | Punti vs attesi |
 | `xg_diff_vs_opponent_strength` | xG diff aggiustato |
 
-### 6. Player/lineup — 20 feature
+### 6. Player/lineup — 47 feature
 
-**File:** `lineup_features.py`  
-**Fixture:** `league_384_lineups.json`
+**File:** `lineup_features.py`, `transfer_lineup_features.py`  
+**Fixture:** `league_384_lineups.json`, registry giocatori/trasferimenti
 
 | Feature | Descrizione |
 |---------|-------------|
-| `starting_xi_attack/defense/midfield_rating` | Qualità XI |
-| `goalkeeper_rating` | Portiere |
-| `missing_starters_count` | Assenti |
-| `missing_minutes/goals/xg_share` | Impatto assenze |
-| `bench_strength`, `lineup_continuity` | Panchina e continuità |
+| `starting_xi_*_rating` | Qualità XI |
+| `missing_*` | Assenze e impatto |
+| `lineup_transfer_*` | Rating/confidence transfer-aware, share unknown/low-sample/cross-league |
+| `lineup_*_diff` | Differenziali home-away principali |
 
 **Gate anti-leakage** (`resolve_lineup_for_match`):
 - `known_pre_match` — partite finite, valido in backtest
@@ -101,7 +100,22 @@ Orchestrazione:
 | `wing_advantage`, `midfield_advantage`, `aerial_advantage` | Duelli per zona |
 | `pressing_mismatch`, `defensive_line_risk` | Stile di gioco |
 
-### 8. Calendar/fatigue — 13 feature
+### 8. Coach impact — 68 feature (Fase 2l)
+
+**File:** `coach_features.py`, `src/coaches/`  
+**Fixture:** `tests/fixtures/coaches/coach_profiles.json`
+
+| Area | Feature (esempi) |
+|------|------------------|
+| Tenure / stabilità | `home_coach_tenure_norm`, `recent_coach_change`, `tactical_stability` |
+| Performance osservata | `coach_ppg_delta`, `coach_attack/defense_delta`, `coach_xg/xga_delta` |
+| Adattamento | `coach_adaptation_score`, `integration_progress`, `early_adaptation_risk` |
+| Policy | `unknown_coach`, `low_sample_coach`, `coach_data_confidence` |
+| Differenziali | `coach_ppg_delta_diff`, `coach_potential_signal_diff`, … (13 in compact policy) |
+
+Disabilitato in profilo `base`; attivo in `advanced` / `all_in_no_predictions` se fixture coach presente.
+
+### 9. Calendar/fatigue — 13 feature
 
 **File:** `fatigue_features.py`  
 **Fixture:** `league_384_calendar.json`
@@ -114,7 +128,7 @@ Orchestrazione:
 | `rotation_risk_home/away` | Rischio rotazione |
 | `fatigue_score_home/away` | Score composito fatigue |
 
-### 9. Motivation — 14 feature
+### 10. Motivation — 14 feature
 
 **File:** `motivation_features.py`
 
@@ -141,10 +155,11 @@ build_match_context(dataset, match, settings, enabled_feature_groups?)
 
 ## Uso in modelli
 
-- **FeatureModel** — usa `feature_vector` filtrato (softmax lineare)
+- **FeatureModel** — usa `feature_vector` filtrato (softmax lineare; pesi statici senza coach)
+- **FeatureTrained** — può usare subset compact/full dopo training walk-forward
 - **Poisson/Dixon-Coles** — usano `TeamStrength`, optional lineup
 - **Elo** — rating da storico
-- **Ensemble** — combina tutti
+- **Ensemble** — combina modelli base (non include `feature_trained`)
 
 ---
 
@@ -157,10 +172,12 @@ Lineup/tactical mock:
 - Predict su partite future → solo `data_availability = forecast`
 - Il match corrente non entra mai nel proprio storico
 
+Coach mock: profili keyed by `team_id`; coach assente → `unknown_coach_fallback` neutro.
+
 Tracciamento fonti: `data_sources.py` → usato in explain e status.
 
 ---
 
 ## Fase di sviluppo
 
-Fase 2 (base) → Fase 2c (9 gruppi completi + ablation) → Fase 2d (gate pre-match lineup/tactical)
+Fase 2c (9 gruppi base) → 2i (transfer lineup) → 2l (gruppo `coach`, 10 gruppi totali)

@@ -6,9 +6,9 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 
 | Documento | Contenuto |
 |-----------|-----------|
-| [ARCHITETTURA.md](ARCHITETTURA.md) | Architettura a strati, 9 gruppi feature, ablation, flussi |
+| [ARCHITETTURA.md](ARCHITETTURA.md) | Architettura a strati, 10 gruppi feature, ablation, flussi |
 | [LOGICA-FUNZIONAMENTO.md](LOGICA-FUNZIONAMENTO.md) | Audit end-to-end, anti-leakage, buchi/rischi |
-| [CRONOSTORIA.md](CRONOSTORIA.md) | Timeline Fase 0 → 2g.1 → 3 |
+| [CRONOSTORIA.md](CRONOSTORIA.md) | Timeline Fase 0 → 2l → 3 |
 | [GUIDA-OPERATIVA.md](GUIDA-OPERATIVA.md) | Setup, comandi CLI, fixture, test |
 
 ## Documentazione per implementazione
@@ -20,13 +20,13 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 03 | [03-sportmonks-client-cache.md](implementazioni/03-sportmonks-client-cache.md) | Client API, cache |
 | 04 | [04-data-pipeline.md](implementazioni/04-data-pipeline.md) | Sync, normalize, dataset |
 | 05 | [05-domain-models.md](implementazioni/05-domain-models.md) | Entità dominio |
-| 06 | [06-feature-engineering.md](implementazioni/06-feature-engineering.md) | **9 gruppi feature (~137 chiavi)** |
+| 06 | [06-feature-engineering.md](implementazioni/06-feature-engineering.md) | **10 gruppi feature (~232 chiavi)** |
 | 07 | [07-modelli-previsionali.md](implementazioni/07-modelli-previsionali.md) | Poisson, Dixon-Coles, Elo, Feature |
 | 08 | [08-ensemble-calibrazione.md](implementazioni/08-ensemble-calibrazione.md) | Ensemble e calibrazione |
 | 09 | [09-prediction-pipeline.md](implementazioni/09-prediction-pipeline.md) | Inferenza, explain arricchito |
 | 10 | [10-backtesting.md](implementazioni/10-backtesting.md) | Backtest e metriche estese |
 | 11 | [11-cli.md](implementazioni/11-cli.md) | CLI (sync, status, predict, backtest, features, ablation) |
-| 12 | [12-test-e-fixture-offline.md](implementazioni/12-test-e-fixture-offline.md) | 92 test, fixture 10 squadre |
+| 12 | [12-test-e-fixture-offline.md](implementazioni/12-test-e-fixture-offline.md) | 305 test, fixture 10 squadre + coach |
 | 13 | [13-fase-3-sportmonks-api.md](implementazioni/13-fase-3-sportmonks-api.md) | API live (da attivare) |
 | 14 | [14-ablation-e-valutazione.md](implementazioni/14-ablation-e-valutazione.md) | Ablation test e valutazione feature |
 | 15 | [15-hardening-foundation.md](implementazioni/15-hardening-foundation.md) | Fix Elo, sync, CI, normalize |
@@ -41,6 +41,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 24 | [24-player-transfer-flow-audit.md](implementazioni/24-player-transfer-flow-audit.md) | Audit flow giocatori/trasferimenti (Fase 2i-audit) |
 | 25 | [25-feature-trained-compact-regularization.md](implementazioni/25-feature-trained-compact-regularization.md) | FeatureTrained compact & regularization (Fase 2j) |
 | 26 | [26-model-evaluation-promotion-gate.md](implementazioni/26-model-evaluation-promotion-gate.md) | Model evaluation & promotion gate (Fase 2k) |
+| 27 | [27-coach-impact-league-adaptation-layer.md](implementazioni/27-coach-impact-league-adaptation-layer.md) | Coach impact & league adaptation (Fase 2l) |
 
 ## Documentazione API esterna
 

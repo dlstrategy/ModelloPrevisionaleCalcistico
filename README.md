@@ -22,6 +22,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2i-audit** | Completata | Audit documentazione flow giocatori/trasferimenti |
 | **Fase 2j** | Completata | FeatureTrained compact & regularization (full/compact) |
 | **Fase 2k** | Completata | Model evaluation report & promotion gate |
+| **Fase 2l** | Completata | Coach impact, league adaptation & integration layer |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
@@ -52,10 +53,11 @@ Moduli offline testabili con ablation:
 | SOS | `schedule_strength.py` | avg_opponent_rating, points_vs_expected |
 | Player/lineup | `lineup_features.py` | XI ratings, missing share, continuity |
 | Tactical | `tactical_features.py` | formation matchup, wing/midfield edge |
+| Coach | `coach_features.py` | tenure, adaptation, integration, potential signal |
 | Calendar | `fatigue_features.py` | rest, midweek, fatigue_score |
 | Motivation | `motivation_features.py` | top4/relegation pressure |
 
-Fixture mock: `tests/fixtures/league_384_*.json` (10 squadre, 8+2 giornate).
+Fixture mock: `tests/fixtures/league_384_*.json` + `tests/fixtures/coaches/coach_profiles.json` (10 squadre, 8+2 giornate).
 
 ## Setup
 

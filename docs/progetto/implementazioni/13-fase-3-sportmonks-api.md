@@ -43,8 +43,9 @@ Prima chiamata → API. Chiamate successive entro TTL → SQLite `data/cache.db`
 | Lineup | `lineup_features.py` | `/fixtures/{id}` + include lineups |
 | Infortuni | `injuries.py` | Endpoint injuries documentato |
 | Giocatori | `player_features.py` | `/players/{id}` + statistics |
+| Coach | `coach_registry.py` | `/coaches/{id}` + `statistics.details`; fixture `include=coaches`; filtri `coachStatisticSeasons` |
 
-Moduli scheletro vanno completati seguendo `docs/sportmonks-football-v3-docs.md`.
+Moduli scheletro vanno completati seguendo `docs/sportmonks-football-v3-docs.md` (sezione Coaches, Coach statistics).
 
 ## Cosa NON cambia
 
@@ -86,6 +87,7 @@ python -m pytest tests/test_client.py -v
 - [ ] Completare `standings.py` per classifica ufficiale
 - [ ] Collegare `xg_features.py` a statistics API
 - [ ] Collegare `lineup_features.py` a lineups API
+- [ ] Collegare `coach_registry.py` a coaches API + statistiche (MATCHES, WIN/DRAW/LOST, AVERAGE_POINTS_PER_GAME, SUBSTITUTIONS)
 - [ ] Valutare `injuries.py` e `player_features.py`
 - [ ] Backtest su stagione completa
 - [ ] Calibrare pesi ensemble e temperature

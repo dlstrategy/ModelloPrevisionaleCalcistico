@@ -50,8 +50,15 @@ probs = model.predict(context)
     "base": "historical",
     "xg": "mock_fixture_historical",
     "player_lineup": "mock_fixture",
-    "tactical": "mock_fixture"
+    "tactical": "mock_fixture",
+    "coach": "mock_coach_profiles"
   },
+  "coach_summary": {
+    "home": {"tenure_matches": 28, "adaptation_score": 0.92, "potential_signal": 0.58},
+    "away": {"tenure_matches": 3, "recent_change": 1, "potential_signal": 0.52},
+    "source": "mock_coach_profiles"
+  },
+  "transfer_lineup_summary": { "...": "..." },
   "top_factors": {
     "positive": [{"feature": "home_xg_diff_avg", "value": 0.45}],
     "negative": [{"feature": "away_fatigue_score", "value": 0.62}]
@@ -84,6 +91,14 @@ Mappa ogni gruppo feature alla fonte effettiva:
 - Squadre equilibrate su xG e strength
 - Assenze significative (≥2 starter)
 - Lineup/tactical con `default_fallback`
+- Coach: allenatore sconosciuto, cambio recente, adattamento in corso, cross-country, confidence bassa
+
+### Sezioni explain aggiuntive
+
+| Sezione | Quando |
+|---------|--------|
+| `transfer_lineup_summary` | Gruppo `player_lineup` attivo |
+| `coach_summary` | Gruppo `coach` attivo |
 
 ---
 
@@ -99,4 +114,4 @@ Explain stampato per **ogni** partita della giornata (flag `--explain`).
 
 ## Fase di sviluppo
 
-Fase 1 (base) → Fase 2c (explain con edge e contributi modelli) → Fase 2d (`data_sources`, warning fallback)
+Fase 1 (base) → Fase 2c (edge e contributi) → Fase 2d (`data_sources`) → Fase 2i (`transfer_lineup_summary`) → Fase 2l (`coach_summary`)

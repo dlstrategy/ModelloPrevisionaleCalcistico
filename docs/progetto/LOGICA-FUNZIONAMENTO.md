@@ -1,6 +1,6 @@
 # Logica di funzionamento del motore previsionale
 
-Documento di audit end-to-end — stato attuale del programma (offline, Fase 2g).
+Documento di audit end-to-end — stato attuale del programma (offline, Fase 2l).
 
 ## 1. Visione generale
 
@@ -21,7 +21,7 @@ Input dati → dataset → MatchContext → modello → P(1)/P(X)/P(2) → pick 
 | **Offline fixture mock** | Default. Dati in `tests/fixtures/` + `data/processed/` |
 | **Sportmonks API (futura)** | Attivabile con token + `ENABLE_SPORTMONKS_SYNC=true` |
 | **Profilo `base`** | Core fixtures, standings, lineup, calendar — no xG/shots/tactical avanzato |
-| **Profilo `advanced`** | Base + xG, shots, tactical, historical |
+| **Profilo `advanced`** | Base + xG, shots, tactical, coach, historical |
 | **Profilo `all_in_no_predictions`** | Completo tranne Predictions/Odds |
 
 ### Fallback per dati mancanti
@@ -31,6 +31,7 @@ Input dati → dataset → MatchContext → modello → P(1)/P(X)/P(2) → pick 
 | xG / Shots | Gruppo feature disabilitato o fallback; explain con `edge_status` |
 | Lineup / Expected lineups | Fallback neutro lineup |
 | Tactical | Default tactical |
+| Coach profiles | Unknown coach fallback neutro (`unknown_coach_fallback`) |
 | Calendar | `basic_rest_days` o neutral fatigue |
 | Standings | Neutral motivation |
 
@@ -216,6 +217,12 @@ Vedi [implementazioni/25-feature-trained-compact-regularization.md](implementazi
 Report comparativo walk-forward full vs compact con giudizio `promoted`/`rejected`/`inconclusive`. Non modifica il modello usato in predict.
 
 Vedi [implementazioni/26-model-evaluation-promotion-gate.md](implementazioni/26-model-evaluation-promotion-gate.md).
+
+### Coach impact & league adaptation (Fase 2l)
+
+Gruppo **`coach`**: ~68 feature aggregate (tenure, cambio recente, adattamento lega/paese, integration progress, style fit, potential signal prudente). Registry mock, unknown coach neutro, disabilitabile via profilo `base`.
+
+Vedi [implementazioni/27-coach-impact-league-adaptation-layer.md](implementazioni/27-coach-impact-league-adaptation-layer.md).
 
 ---
 

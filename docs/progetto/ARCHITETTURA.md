@@ -34,10 +34,10 @@ Il motore è **proprietario**: non usa l'add-on Predictions di Sportmonks.
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
-│                   FEATURE LAYER (9 gruppi)                   │
+│                   FEATURE LAYER (10 gruppi)                  │
 │   match_context ← feature_vector ← feature_groups            │
-│   advanced_strength | xg | shots | sos | lineup | tactical │
-│   fatigue | motivation | form | standings | team_strength    │
+│   advanced_strength | xg | shots | sos | lineup | tactical   │
+│   coach | fatigue | motivation | form | standings            │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -93,7 +93,7 @@ sequenceDiagram
         CLI->>Features: build_match_context(match, as_of)
         Features->>Features: build_full_feature_vector()
         Features->>Features: filter_feature_vector(groups)
-        Features-->>CLI: MatchContext (~130+ feature)
+        Features-->>CLI: MatchContext (~230+ feature con profilo advanced)
         CLI->>Model: predict(context)
         Model-->>CLI: OutcomeProbabilities
         CLI->>Output: Prediction (pick, confidence)
@@ -121,8 +121,9 @@ Lineup e tactical aggiuntivi:
 | `xg` | `xg_features.py` | 20 |
 | `shots` | `shots_features.py` | 18 |
 | `strength_of_schedule` | `schedule_strength.py` | 8 |
-| `player_lineup` | `lineup_features.py` | 20 |
+| `player_lineup` | `lineup_features.py`, `transfer_lineup_features.py` | 47 |
 | `tactical` | `tactical_features.py` | 8 |
+| `coach` | `coach_features.py` | 68 |
 | `calendar` | `fatigue_features.py` | 13 |
 | `motivation` | `motivation_features.py` | 14 |
 
@@ -135,7 +136,7 @@ Assemblaggio in `feature_vector.py`, orchestrazione in `match_context.py`.
 ```
 ABLATION_VARIANTS (cumulative):
   base → base+xg → base+shots → base+player_lineup
-       → base+tactical → base+calendar → full
+       → base+tactical → base+coach → base+calendar → full
 ```
 
 - Engine: `src/backtesting/ablation.py`
@@ -159,6 +160,7 @@ ABLATION_VARIANTS (cumulative):
 | `schedule_strength.py` | SOS, points vs expected |
 | `lineup_features.py` | XI ratings, assenze, gate pre-match, `resolve_lineup_for_match()` |
 | `tactical_features.py` | Formazioni, duelli tattici, gate pre-match |
+| `coach_features.py` | Impatto coach, adattamento lega/paese, integration |
 | `data_sources.py` | Tracciamento origine dati per gruppi feature (explain/status) |
 | `fatigue_features.py` | Riposo, midweek, fatigue score |
 | `motivation_features.py` | Pressione classifica (top4, retrocessione) |
@@ -175,7 +177,7 @@ ABLATION_VARIANTS (cumulative):
 
 ### `src/prediction/explain.py`
 
-Explain arricchito: probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue), fattori positivi/negativi, `data_sources`, warning confidenza e fallback.
+Explain arricchito: probabilità, contributi modelli, edge (xG, strength, lineup, tactical, fatigue), `coach_summary`, `transfer_lineup_summary`, fattori positivi/negativi, `data_sources`, warning confidenza e fallback.
 
 **Diagnostica:** `src/cli_status.py` — comando `status` per ispezione dataset offline.
 
@@ -197,6 +199,7 @@ tests/fixtures/
   league_384_lineups.json     # Lineup + player impact
   league_384_tactical.json    # Matchup tattici
   league_384_calendar.json    # Midweek, rotation risk
+  coaches/coach_profiles.json # Profili allenatore mock (Fase 2l)
 
 scripts/
   generate_fixtures.py          # Rigenera fixture mock

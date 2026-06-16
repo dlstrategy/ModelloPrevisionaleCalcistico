@@ -12,6 +12,7 @@ from src.features.lineup_features import (
 from src.features.motivation_features import motivation_to_features
 from src.features.schedule_strength import schedule_strength_to_features
 from src.features.shots_features import shots_profile_to_features
+from src.features.coach_features import build_coach_features
 from src.features.tactical_features import tactical_to_features
 from src.features.transfer_lineup_features import build_transfer_lineup_features
 from src.features.xg_features import xg_profile_to_features
@@ -65,6 +66,7 @@ def build_full_feature_vector(context) -> dict[str, float]:
     vec.update(player_lineup_to_features(player_snap))
     vec.update(build_transfer_lineup_features(context.match))
     vec.update(tactical_to_features(context.tactical))
+    vec.update(build_coach_features(context.match, tactical=context.tactical))
 
     return vec
 

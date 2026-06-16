@@ -17,8 +17,9 @@ Varianti **cumulative** (ogni step aggiunge un gruppo):
 | `base+shots` | + shots |
 | `base+player_lineup` | + player_lineup |
 | `base+tactical` | + tactical |
+| `base+coach` | + coach |
 | `base+calendar` | + calendar |
-| `full` | tutti i 9 gruppi |
+| `full` | tutti i 10 gruppi |
 
 Definite in `src/features/feature_groups.py` → `ABLATION_VARIANTS`.
 
@@ -80,7 +81,7 @@ Output console + `data/backtests/ablation_YYYYMMDD_HHMMSS.json`.
 
 ## Test
 
-`tests/test_ablation.py` — verifica 7 varianti, conteggio feature crescente.
+`tests/test_ablation.py` — verifica 8 varianti, conteggio feature crescente.
 
 ---
 

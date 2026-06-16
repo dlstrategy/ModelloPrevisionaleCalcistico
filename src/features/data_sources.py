@@ -7,6 +7,20 @@ from src.data_capabilities.resolver import resolve_capabilities
 from src.features.match_context import MatchContext
 
 
+def _coach_source(context: MatchContext, resolution) -> str:
+    if "coach" in resolution.disabled_feature_groups:
+        return "disabled"
+    from src.coaches.coach_registry import COACH_PROFILES_PATH, get_team_coach_profile
+
+    if not COACH_PROFILES_PATH.exists():
+        return "missing"
+    home = get_team_coach_profile(context.match.home.team_id, context.match.league_id)
+    away = get_team_coach_profile(context.match.away.team_id, context.match.league_id)
+    if home.source == "unknown_coach_fallback" or away.source == "unknown_coach_fallback":
+        return "fallback"
+    return "mock_coach_profiles"
+
+
 def build_data_sources(
     context: MatchContext,
     settings: Settings,
@@ -54,6 +68,7 @@ def build_data_sources(
         "shots": companion_source("shots", "mock_fixture_historical"),
         "player_lineup": companion_source("player_lineup", context.lineup_source),
         "tactical": companion_source("tactical", context.tactical_source),
+        "coach": _coach_source(context, resolution),
         "player_transfer": (
             "disabled"
             if "player_lineup" in disabled

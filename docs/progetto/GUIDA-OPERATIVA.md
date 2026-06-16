@@ -72,9 +72,9 @@ Mostra gruppi feature attivi, conteggio per gruppo, esempio feature vector.
 python -m src.cli ablation --league 384 --rounds 5
 ```
 
-Esegue 7 varianti cumulative e salva report in `data/backtests/ablation_*.json`.
+Esegue 8 varianti cumulative e salva report in `data/backtests/ablation_*.json`.
 
-Varianti: `base`, `base+xg`, `base+shots`, `base+player_lineup`, `base+tactical`, `base+calendar`, `full`
+Varianti: `base`, `base+xg`, `base+shots`, `base+player_lineup`, `base+tactical`, `base+coach`, `base+calendar`, `full`
 
 ### Data quality
 
@@ -129,7 +129,7 @@ Genera 50 partite (10 squadre, 8+2 giornate) e tutti i file companion in `tests/
 python -m pytest -q
 ```
 
-Risultato atteso: **92 passed**.
+Risultato atteso: **305 passed**.
 
 CI automatica su GitHub Actions (`.github/workflows/ci.yml`).
 
