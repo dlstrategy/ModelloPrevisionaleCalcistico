@@ -42,6 +42,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 25 | [25-feature-trained-compact-regularization.md](implementazioni/25-feature-trained-compact-regularization.md) | FeatureTrained compact & regularization (Fase 2j) |
 | 26 | [26-model-evaluation-promotion-gate.md](implementazioni/26-model-evaluation-promotion-gate.md) | Model evaluation & promotion gate (Fase 2k) |
 | 27 | [27-coach-impact-league-adaptation-layer.md](implementazioni/27-coach-impact-league-adaptation-layer.md) | Coach impact & league adaptation (Fase 2l) |
+| 28 | [28-sportmonks-coach-mapping-prep.md](implementazioni/28-sportmonks-coach-mapping-prep.md) | Sportmonks coach mapping prep (Fase 2l-b) |
 
 ## Documentazione API esterna
 

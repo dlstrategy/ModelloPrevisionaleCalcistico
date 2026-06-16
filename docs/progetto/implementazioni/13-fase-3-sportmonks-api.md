@@ -47,6 +47,35 @@ Prima chiamata → API. Chiamate successive entro TTL → SQLite `data/cache.db`
 
 Moduli scheletro vanno completati seguendo `docs/sportmonks-football-v3-docs.md` (sezione Coaches, Coach statistics).
 
+## Coach — mapping Sportmonks (prep Fase 2l-b)
+
+**Stato:** documentato, non attivato. Dettaglio completo: [28-sportmonks-coach-mapping-prep.md](28-sportmonks-coach-mapping-prep.md).
+
+### Endpoint e include
+
+- Coaches: all, by id, by country, search, last updated
+- `include=coaches` su fixture e team
+- `include=statistics.details` su coach (MATCHES, WIN/DRAW/LOST, AVERAGE_POINTS_PER_GAME, SUBSTITUTIONS)
+- `include=teams`, `include=latest` per storico e tenure
+
+### Campi CoachProfile
+
+| Tipo | Esempi |
+|------|--------|
+| **Diretti** | `coach_id`, `coach_name`, country |
+| **Derivati** | `matches_in_charge`, PPG, prior league, `data_confidence` |
+| **Non nativi** | xG/style deltas, formation changes, `appointed_at` esatto |
+
+### Anti-leakage
+
+- Tutti i calcoli coach **as_of `match.starting_at`**
+- PPG/deltas/tenure solo su partite precedenti alla predizione
+- Nessuna statistica future del coach o della squadra
+
+### Moduli interni (invariati in Fase 3)
+
+`coach_registry.py` → popola `CoachProfile`; `coach_adaptation.py` e `coach_features.py` restano la logica di feature/summary.
+
 ## Cosa NON cambia
 
 - Output: solo P(1), P(X), P(2)

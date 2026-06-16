@@ -11,6 +11,8 @@ from src.coaches.unknown_coach_policy import DEFAULT_COACH_POLICY
 from src.domain.match import Match
 from src.features.tactical_features import TacticalMatchup
 
+STYLE_FIT_LOW_CONFIDENCE_THRESHOLD = 0.20
+
 COACH_FEATURE_KEYS: frozenset[str] = frozenset(
     {
         "home_coach_tenure_matches",
@@ -145,9 +147,9 @@ def _style_fit(
         line_gap = abs(coach.defensive_line_height - tactical.defensive_line_risk)
     fit = _clamp01(1.0 - (pressing_gap + line_gap) / 2.0)
     confidence = _clamp01(coach.data_confidence * 0.70)
-    if fit == 0.50 and confidence <= 0.20:
+    if confidence < STYLE_FIT_LOW_CONFIDENCE_THRESHOLD or fit == 0.50:
         notes.append("style_fit_insufficient_data")
-    return fit, confidence, tuple(notes)
+    return fit, confidence, tuple(dict.fromkeys(notes))
 
 
 def _potential_signal(
@@ -300,6 +302,49 @@ def build_coach_features(
     return features
 
 
+def coach_side_style_fit_insufficient(side: dict[str, Any]) -> bool:
+    notes = side.get("style_fit_notes") or ()
+    if "style_fit_insufficient_data" in notes:
+        return True
+    confidence = side.get("style_fit_confidence", 1.0)
+    return float(confidence) < STYLE_FIT_LOW_CONFIDENCE_THRESHOLD
+
+
+def _side_summary_entry(
+    coach: CoachProfile,
+    adaptation: CoachAdaptationEstimate,
+    feats: dict[str, float],
+    prefix: str,
+    tactical: TacticalMatchup | None,
+) -> dict[str, Any]:
+    _, style_conf, style_notes = _style_fit(coach, tactical)
+    return {
+        "coach_name": coach.coach_name,
+        "tenure_matches": coach.matches_in_charge,
+        "recent_change": feats[f"{prefix}_recent_coach_change"],
+        "ppg_delta": round(feats[f"{prefix}_coach_ppg_delta"], 4),
+        "attack_delta": round(feats[f"{prefix}_coach_attack_delta"], 4),
+        "defense_delta": round(feats[f"{prefix}_coach_defense_delta"], 4),
+        "tactical_stability": round(feats[f"{prefix}_coach_tactical_stability"], 4),
+        "data_confidence": round(coach.data_confidence, 4),
+        "unknown_coach": coach.source == "unknown_coach_fallback",
+        "low_sample_coach": feats[f"{prefix}_low_sample_coach"] > 0,
+        "same_league": adaptation.same_league,
+        "same_country": adaptation.same_country,
+        "cross_country": adaptation.cross_country,
+        "adaptation_score": round(adaptation.adaptation_score, 4),
+        "adaptation_confidence": round(adaptation.adaptation_confidence, 4),
+        "expected_integration_matches": round(adaptation.expected_integration_matches, 2),
+        "integration_progress": round(feats[f"{prefix}_coach_integration_progress"], 4),
+        "early_adaptation_risk": round(feats[f"{prefix}_coach_early_adaptation_risk"], 4),
+        "style_fit": round(feats[f"{prefix}_coach_style_fit"], 4),
+        "style_fit_confidence": round(feats[f"{prefix}_coach_style_fit_confidence"], 4),
+        "potential_signal": round(feats[f"{prefix}_coach_potential_signal"], 4),
+        "adaptation_notes": list(adaptation.notes),
+        "style_fit_notes": list(style_notes),
+    }
+
+
 def build_coach_summary(
     match: Match,
     *,
@@ -313,50 +358,12 @@ def build_coach_summary(
     home_feats = _side_features("home", home_coach, home_adapt, tactical)
     away_feats = _side_features("away", away_coach, away_adapt, tactical)
 
+    has_known = (
+        home_coach.source != "unknown_coach_fallback"
+        or away_coach.source != "unknown_coach_fallback"
+    )
     return {
-        "home": {
-            "coach_name": home_coach.coach_name,
-            "tenure_matches": home_coach.matches_in_charge,
-            "recent_change": home_feats["home_recent_coach_change"],
-            "ppg_delta": round(home_feats["home_coach_ppg_delta"], 4),
-            "attack_delta": round(home_feats["home_coach_attack_delta"], 4),
-            "defense_delta": round(home_feats["home_coach_defense_delta"], 4),
-            "tactical_stability": round(home_feats["home_coach_tactical_stability"], 4),
-            "data_confidence": round(home_coach.data_confidence, 4),
-            "unknown_coach": home_coach.source == "unknown_coach_fallback",
-            "low_sample_coach": home_feats["home_low_sample_coach"] > 0,
-            "same_league": home_adapt.same_league,
-            "same_country": home_adapt.same_country,
-            "cross_country": home_adapt.cross_country,
-            "adaptation_score": round(home_adapt.adaptation_score, 4),
-            "adaptation_confidence": round(home_adapt.adaptation_confidence, 4),
-            "expected_integration_matches": round(home_adapt.expected_integration_matches, 2),
-            "integration_progress": round(home_feats["home_coach_integration_progress"], 4),
-            "early_adaptation_risk": round(home_feats["home_coach_early_adaptation_risk"], 4),
-            "style_fit": round(home_feats["home_coach_style_fit"], 4),
-            "potential_signal": round(home_feats["home_coach_potential_signal"], 4),
-        },
-        "away": {
-            "coach_name": away_coach.coach_name,
-            "tenure_matches": away_coach.matches_in_charge,
-            "recent_change": away_feats["away_recent_coach_change"],
-            "ppg_delta": round(away_feats["away_coach_ppg_delta"], 4),
-            "attack_delta": round(away_feats["away_coach_attack_delta"], 4),
-            "defense_delta": round(away_feats["away_coach_defense_delta"], 4),
-            "tactical_stability": round(away_feats["away_coach_tactical_stability"], 4),
-            "data_confidence": round(away_coach.data_confidence, 4),
-            "unknown_coach": away_coach.source == "unknown_coach_fallback",
-            "low_sample_coach": away_feats["away_low_sample_coach"] > 0,
-            "same_league": away_adapt.same_league,
-            "same_country": away_adapt.same_country,
-            "cross_country": away_adapt.cross_country,
-            "adaptation_score": round(away_adapt.adaptation_score, 4),
-            "adaptation_confidence": round(away_adapt.adaptation_confidence, 4),
-            "expected_integration_matches": round(away_adapt.expected_integration_matches, 2),
-            "integration_progress": round(away_feats["away_coach_integration_progress"], 4),
-            "early_adaptation_risk": round(away_feats["away_coach_early_adaptation_risk"], 4),
-            "style_fit": round(away_feats["away_coach_style_fit"], 4),
-            "potential_signal": round(away_feats["away_coach_potential_signal"], 4),
-        },
-        "source": "mock_coach_profiles" if home_coach.source != "unknown_coach_fallback" else "unknown_coach_fallback",
+        "home": _side_summary_entry(home_coach, home_adapt, home_feats, "home", tactical),
+        "away": _side_summary_entry(away_coach, away_adapt, away_feats, "away", tactical),
+        "source": "mock_coach_profiles" if has_known else "unknown_coach_fallback",
     }

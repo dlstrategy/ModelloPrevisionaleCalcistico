@@ -196,6 +196,16 @@ Gruppo `coach` (68 feature), registry mock, adaptation lega/paese, explain `coac
 
 ---
 
+## Fase 2l-b — Coach hardening & Sportmonks mapping prep (completata)
+
+| Area | Modifica |
+|------|----------|
+| Explain | Warning style-fit insufficiente; coach_summary con notes |
+| Docs | Modulo 28 mapping Sportmonks; aggiornamento doc 13/27 |
+| Test | `test_coach_explain_hardening.py` |
+
+---
+
 ## Fase 3 — Sync API Sportmonks (da attivare)
 
 Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
@@ -220,6 +230,7 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto.
 ├── [M6e] Fase 2g — FeatureTrainedModel offline
 ├── [M6f] Fase 2h–2k — Transfer layer, compact, evaluation gate
 ├── [M6g] Fase 2l — Coach impact & league adaptation
+├── [M6h] Fase 2l-b — Coach hardening & Sportmonks mapping prep
 └── [M7] Fase 3 — API live (futuro)
 ```
 

@@ -147,6 +147,10 @@ def test_explain_coach_summary():
     assert "coach_summary" in explanation
     assert "home" in explanation["coach_summary"]
     assert "away" in explanation["coach_summary"]
+    for side in ("home", "away"):
+        assert "style_fit_confidence" in explanation["coach_summary"][side]
+        assert "style_fit_notes" in explanation["coach_summary"][side]
+        assert "adaptation_notes" in explanation["coach_summary"][side]
     assert set(pred.probabilities.as_dict().keys()) == {"home", "draw", "away"}
 
 

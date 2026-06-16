@@ -61,6 +61,18 @@ Gruppo feature: **`coach`**. Disabilitato in profilo `base`; abilitato in `advan
 
 Confronto prudente `pressing_intensity` / `defensive_line_height` coach vs segnali tactical. Se dati insufficienti o tactical fallback: **0.50** + confidence bassa.
 
+### Explain (Fase 2l-b)
+
+- `coach_summary` include `style_fit_confidence`, `style_fit_notes`, `adaptation_notes` per home/away
+- Warning esplicito se confidence < 0.20 o note `style_fit_insufficient_data`:
+  - *"Coach style fit insufficient data — compatibilità stile/rosa non certa"*
+- Warning solo se gruppo `coach` attivo (non in profilo `base`)
+
+## Dati mock vs Fase 3
+
+- **Fase 2l / 2l-b:** fixture `tests/fixtures/coaches/coach_profiles.json` — nessuna API
+- **Fase 3:** mapping Sportmonks documentato in [28-sportmonks-coach-mapping-prep.md](28-sportmonks-coach-mapping-prep.md)
+
 ## FeatureModel statico
 
 **Non modificato** in questa fase — nessun peso coach aggiunto. Le feature entrano nel vector ma il modello statico le ignora (chiavi non in pesi).
@@ -94,14 +106,6 @@ Subset diff: `coach_ppg_delta_diff`, `coach_attack_delta_diff`, `coach_defense_d
 
 ## Mapping Sportmonks (Fase 3)
 
-Documentazione locale: `docs/sportmonks-football-v3-docs.md` (Coaches, Coach statistics).
+Vedi documento dedicato [28-sportmonks-coach-mapping-prep.md](28-sportmonks-coach-mapping-prep.md) per mapping completo, anti-leakage e classificazione diretto/derivato/non nativo.
 
-| Campo mock / feature | Fonte API prevista |
-|----------------------|-------------------|
-| `matches_in_charge`, PPG | `statistics.details` — MATCHES (188), AVERAGE_POINTS_PER_GAME (9676), WIN/DRAW/LOST |
-| Rotazioni | SUBSTITUTIONS (59) o derivato da lineup |
-| Tenure / appointed | `teams` include su coach + `latest` fixtures (6 mesi) |
-| Cross-league experience | `teams` / `statistics` per season + `country_id` |
-| xG / style / formation | **Non nativi** — derivare da fixture statistics o mantenere proxy |
-
-Endpoint: `GET /v3/football/coaches/{id}?include=statistics.details;teams;latest` e `include=coaches` su fixture/team.
+Endpoint riassuntivi: `GET /v3/football/coaches/{id}?include=statistics.details;teams;latest` e `include=coaches` su fixture/team.

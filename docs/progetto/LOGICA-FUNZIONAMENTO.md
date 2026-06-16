@@ -1,6 +1,6 @@
 # Logica di funzionamento del motore previsionale
 
-Documento di audit end-to-end — stato attuale del programma (offline, Fase 2l).
+Documento di audit end-to-end — stato attuale del programma (offline, Fase 2l-b).
 
 ## 1. Visione generale
 
@@ -223,6 +223,12 @@ Vedi [implementazioni/26-model-evaluation-promotion-gate.md](implementazioni/26-
 Gruppo **`coach`**: ~68 feature aggregate (tenure, cambio recente, adattamento lega/paese, integration progress, style fit, potential signal prudente). Registry mock, unknown coach neutro, disabilitabile via profilo `base`.
 
 Vedi [implementazioni/27-coach-impact-league-adaptation-layer.md](implementazioni/27-coach-impact-league-adaptation-layer.md).
+
+### Coach layer hardening & Sportmonks mapping prep (Fase 2l-b)
+
+Warning explain style-fit insufficiente; `coach_summary` arricchita (`style_fit_confidence`, `style_fit_notes`, `adaptation_notes`); mapping Sportmonks documentato senza API.
+
+Vedi [implementazioni/28-sportmonks-coach-mapping-prep.md](implementazioni/28-sportmonks-coach-mapping-prep.md).
 
 ---
 

@@ -92,6 +92,7 @@ Mappa ogni gruppo feature alla fonte effettiva:
 - Assenze significative (≥2 starter)
 - Lineup/tactical con `default_fallback`
 - Coach: allenatore sconosciuto, cambio recente, adattamento in corso, cross-country, confidence bassa
+- Coach style fit: *"Coach style fit insufficient data — compatibilità stile/rosa non certa"*
 
 ### Sezioni explain aggiuntive
 

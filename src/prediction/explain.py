@@ -238,7 +238,10 @@ def explain_prediction(
         explanation["warnings"].append("Assenze significative in formazione")
 
     if _group_active(context, "coach"):
-        from src.features.coach_features import build_coach_summary
+        from src.features.coach_features import (
+            build_coach_summary,
+            coach_side_style_fit_insufficient,
+        )
 
         explanation["coach_summary"] = build_coach_summary(context.match, tactical=context.tactical)
         coach_src = data_sources.get("coach", "missing")
@@ -246,6 +249,9 @@ def explain_prediction(
 
         home_c = explanation["coach_summary"]["home"]
         away_c = explanation["coach_summary"]["away"]
+        style_fit_warning = (
+            "Coach style fit insufficient data — compatibilità stile/rosa non certa"
+        )
         if home_c.get("unknown_coach") or away_c.get("unknown_coach"):
             explanation["warnings"].append(
                 "Coach data fallback — allenatore sconosciuto per una squadra"
@@ -272,7 +278,8 @@ def explain_prediction(
             explanation["warnings"].append(
                 "Coach impact low confidence — pochi match o dati mock"
             )
-        if coach_src == "fallback":
-            pass  # unknown warning already added
+        if coach_side_style_fit_insufficient(home_c) or coach_side_style_fit_insufficient(away_c):
+            if style_fit_warning not in explanation["warnings"]:
+                explanation["warnings"].append(style_fit_warning)
 
     return explanation

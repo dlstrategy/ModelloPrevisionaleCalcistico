@@ -23,6 +23,7 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2j** | Completata | FeatureTrained compact & regularization (full/compact) |
 | **Fase 2k** | Completata | Model evaluation report & promotion gate |
 | **Fase 2l** | Completata | Coach impact, league adaptation & integration layer |
+| **Fase 2l-b** | Completata | Coach explain hardening & Sportmonks mapping prep |
 | **Fase 3** | Da attivare | Sync API Sportmonks reale |
 
 ## Output (solo 1/X/2)
