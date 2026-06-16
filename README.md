@@ -26,7 +26,8 @@ Motore previsionale **proprietario** per il mercato **1/X/2**, basato su dati **
 | **Fase 2l-b** | Completata | Coach explain hardening & Sportmonks mapping prep |
 | **Fase 2m** | Completata | Real data readiness audit pre-Fase 3 |
 | **Fase 3a** | Completata | Sportmonks API mappers offline-first |
-| **Fase 3** | Da attivare (`PARTIAL_READY`) | Sync API Sportmonks reale + wire mapper (3b) |
+| **Fase 3b** | Completata | Sync staging wiring mapper (flag controllato) |
+| **Fase 3c** | Da attivare (`PARTIAL_READY`) | Sync reale controllata + validate/capabilities |
 
 ## Output (solo 1/X/2)
 
@@ -122,9 +123,13 @@ In `.env`:
 ```env
 SPORTMONKS_API_TOKEN=il_tuo_token
 ENABLE_SPORTMONKS_SYNC=true
+# Opzionale staging mapper avanzati (Fase 3b) — default false
+ENABLE_SPORTMONKS_ADVANCED_MAPPERS=false
 ```
 
 Poi: `python -m src.cli sync --league 384`
+
+Con `ENABLE_SPORTMONKS_ADVANCED_MAPPERS=true` il sync API usa include avanzati e scrive companion staging in `data/processed/league_{id}_companions/`. Default **false** = include base only (comportamento sicuro).
 
 ## Test
 

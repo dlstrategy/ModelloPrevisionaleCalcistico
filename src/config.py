@@ -40,6 +40,7 @@ class Settings:
     base_url: str
     default_league_id: int
     enable_sportmonks_sync: bool
+    enable_sportmonks_advanced_mappers: bool
     cache_ttl_fixtures: int
     cache_ttl_standings: int
     cache_ttl_teams: int
@@ -78,6 +79,10 @@ class Settings:
     def can_sync_api(self) -> bool:
         return self.has_api_token and self.enable_sportmonks_sync
 
+    @property
+    def can_use_advanced_mappers(self) -> bool:
+        return self.can_sync_api and self.enable_sportmonks_advanced_mappers
+
 
 def load_settings(env_file: Path | None = None) -> Settings:
     if env_file is None:
@@ -95,6 +100,7 @@ def load_settings(env_file: Path | None = None) -> Settings:
         base_url=os.getenv("SPORTMONKS_BASE_URL", "https://api.sportmonks.com/v3/football").rstrip("/"),
         default_league_id=_int("DEFAULT_LEAGUE_ID", SERIE_A_LEAGUE_ID),
         enable_sportmonks_sync=_bool("ENABLE_SPORTMONKS_SYNC", False),
+        enable_sportmonks_advanced_mappers=_bool("ENABLE_SPORTMONKS_ADVANCED_MAPPERS", False),
         cache_ttl_fixtures=_int("CACHE_TTL_FIXTURES", 3600),
         cache_ttl_standings=_int("CACHE_TTL_STANDINGS", 86400),
         cache_ttl_teams=_int("CACHE_TTL_TEAMS", 86400),

@@ -238,7 +238,15 @@ Vedi [implementazioni/29-real-data-readiness-audit.md](implementazioni/29-real-d
 
 ### Sportmonks API mappers offline-first (Fase 3a)
 
-Mapper puri JSON Sportmonks → companion/registry interni (statistics, lineups, coach, standings, player). Test su sample in `tests/fixtures/sportmonks/`. Sync non wired — resta `PARTIAL_READY`.
+Mapper puri JSON Sportmonks → companion/registry interni (statistics, lineups, coach, standings, player). Test su sample in `tests/fixtures/sportmonks/`.
+
+Vedi [implementazioni/30-sportmonks-api-mappers-offline-first.md](implementazioni/30-sportmonks-api-mappers-offline-first.md).
+
+### Sync staging wiring mapper (Fase 3b)
+
+Modulo `sportmonks_mapper_wiring.py`: include avanzati e mapper collegati a `_sync_from_api()` **solo** con `ENABLE_SPORTMONKS_ADVANCED_MAPPERS=true` (default false). Companion staging in `data/processed/league_{id}_companions/`. Resta **`PARTIAL_READY`** finché sync reale non è validata (Fase 3c).
+
+Vedi [implementazioni/31-sportmonks-sync-staging-wiring.md](implementazioni/31-sportmonks-sync-staging-wiring.md).
 
 Vedi [implementazioni/30-sportmonks-api-mappers-offline-first.md](implementazioni/30-sportmonks-api-mappers-offline-first.md).
 

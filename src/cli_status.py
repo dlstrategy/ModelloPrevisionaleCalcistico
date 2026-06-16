@@ -91,6 +91,8 @@ def print_status(settings: Settings, league_id: int) -> int:
     for group in sorted(ALL_FEATURE_GROUPS):
         print(f"  {group:<22} {feature_group_display_status(group, cap)}")
     print(f"Policy disabled:    {', '.join(cap.policy_disabled_capabilities)}")
+    adv_flag = "true" if settings.enable_sportmonks_advanced_mappers else "false (default)"
+    print(f"Advanced mappers:   {adv_flag} (ENABLE_SPORTMONKS_ADVANCED_MAPPERS)")
     readiness = build_real_data_readiness_report(settings, league_id)
     print(f"Real data readiness: {readiness.overall_status} (python -m src.cli readiness --league {league_id})")
     return 0

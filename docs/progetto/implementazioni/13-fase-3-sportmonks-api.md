@@ -4,7 +4,15 @@
 
 **Predisposto ma non attivato.** Tutto il codice esiste; la sync usa fixture offline finché non si abilita esplicitamente l'API.
 
-**Prontezza Fase 3: `PARTIAL_READY`** — audit [29](29-real-data-readiness-audit.md). Mapper offline-first in [30](30-sportmonks-api-mappers-offline-first.md); sync wiring in Fase 3b.
+**Prontezza Fase 3: `PARTIAL_READY`** — audit [29](29-real-data-readiness-audit.md). Mapper offline-first in [30](30-sportmonks-api-mappers-offline-first.md); sync staging wiring in [31](31-sportmonks-sync-staging-wiring.md).
+
+## Flag staging (Fase 3b)
+
+```env
+ENABLE_SPORTMONKS_ADVANCED_MAPPERS=false   # default — include base only
+```
+
+Richiede `ENABLE_SPORTMONKS_SYNC=true` + token per attivare include avanzati e mapper staging.
 
 ## Prerequisiti
 
@@ -116,8 +124,9 @@ python -m pytest tests/test_client.py -v
 Prima di tutto: `python -m src.cli readiness --league 384 --profile advanced` (vedi [29-real-data-readiness-audit.md](29-real-data-readiness-audit.md)).
 
 - [ ] Token e flag in `.env`
-- [ ] Mapper offline-first implementati (Fase 3a — doc 30)
-- [ ] Wire mapper nel sync staging (Fase 3b)
+- [x] Mapper offline-first implementati (Fase 3a — doc 30)
+- [x] Wire mapper nel sync staging (Fase 3b — doc 31)
+- [ ] Validare sync reale controllata (Fase 3c)
 - [ ] Sync produzione dati reali in `data/processed/`
 - [ ] Completare `standings.py` per classifica ufficiale
 - [ ] Collegare `xg_features.py` a statistics API

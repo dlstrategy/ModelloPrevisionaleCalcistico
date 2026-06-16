@@ -10,11 +10,18 @@ from pathlib import Path
 from src.config import CACHE_DB_PATH, FIXTURES_DIR, PROCESSED_DIR, Settings
 from src.data_pipeline.dataset_builder import MatchDataset
 from src.data_pipeline.normalize import normalize_fixtures_response
+from src.data_pipeline.sportmonks_mapper_wiring import (
+    apply_mappers_to_sync_payloads,
+    build_fixture_includes,
+    companions_dir_for_league,
+    write_companion_artifacts,
+)
 from src.domain.match import Match
 from src.sportmonks.cache import ResponseCache
 from src.sportmonks.client import SportmonksClient
 from src.sportmonks import fixtures as fixtures_api
 from src.sportmonks import leagues as leagues_api
+from src.sportmonks import standings as standings_api
 
 logger = logging.getLogger(__name__)
 
@@ -68,9 +75,7 @@ def _sync_from_api(settings: Settings, league_id: int) -> MatchDataset:
     today = datetime.utcnow().date()
     past_start = today - timedelta(days=PAST_SYNC_DAYS)
     future_end = today + timedelta(days=FUTURE_SYNC_DAYS)
-    includes = "participants;scores;state"
-    # Fase 3b TODO: estendere includes (statistics;lineups;coaches;formations) e
-    # applicare mapper offline-first da src/sportmonks/mappers/ — non attivato in 3a.
+    includes = build_fixture_includes(settings.can_use_advanced_mappers)
 
     past_response = fixtures_api.fetch_fixtures_between(
         client,
@@ -94,7 +99,7 @@ def _sync_from_api(settings: Settings, league_id: int) -> MatchDataset:
     matches = _merge_matches(past_matches, future_matches)
 
     logger.info(
-        "Sync API: %d passate [%s -> %s], %d future [%s -> %s], %d totali",
+        "Sync API: %d passate [%s -> %s], %d future [%s -> %s], %d totali (includes=%s)",
         len(past_matches),
         past_start,
         today,
@@ -102,7 +107,49 @@ def _sync_from_api(settings: Settings, league_id: int) -> MatchDataset:
         today,
         future_end,
         len(matches),
+        includes,
     )
+
+    if settings.can_use_advanced_mappers:
+        standings_payload = None
+        if season_id is not None:
+            try:
+                standings_payload = standings_api.fetch_standings_by_season(
+                    client,
+                    season_id,
+                    ttl=settings.cache_ttl_standings,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "Standings fetch failed for league %s season %s: %s",
+                    league_id,
+                    season_id,
+                    exc,
+                )
+        try:
+            artifacts = apply_mappers_to_sync_payloads(
+                league_id=league_id,
+                season_id=season_id,
+                past_fixtures_payload=past_response,
+                future_fixtures_payload=future_response,
+                standings_payload=standings_payload,
+            )
+            paths = write_companion_artifacts(
+                artifacts,
+                companions_dir_for_league(league_id),
+            )
+            logger.info(
+                "Advanced mapper staging: %d companion files for league %s",
+                len(paths),
+                league_id,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Advanced mapper staging failed for league %s: %s",
+                league_id,
+                exc,
+            )
+
     return MatchDataset(league_id=league_id, season_id=season_id, matches=matches)
 
 

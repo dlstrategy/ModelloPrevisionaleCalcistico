@@ -127,10 +127,13 @@ def test_mapper_offline_items_present(settings):
     areas = {i.area for i in report.items}
     assert "mapper_offline_xg" in areas
     assert "sync_wiring_xg" in areas
+    assert "advanced_mapper_flag" in areas
     mapper_xg = next(i for i in report.items if i.area == "mapper_offline_xg")
     assert mapper_xg.status == "partial"
     sync_xg = next(i for i in report.items if i.area == "sync_wiring_xg")
-    assert sync_xg.status == "not_ready"
+    assert sync_xg.status == "partial"
+    adv_flag = next(i for i in report.items if i.area == "advanced_mapper_flag")
+    assert adv_flag.status == "ready"
 
 
 def test_feature_trained_outside_ensemble_and_all_models(dataset, settings):

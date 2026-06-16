@@ -97,16 +97,18 @@ Utility condivise: `src/sportmonks/mappers/_common.py`
 
 ## 6. Cosa resta non wired nel sync
 
-- `_sync_from_api()` include ancora solo `participants;scores;state` (TODO Fase 3b in `sync.py`)
-- Nessun mapper invocato in production sync
-- Companion `data/processed` non sovrascritti da mapper
+- **Fase 3b completata:** wiring staging in `sportmonks_mapper_wiring.py` + integrazione in `_sync_from_api()` **dietro** `ENABLE_SPORTMONKS_ADVANCED_MAPPERS=false` (default).
+- Con flag **false**: include base only; nessun mapper; nessuna scrittura companion (comportamento pre-3b).
+- Con flag **true**: include avanzati + mapper + scrittura `data/processed/league_{id}_companions/`.
+- Vedi [31-sportmonks-sync-staging-wiring.md](31-sportmonks-sync-staging-wiring.md).
 
-## 7. Readiness post-3a
+## 7. Readiness post-3a / post-3b
 
 Resta **`PARTIAL_READY`**:
 
 - `mapper_offline_*` → **partial** (warning)
-- `sync_wiring_*` → **not_ready** (blocking)
+- `sync_wiring_*` → **partial** (warning) dopo 3b
+- `advanced_mapper_flag` → **ready** (info) se default false
 
 Comando: `python -m src.cli readiness --league 384 --profile advanced`
 
@@ -117,6 +119,8 @@ Comando: `python -m src.cli readiness --league 384 --profile advanced`
 - `tests/test_sportmonks_coach_mapper.py`
 - `tests/test_sportmonks_standings_mapper.py`
 - `tests/test_sportmonks_player_mapper.py`
+- `tests/test_sportmonks_mapper_wiring.py` (3b)
+- `tests/test_sportmonks_sync_staging.py` (3b)
 - `tests/test_real_data_readiness.py` (aggiornato)
 
 ## 9. Anti-leakage
@@ -125,14 +129,16 @@ Comando: `python -m src.cli readiness --league 384 --profile advanced`
 - Cutoff `as_of` da applicare nel futuro sync/walk-forward **prima** di aggregare statistiche
 - Nessuna statistica futura introdotta dai mapper
 
-## 10. Prossimo step — Fase 3b
+## 10. Prossimo step — Fase 3c
 
-Wire mapper in sync staging con flag controllato:
+Sync reale controllata con token locale:
 
-1. Extend includes: `statistics;lineups;coaches;formations`
-2. Fetch standings season post-sync
-3. Applicare mapper → companion files / registry
-4. Validare su dataset reale senza cambiare ensemble production
+1. Validare include avanzati su subscription reale
+2. Verificare artifact companion su dataset reale
+3. Ritrain feature_trained; promotion gate
+4. Cutover production graduale (zero default change)
+
+Vedi [31-sportmonks-sync-staging-wiring.md](31-sportmonks-sync-staging-wiring.md).
 
 ## Riferimenti
 

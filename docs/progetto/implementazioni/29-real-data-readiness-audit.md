@@ -2,9 +2,10 @@
 
 Audit strutturato di prontezza **prima** dell'attivazione sync Sportmonks reale (Fase 3). Nessuna chiamata API in questa fase.
 
-**Raccomandazione finale: `PARTIAL_READY`** (post Fase 3a: mapper offline-first presenti, sync non wired)
+**Raccomandazione finale: `PARTIAL_READY`** (post Fase 3b: mapper wired in staging dietro flag, sync reale non validata)
 
 Aggiornamento Fase 3a: vedi [30-sportmonks-api-mappers-offline-first.md](30-sportmonks-api-mappers-offline-first.md).
+Aggiornamento Fase 3b: vedi [31-sportmonks-sync-staging-wiring.md](31-sportmonks-sync-staging-wiring.md).
 
 ---
 
@@ -274,7 +275,7 @@ Modulo: `src/data_pipeline/readiness.py`
 
 **Motivazione:** infrastruttura client/cache/sync gated e layer feature offline sono solidi; i **mapper API avanzati** (xG, shots, lineups, player careers, coach) non sono collegati al sync pipeline. Attivare sync reale oggi produrrebbe un dataset incompleto e feature groups in fallback silenzioso o proxy.
 
-**Prossimo step consigliato:** Fase 3a — implementare mapper statistics + lineups + standings nel sync path, con test offline su JSON API campione, **senza** abilitare token in CI.
+**Prossimo step consigliato:** Fase 3c — sync reale controllata con token locale, validate/capabilities su artifact companion, ritrain feature_trained, zero production cutover.
 
 ---
 

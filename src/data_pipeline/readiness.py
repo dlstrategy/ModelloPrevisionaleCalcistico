@@ -25,6 +25,7 @@ PROMOTION_GATE_PATH = PROJECT_ROOT / "src/backtesting/promotion_gate.py"
 FEATURE_POLICY_PATH = PROJECT_ROOT / "src/training/feature_policy.py"
 SPORTMONKS_CLIENT_PATH = PROJECT_ROOT / "src/sportmonks/client.py"
 MAPPERS_DIR = PROJECT_ROOT / "src/sportmonks/mappers"
+MAPPER_WIRING_PATH = PROJECT_ROOT / "src/data_pipeline/sportmonks_mapper_wiring.py"
 SPORTMONKS_FIXTURES_DIR = PROJECT_ROOT / "tests/fixtures/sportmonks"
 TESTS_DIR = PROJECT_ROOT / "tests"
 
@@ -109,6 +110,14 @@ def _check_mapper_offline(group: str) -> ReadinessItem:
 
 
 def _check_sync_wiring(group: str) -> ReadinessItem:
+    if MAPPER_WIRING_PATH.exists():
+        return _item(
+            f"sync_wiring_{group}",
+            "partial",
+            "warning",
+            f"Mapper '{group}' collegato in staging (sportmonks_mapper_wiring) dietro flag",
+            "Validare con sync reale controllata (Fase 3c) prima del cutover production",
+        )
     return _item(
         f"sync_wiring_{group}",
         "not_ready",
@@ -294,6 +303,27 @@ def build_real_data_readiness_report(
 
     items.append(_check_client_auth_header_only())
 
+    if settings.enable_sportmonks_advanced_mappers:
+        items.append(
+            _item(
+                "advanced_mapper_flag",
+                "partial",
+                "warning",
+                "ENABLE_SPORTMONKS_ADVANCED_MAPPERS=true — include avanzati e mapper staging attivi",
+                "Usare solo in staging controllata; default false in production",
+            )
+        )
+    else:
+        items.append(
+            _item(
+                "advanced_mapper_flag",
+                "ready",
+                "info",
+                "ENABLE_SPORTMONKS_ADVANCED_MAPPERS default false — sync base invariato",
+                "Abilitare solo per staging controllata con token locale (Fase 3c)",
+            )
+        )
+
     items.append(
         _item(
             "response_cache",
@@ -304,15 +334,27 @@ def build_real_data_readiness_report(
         )
     )
 
-    items.append(
-        _item(
-            "sync_includes",
-            "partial",
-            "warning",
-            "Sync API usa include base: participants;scores;state",
-            "Estendere include per statistics, lineups, coaches prima di feature avanzate",
+    if MAPPER_WIRING_PATH.exists():
+        items.append(
+            _item(
+                "sync_includes",
+                "partial",
+                "warning",
+                "Include base default: participants;scores;state; "
+                "include avanzati disponibili con ENABLE_SPORTMONKS_ADVANCED_MAPPERS=true",
+                "Validare include avanzati su API reale in Fase 3c",
+            )
         )
-    )
+    else:
+        items.append(
+            _item(
+                "sync_includes",
+                "partial",
+                "warning",
+                "Sync API usa include base: participants;scores;state",
+                "Estendere include per statistics, lineups, coaches prima di feature avanzate",
+            )
+        )
 
     advanced_groups = frozenset(MAPPER_OFFLINE_BY_GROUP.keys())
 
@@ -458,10 +500,10 @@ def build_real_data_readiness_report(
             "player_careers_sync",
             "partial" if (MAPPERS_DIR / "player_mapper.py").exists() else "not_ready",
             "warning" if (MAPPERS_DIR / "player_mapper.py").exists() else "blocking",
-            "player_careers: mapper offline-first presente; sync non collegato"
+            "player_careers: mapper offline-first presente; sync staging wired dietro flag"
             if (MAPPERS_DIR / "player_mapper.py").exists()
             else "player_careers.json popolato solo da fixture offline mock",
-            "Wire player_mapper al sync in Fase 3b",
+            "Validare sync player careers in Fase 3c",
         )
     )
 
@@ -475,8 +517,8 @@ def build_real_data_readiness_report(
                 "coach_layer_offline",
                 "partial",
                 "warning",
-                "Coach layer offline OK; mapper offline-first presente (3a), sync non wired",
-                "Collegare coach_mapper al sync in Fase 3b",
+                "Coach layer offline OK; mapper wired in staging (3b), non validato su API reale",
+                "Validare coach_mapper con sync reale controllata (Fase 3c)",
             )
         )
 

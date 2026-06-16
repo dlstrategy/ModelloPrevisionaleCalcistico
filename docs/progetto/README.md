@@ -45,6 +45,7 @@ Indice della documentazione interna del motore previsionale 1/X/2 per la Serie A
 | 28 | [28-sportmonks-coach-mapping-prep.md](implementazioni/28-sportmonks-coach-mapping-prep.md) | Sportmonks coach mapping prep (Fase 2l-b) |
 | 29 | [29-real-data-readiness-audit.md](implementazioni/29-real-data-readiness-audit.md) | Real data readiness audit pre-Fase 3 (Fase 2m) |
 | 30 | [30-sportmonks-api-mappers-offline-first.md](implementazioni/30-sportmonks-api-mappers-offline-first.md) | Sportmonks API mappers offline-first (Fase 3a) |
+| 31 | [31-sportmonks-sync-staging-wiring.md](implementazioni/31-sportmonks-sync-staging-wiring.md) | Sync staging wiring mapper (Fase 3b) |
 
 ## Documentazione API esterna
 

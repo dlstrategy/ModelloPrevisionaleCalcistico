@@ -224,15 +224,29 @@ Gruppo `coach` (68 feature), registry mock, adaptation lega/paese, explain `coac
 |------|----------|
 | Mapper | `src/sportmonks/mappers/` (statistics, lineups, coach, standings, player) |
 | Sample JSON | `tests/fixtures/sportmonks/*.json` (offline_sample) |
-| Readiness | mapper_offline partial + sync_wiring blocking |
+| Readiness | mapper_offline partial + sync_wiring partial (post 3b) |
 | Test | 5 nuovi file test_sportmonks_* |
 | Doc | Modulo 30 |
 
 ---
 
-## Fase 3 — Sync API Sportmonks (da attivare, PARTIAL_READY)
+## Fase 3b — Sync staging wiring mapper (completata)
 
-Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto. **Attendere mapper avanzati** (doc 29 checklist).
+| Area | Modifica |
+|------|----------|
+| Flag | `ENABLE_SPORTMONKS_ADVANCED_MAPPERS=false` (default) |
+| Wiring | `src/data_pipeline/sportmonks_mapper_wiring.py` |
+| Sync | `_sync_from_api()` include avanzati + mapper solo se flag true |
+| Output | `data/processed/league_{id}_companions/*.json` |
+| Readiness | sync_wiring partial/warning; advanced_mapper_flag ready/info |
+| Test | `test_sportmonks_mapper_wiring.py`, `test_sportmonks_sync_staging.py` |
+| Doc | Modulo 31 |
+
+---
+
+## Fase 3c — Sync reale controllata (da attivare, PARTIAL_READY)
+
+Token locale + validate/capabilities su artifact reali. Zero production cutover finché promotion gate non approva.
 
 ---
 
@@ -257,7 +271,8 @@ Token + `ENABLE_SPORTMONKS_SYNC=true`. Sync passato + futuro già predisposto. *
 ├── [M6h] Fase 2l-b — Coach hardening & Sportmonks mapping prep
 ├── [M6i] Fase 2m — Real data readiness audit (PARTIAL_READY)
 ├── [M6j] Fase 3a — Sportmonks API mappers offline-first
-└── [M7] Fase 3b — Wire mapper + API live (futuro)
+├── [M6k] Fase 3b — Sync staging wiring mapper (flag controllato)
+└── [M7] Fase 3c — Sync reale controllata + validate (futuro)
 ```
 
 ---
